@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" id="html-root">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,11 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --tierra:#1a1611; --tierra-media:#2a2319;
-  --musgo:#2d4a2e; --musgo-claro:#3d6a3e; --musgo-glow:#4a8a4b;
-  --ocre:#c4973b; --ocre-claro:#d4a74b;
-  --marfil:#f0e6d3; --marfil-tenue:#f0e6d399;
+:root{
+  --tierra:#1a1611;--tierra-media:#2a2319;
+  --musgo:#2d4a2e;--musgo-claro:#3d6a3e;--musgo-glow:#4a8a4b;
+  --ocre:#c4973b;--ocre-claro:#d4a74b;
+  --marfil:#f0e6d3;--marfil-tenue:#f0e6d399;
   --cristal:rgba(240,230,211,0.06);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -27,17 +27,23 @@ body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);
 .bar-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
 .bar-logo svg{width:28px;height:28px}
 .bar-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--ocre);letter-spacing:.08em}
-.bar-right{display:flex;gap:1rem;align-items:center}
-.bar-link{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--marfil-tenue);text-decoration:none;transition:color .3s}
+.bar-right{display:flex;gap:.8rem;align-items:center}
+.bar-link{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--marfil-tenue);text-decoration:none;transition:color .3s}
 .bar-link:hover{color:var(--ocre)}
-.bar-cta{padding:.4rem 1rem;border:1px solid var(--ocre);border-radius:4px;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ocre);text-decoration:none;transition:all .3s}
+.bar-cta{padding:.38rem .9rem;border:1px solid var(--ocre);border-radius:4px;font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ocre);text-decoration:none;transition:all .3s}
 .bar-cta:hover{background:rgba(196,151,59,.1)}
+
+/* SELECTOR DE IDIOMA */
+.lang-btns{display:flex;gap:.35rem}
+.lang-btn{background:transparent;border:1px solid rgba(196,151,59,.2);color:var(--marfil-tenue);font-family:'Jost',sans-serif;font-size:.68rem;letter-spacing:.1em;padding:.28rem .6rem;border-radius:3px;cursor:pointer;transition:all .3s}
+.lang-btn:hover{border-color:var(--ocre);color:var(--ocre)}
+.lang-btn.active{border-color:var(--ocre);color:var(--ocre);background:rgba(196,151,59,.1)}
 
 /* MAIN */
 main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5.5rem 1.5rem 3rem}
 
 /* PHASES */
-.phase{display:none;flex-direction:column;align-items:center;gap:1.5rem;width:100%;max-width:600px;animation:fadeUp .8s forwards}
+.phase{display:none;flex-direction:column;align-items:center;gap:1.5rem;width:100%;max-width:640px;animation:fadeUp .8s forwards}
 .phase.active{display:flex}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
@@ -68,7 +74,15 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 
 /* HEADINGS */
 .heading{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:var(--marfil);text-align:center}
-.subtext{font-size:.9rem;font-weight:300;color:var(--marfil-tenue);text-align:center;line-height:1.75;max-width:440px}
+.subtext{font-size:.9rem;font-weight:300;color:var(--marfil-tenue);text-align:center;line-height:1.75;max-width:460px}
+
+/* CATEGORÍAS */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;width:100%}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.9rem .5rem;background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:10px;cursor:pointer;transition:all .3s;color:var(--marfil-tenue)}
+.cat-btn:hover{border-color:rgba(196,151,59,.35);color:var(--marfil)}
+.cat-btn.active{border-color:var(--ocre);background:rgba(196,151,59,.1);color:var(--ocre)}
+.cat-icon{font-size:1.5rem}
+.cat-name{font-size:.7rem;letter-spacing:.06em;text-align:center;font-weight:400}
 
 /* FIELDS */
 .field{width:100%;display:flex;flex-direction:column;gap:.4rem}
@@ -91,12 +105,13 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* CÁPSULA */
-.capsule{border:1px solid rgba(196,151,59,.25);border-radius:16px;padding:2.2rem;width:100%;position:relative;overflow:hidden;background:rgba(13,11,8,.45)}
-.capsule-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(160deg,rgba(13,11,8,.82) 0%,rgba(26,22,17,.70) 100%);z-index:0}
+.capsule{border:1px solid rgba(196,151,59,.25);border-radius:16px;padding:2.5rem 2.2rem;width:100%;position:relative;overflow:hidden;background:rgba(13,11,8,.45)}
+.capsule-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(160deg,rgba(13,11,8,.85) 0%,rgba(26,22,17,.75) 100%);z-index:0}
 .capsule-seal{position:absolute;top:-.62rem;left:50%;transform:translateX(-50%);background:var(--tierra);padding:0 .6rem;color:var(--ocre);font-size:.75rem;z-index:2}
-.capsule-content{position:relative;z-index:1;display:flex;flex-direction:column;gap:.9rem}
-.cap-subject{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);text-align:center}
-.cap-text{font-family:'Cormorant Garamond',serif;font-size:1.08rem;line-height:1.9;color:var(--marfil);text-align:center;font-style:italic;white-space:pre-line}
+.capsule-content{position:relative;z-index:1;display:flex;flex-direction:column;gap:1rem}
+.cap-category{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--musgo-glow);text-align:center}
+.cap-subject{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);text-align:center}
+.cap-text{font-family:'Cormorant Garamond',serif;font-size:1.05rem;line-height:2;color:var(--marfil);text-align:center;font-style:italic;white-space:pre-line}
 .cap-date{font-size:.63rem;color:var(--marfil-tenue);text-align:center;letter-spacing:.12em}
 
 /* SHARE */
@@ -104,7 +119,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .share-label{font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ocre)}
 .share-text{font-family:'Cormorant Garamond',serif;font-size:.92rem;color:var(--marfil-tenue);line-height:1.6;font-style:italic}
 .share-btns{display:flex;gap:.6rem;flex-wrap:wrap}
-.share-btn{background:transparent;border:1px solid rgba(196,151,59,.25);color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.12em;padding:.48rem 1.1rem;border-radius:6px;cursor:pointer;transition:all .3s}
+.share-btn{background:transparent;border:1px solid rgba(196,151,59,.25);color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;padding:.48rem 1rem;border-radius:6px;cursor:pointer;transition:all .3s}
 .share-btn:hover{background:rgba(196,151,59,.1)}
 
 /* CTA FINAL */
@@ -120,10 +135,11 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .foot a{color:var(--ocre);text-decoration:none}
 
 @media(max-width:580px){
-  .hook-counter{font-size:3.8rem}
-  .hook-q{font-size:1.5rem}
-  .top-bar{padding:.8rem 1.2rem}
-  .bar-right .bar-link{display:none}
+  .hook-counter{font-size:3.5rem}
+  .hook-q{font-size:1.4rem}
+  .top-bar{padding:.8rem 1rem}
+  .bar-link{display:none}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
   .mini-grid{grid-template-columns:1fr}
 }
 </style>
@@ -152,8 +168,14 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
     <span class="bar-name">THANOTECTAS</span>
   </a>
   <div class="bar-right">
-    <a href="https://thanotectas.com/depositar" class="bar-link">Depositar legado</a>
-    <a href="https://thanotectas.com" class="bar-cta">Ver sitio completo</a>
+    <a href="https://thanotectas.com/depositar" class="bar-link" data-i="nav-deposit">Depositar legado</a>
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    </div>
+    <a href="https://thanotectas.com" class="bar-cta" data-i="nav-site">Ver sitio</a>
   </div>
 </header>
 
@@ -180,23 +202,23 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
         <circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
       </svg>
       <div class="brand-name">Thanotectas</div>
-      <div class="brand-sub">Oráculo del Umbral</div>
+      <div class="brand-sub" data-i="brand-sub">Oráculo del Umbral</div>
     </div>
     <div style="text-align:center">
       <div class="hook-counter" id="hook-n">0</div>
-      <div class="hook-label">especies perdidas desde que abriste esta página</div>
+      <div class="hook-label" data-i="hook-label">especies perdidas desde que abriste esta página</div>
     </div>
-    <h1 class="hook-q">¿Hay algo que temes que<br>el mundo <em>olvide para siempre?</em></h1>
-    <p class="hook-sub">Inscribe aquí su nombre. El Oráculo lo convertirá en una cápsula poética sellada para el futuro.</p>
+    <h1 class="hook-q" data-i="hook-q">¿Hay algo que temes que<br>el mundo <em>olvide para siempre?</em></h1>
+    <p class="hook-sub" data-i="hook-sub">Inscribe aquí su nombre. El Oráculo lo convertirá en una cápsula poética sellada para el futuro.</p>
     <div class="mini-grid">
-      <div class="mini-cap"><span>🐸 Inscrita hoy</span>"La rana dorada del Chocó, cuyo canto era un río pequeño."</div>
-      <div class="mini-cap"><span>🏔 Inscrita hoy</span>"El glaciar del Cocuy — aprendí a ver el tiempo en su hielo."</div>
-      <div class="mini-cap"><span>🌿 Inscrita hoy</span>"El olor a tierra mojada de la selva amazónica en abril."</div>
+      <div class="mini-cap"><span data-i="mini1-label">🐸 Inscrita hoy</span><span data-i="mini1-text">"La rana dorada del Chocó, cuyo canto era un río pequeño."</span></div>
+      <div class="mini-cap"><span data-i="mini2-label">🏔 Inscrita hoy</span><span data-i="mini2-text">"El glaciar del Cocuy — aprendí a ver el tiempo en su hielo."</span></div>
+      <div class="mini-cap"><span data-i="mini3-label">🌿 Inscrita hoy</span><span data-i="mini3-text">"El olor a tierra mojada de la selva amazónica en abril."</span></div>
     </div>
     <div class="orb" onclick="go('input')"></div>
-    <button class="btn-main" onclick="go('input')">🌿 Inscribir una memoria ecológica</button>
+    <button class="btn-main" onclick="go('input')" data-i="btn-start">🌿 Inscribir una memoria ecológica</button>
     <p style="font-size:.75rem;color:var(--marfil-tenue);text-align:center">
-      Un proyecto de <a href="https://thanotectas.com" style="color:var(--ocre);text-decoration:none">thanotectas.com</a> · Guardianes del Umbral
+      <a href="https://thanotectas.com" style="color:var(--ocre);text-decoration:none">thanotectas.com</a> · <span data-i="footer-tagline">Guardianes del Umbral</span>
     </p>
   </div>
 
@@ -204,94 +226,235 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   <div class="phase" id="ph-input">
     <div class="brand">
       <div class="brand-name">Thanotectas</div>
-      <div class="brand-sub">Oráculo del Umbral</div>
+      <div class="brand-sub" data-i="brand-sub">Oráculo del Umbral</div>
     </div>
-    <h2 class="heading">¿Qué deseas honrar?</h2>
-    <p class="subtext">Una especie, un ecosistema, un río, un glaciar, un sonido, un aroma del bosque…</p>
+    <h2 class="heading" data-i="input-heading">¿Qué deseas honrar?</h2>
+    <p class="subtext" data-i="input-sub">Selecciona una categoría y nombra lo que la Tierra está perdiendo</p>
+
+    <!-- CATEGORÍAS -->
+    <div class="cat-grid">
+      <button class="cat-btn active" onclick="selectCat(this,'especies')">
+        <span class="cat-icon">🐾</span>
+        <span class="cat-name" data-i="cat-especies">Especies</span>
+      </button>
+      <button class="cat-btn" onclick="selectCat(this,'ecosistemas')">
+        <span class="cat-icon">🌿</span>
+        <span class="cat-name" data-i="cat-ecosistemas">Ecosistemas</span>
+      </button>
+      <button class="cat-btn" onclick="selectCat(this,'rios')">
+        <span class="cat-icon">💧</span>
+        <span class="cat-name" data-i="cat-rios">Ríos y glaciares</span>
+      </button>
+      <button class="cat-btn" onclick="selectCat(this,'sonidos')">
+        <span class="cat-icon">🎵</span>
+        <span class="cat-name" data-i="cat-sonidos">Sonidos y aromas</span>
+      </button>
+      <button class="cat-btn" onclick="selectCat(this,'territorios')">
+        <span class="cat-icon">🏔</span>
+        <span class="cat-name" data-i="cat-territorios">Territorios</span>
+      </button>
+      <button class="cat-btn" onclick="selectCat(this,'saberes')">
+        <span class="cat-icon">🌺</span>
+        <span class="cat-name" data-i="cat-saberes">Saberes ancestrales</span>
+      </button>
+    </div>
+
     <div class="field">
-      <label>Lo que nominas al umbral</label>
-      <input id="subj" type="text" maxlength="120" placeholder="Ej: El oso de anteojos, La selva del Putumayo, El glaciar del Cocuy…"/>
+      <label data-i="label-sujeto">Lo que nominas al umbral</label>
+      <input id="subj" type="text" maxlength="120" data-i-ph="ph-sujeto"/>
     </div>
     <div class="field">
-      <label>Un recuerdo o testimonio (opcional)</label>
-      <textarea id="desc" rows="3" placeholder="Un encuentro, una sensación, lo que más extrañarías…"></textarea>
+      <label data-i="label-testimonio">Un recuerdo o testimonio (opcional)</label>
+      <textarea id="desc" rows="3" data-i-ph="ph-testimonio"></textarea>
     </div>
     <div class="err-box" id="inp-err"></div>
-    <button class="btn-main" id="btn-invocar" onclick="invoke()">Que el Oráculo inscriba</button>
-    <button class="btn-ghost" onclick="go('hook')">← Volver</button>
+    <button class="btn-main" id="btn-invocar" onclick="invoke()" data-i="btn-invoke">Que el Oráculo inscriba</button>
+    <button class="btn-ghost" onclick="go('hook')" data-i="btn-back">← Volver</button>
   </div>
 
   <!-- FASE 3: LOADING -->
   <div class="phase" id="ph-loading">
     <div class="ring"></div>
-    <h2 class="heading">El Oráculo consulta las sombras…</h2>
-    <p class="subtext">Inscribiendo la memoria en el tejido del tiempo</p>
+    <h2 class="heading" data-i="loading-heading">El Oráculo consulta las sombras…</h2>
+    <p class="subtext" data-i="loading-sub">Inscribiendo la memoria en el tejido del tiempo</p>
   </div>
 
   <!-- FASE 4: RESULTADO -->
   <div class="phase" id="ph-result">
     <div class="brand">
       <div class="brand-name">Thanotectas</div>
-      <div class="brand-sub">Cápsula Inscrita</div>
+      <div class="brand-sub" data-i="result-sub">Cápsula Inscrita</div>
     </div>
     <div class="capsule" id="capsule-box">
       <div class="capsule-overlay"></div>
       <span class="capsule-seal">✦</span>
       <div class="capsule-content">
-        <div class="cap-subject" id="r-subj"></div>
-        <div class="cap-text"    id="r-text"></div>
-        <div class="cap-date"    id="r-date"></div>
+        <div class="cap-category" id="r-cat"></div>
+        <div class="cap-subject"  id="r-subj"></div>
+        <div class="cap-text"     id="r-text"></div>
+        <div class="cap-date"     id="r-date"></div>
       </div>
     </div>
     <div class="share-block">
-      <div class="share-label">📲 Comparte esta cápsula</div>
+      <div class="share-label" data-i="share-label">📲 Comparte esta cápsula</div>
       <div class="share-text" id="share-txt"></div>
       <div class="share-btns">
-        <button class="share-btn" onclick="shareX()">Compartir en X</button>
-        <button class="share-btn" id="copy-btn" onclick="copyShare()">Copiar texto</button>
-        <button class="share-btn" onclick="regenerar()">🔄 Nueva versión</button>
-        <button class="btn-ghost" onclick="reset()">Inscribir otra</button>
+        <button class="share-btn" onclick="shareX()" data-i="btn-share-x">Compartir en X</button>
+        <button class="share-btn" id="copy-btn" onclick="copyShare()" data-i="btn-copy">Copiar texto</button>
+        <button class="share-btn" onclick="regenerar()" data-i="btn-regen">🔄 Nueva versión</button>
+        <button class="btn-ghost" onclick="reset()" data-i="btn-new">Inscribir otra</button>
       </div>
     </div>
     <div class="final-cta">
-      <p>¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.</p>
-      <a href="https://thanotectas.com/depositar" class="btn-gold">🌿 Depositar mi legado</a>
+      <p data-i="cta-text">¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.</p>
+      <a href="https://thanotectas.com/depositar" class="btn-gold" data-i="btn-deposit">🌿 Depositar mi legado</a>
     </div>
   </div>
 
 </main>
 
 <footer class="foot">
-  <p>© 2026 <a href="https://thanotectas.com">Thanotectas</a> · Guardianes del Umbral · Colombia</p>
+  <p>© 2026 <a href="https://thanotectas.com">Thanotectas</a> · <span data-i="footer-tagline">Guardianes del Umbral</span> · Colombia</p>
 </footer>
 
 <script>
 // ── Estrellas ──────────────────────────────────────────
 (function(){
   const cv=document.getElementById('stars'),cx=cv.getContext('2d');let st=[];
-  function init(){
-    cv.width=innerWidth;cv.height=innerHeight;st=[];
-    for(let i=0;i<Math.floor(cv.width*cv.height/7000);i++)
-      st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,
-               r:Math.random()*.9+.2,a:Math.random()*.5+.1,
-               s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});
-  }
-  function draw(){
-    cx.clearRect(0,0,cv.width,cv.height);
-    const t=Date.now();
-    st.forEach(s=>{
-      const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));
-      cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
+  function init(){cv.width=innerWidth;cv.height=innerHeight;st=[];for(let i=0;i<Math.floor(cv.width*cv.height/7000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
+  function draw(){cx.clearRect(0,0,cv.width,cv.height);const t=Date.now();st.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();});requestAnimationFrame(draw);}
   init();draw();addEventListener('resize',init);
 })();
 
 // ── Contador ───────────────────────────────────────────
-let n=0;
-setInterval(()=>{ n++; document.getElementById('hook-n').textContent=n; }, 9600);
+let n=0; setInterval(()=>{n++;document.getElementById('hook-n').textContent=n;},9600);
+
+// ── Estado ─────────────────────────────────────────────
+let activeLang='es';
+let activeCat='especies';
+
+// ── Traducciones ───────────────────────────────────────
+const T={
+  es:{
+    'brand-sub':'Oráculo del Umbral','hook-label':'especies perdidas desde que abriste esta página',
+    'hook-q':'¿Hay algo que temes que<br>el mundo <em>olvide para siempre?</em>',
+    'hook-sub':'Inscribe aquí su nombre. El Oráculo lo convertirá en una cápsula poética sellada para el futuro.',
+    'mini1-label':'🐸 Inscrita hoy','mini2-label':'🏔 Inscrita hoy','mini3-label':'🌿 Inscrita hoy',
+    'mini1-text':'"La rana dorada del Chocó, cuyo canto era un río pequeño."',
+    'mini2-text':'"El glaciar del Cocuy — aprendí a ver el tiempo en su hielo."',
+    'mini3-text':'"El olor a tierra mojada de la selva amazónica en abril."',
+    'btn-start':'🌿 Inscribir una memoria ecológica','footer-tagline':'Guardianes del Umbral',
+    'input-heading':'¿Qué deseas honrar?','input-sub':'Selecciona una categoría y nombra lo que la Tierra está perdiendo',
+    'cat-especies':'Especies','cat-ecosistemas':'Ecosistemas','cat-rios':'Ríos y glaciares',
+    'cat-sonidos':'Sonidos y aromas','cat-territorios':'Territorios','cat-saberes':'Saberes ancestrales',
+    'label-sujeto':'Lo que nominas al umbral','label-testimonio':'Un recuerdo o testimonio (opcional)',
+    'ph-sujeto':'Ej: El oso de anteojos, La selva del Putumayo, El glaciar del Cocuy…',
+    'ph-testimonio':'Un encuentro, una sensación, lo que más extrañarías…',
+    'btn-invoke':'Que el Oráculo inscriba','btn-back':'← Volver',
+    'loading-heading':'El Oráculo consulta las sombras…','loading-sub':'Inscribiendo la memoria en el tejido del tiempo',
+    'result-sub':'Cápsula Inscrita','share-label':'📲 Comparte esta cápsula',
+    'btn-share-x':'Compartir en X','btn-copy':'Copiar texto','btn-regen':'🔄 Nueva versión','btn-new':'Inscribir otra',
+    'cta-text':'¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.',
+    'btn-deposit':'🌿 Depositar mi legado','nav-deposit':'Depositar legado','nav-site':'Ver sitio',
+    'err-empty':'Debes nombrar aquello que deseas honrar.',
+    'cat-labels':{'especies':'Especie','ecosistemas':'Ecosistema','rios':'Río / Glaciar','sonidos':'Sonido / Aroma','territorios':'Territorio','saberes':'Saber ancestral'},
+    'share-template':(s,p)=>`Acabo de inscribir a "${s}" en el Oráculo del Umbral 🌿\n\n"${p}"\n\nthanotectas.com/oraculo #DueloEcológico #Thanotectas`,
+    'date-prefix':'Inscrita el',
+  },
+  en:{
+    'brand-sub':'Oracle of the Threshold','hook-label':'species lost since you opened this page',
+    'hook-q':'Is there something you fear<br>the world will <em>forget forever?</em>',
+    'hook-sub':'Inscribe its name here. The Oracle will turn it into a sealed poetic capsule for the future.',
+    'mini1-label':'🐸 Inscribed today','mini2-label':'🏔 Inscribed today','mini3-label':'🌿 Inscribed today',
+    'mini1-text':'"The golden frog of Chocó, whose song was a small river."',
+    'mini2-text':'"The Cocuy glacier — I learned to see time in its ice."',
+    'mini3-text':'"The smell of wet earth in the Amazon jungle in April."',
+    'btn-start':'🌿 Inscribe an ecological memory','footer-tagline':'Guardians of the Threshold',
+    'input-heading':'What do you wish to honor?','input-sub':'Select a category and name what the Earth is losing',
+    'cat-especies':'Species','cat-ecosistemas':'Ecosystems','cat-rios':'Rivers & glaciers',
+    'cat-sonidos':'Sounds & aromas','cat-territorios':'Territories','cat-saberes':'Ancestral knowledge',
+    'label-sujeto':'What you nominate to the threshold','label-testimonio':'A memory or testimony (optional)',
+    'ph-sujeto':'E.g.: The spectacled bear, The Amazon rainforest, The Cocuy glacier…',
+    'ph-testimonio':'An encounter, a feeling, what you would miss most…',
+    'btn-invoke':'Let the Oracle inscribe','btn-back':'← Back',
+    'loading-heading':'The Oracle consults the shadows…','loading-sub':'Inscribing the memory in the fabric of time',
+    'result-sub':'Inscribed Capsule','share-label':'📲 Share this capsule',
+    'btn-share-x':'Share on X','btn-copy':'Copy text','btn-regen':'🔄 New version','btn-new':'Inscribe another',
+    'cta-text':'Do you want to preserve this capsule <strong>permanently</strong>?<br>In Thanotectas you can seal it to be opened in 2050, 2075 or 2100.',
+    'btn-deposit':'🌿 Deposit my legacy','nav-deposit':'Deposit legacy','nav-site':'Full site',
+    'err-empty':'You must name something you wish to honor.',
+    'cat-labels':{'especies':'Species','ecosistemas':'Ecosystem','rios':'River / Glacier','sonidos':'Sound / Aroma','territorios':'Territory','saberes':'Ancestral knowledge'},
+    'share-template':(s,p)=>`I just inscribed "${s}" in the Oracle of the Threshold 🌿\n\n"${p}"\n\nthanotectas.com/oraculo #EcologicalGrief #Thanotectas`,
+    'date-prefix':'Inscribed on',
+  },
+  pt:{
+    'brand-sub':'Oráculo do Umbral','hook-label':'espécies perdidas desde que você abriu esta página',
+    'hook-q':'Há algo que você teme que<br>o mundo <em>esqueça para sempre?</em>',
+    'hook-sub':'Inscreva seu nome aqui. O Oráculo o transformará em uma cápsula poética selada para o futuro.',
+    'mini1-label':'🐸 Inscrita hoje','mini2-label':'🏔 Inscrita hoje','mini3-label':'🌿 Inscrita hoje',
+    'mini1-text':'"O sapo dourado do Chocó, cujo canto era um rio pequeno."',
+    'mini2-text':'"A geleira do Cocuy — aprendi a ver o tempo em seu gelo."',
+    'mini3-text':'"O cheiro de terra molhada da floresta amazônica em abril."',
+    'btn-start':'🌿 Inscrever uma memória ecológica','footer-tagline':'Guardiões do Umbral',
+    'input-heading':'O que você deseja honrar?','input-sub':'Selecione uma categoria e nomeie o que a Terra está perdendo',
+    'cat-especies':'Espécies','cat-ecosistemas':'Ecossistemas','cat-rios':'Rios e geleiras',
+    'cat-sonidos':'Sons e aromas','cat-territorios':'Territórios','cat-saberes':'Saberes ancestrais',
+    'label-sujeto':'O que você nomeia para o umbral','label-testimonio':'Uma lembrança ou testemunho (opcional)',
+    'ph-sujeto':'Ex: O urso-de-óculos, A floresta amazônica, A geleira do Cocuy…',
+    'ph-testimonio':'Um encontro, uma sensação, o que você mais sentiria falta…',
+    'btn-invoke':'Que o Oráculo inscreva','btn-back':'← Voltar',
+    'loading-heading':'O Oráculo consulta as sombras…','loading-sub':'Inscrevendo a memória no tecido do tempo',
+    'result-sub':'Cápsula Inscrita','share-label':'📲 Compartilhe esta cápsula',
+    'btn-share-x':'Compartilhar no X','btn-copy':'Copiar texto','btn-regen':'🔄 Nova versão','btn-new':'Inscrever outra',
+    'cta-text':'Você quer preservar esta cápsula <strong>permanentemente</strong>?<br>No Thanotectas você pode selá-la para ser aberta em 2050, 2075 ou 2100.',
+    'btn-deposit':'🌿 Depositar meu legado','nav-deposit':'Depositar legado','nav-site':'Ver site',
+    'err-empty':'Você deve nomear algo que deseja honrar.',
+    'cat-labels':{'especies':'Espécie','ecosistemas':'Ecossistema','rios':'Rio / Geleira','sonidos':'Som / Aroma','territorios':'Território','saberes':'Saber ancestral'},
+    'share-template':(s,p)=>`Acabei de inscrever "${s}" no Oráculo do Umbral 🌿\n\n"${p}"\n\nthanotectas.com/oraculo #LutoEcológico #Thanotectas`,
+    'date-prefix':'Inscrita em',
+  }
+  fr:{
+    'brand-sub':'Oracle du Seuil','hook-label':'espèces perdues depuis que vous avez ouvert cette page',
+    'hook-q':'Y a-t-il quelque chose que vous craignez que<br>le monde <em>oublie pour toujours ?</em>',
+    'hook-sub':'Inscrivez son nom ici. L\'Oracle le transformera en une capsule poétique scellée pour l\'avenir.',
+    'mini1-label':'🐸 Inscrite aujourd\'hui','mini2-label':'🏔 Inscrite aujourd\'hui','mini3-label':'🌿 Inscrite aujourd\'hui',
+    'mini1-text':'"La grenouille dorée du Chocó, dont le chant était une petite rivière."',
+    'mini2-text':'"Le glacier du Cocuy — j\'ai appris à voir le temps dans sa glace."',
+    'mini3-text':'"L\'odeur de la terre mouillée de la forêt amazonienne en avril."',
+    'btn-start':'🌿 Inscrire une mémoire écologique','footer-tagline':'Gardiens du Seuil',
+    'input-heading':'Que souhaitez-vous honorer ?','input-sub':'Sélectionnez une catégorie et nommez ce que la Terre est en train de perdre',
+    'cat-especies':'Espèces','cat-ecosistemas':'Écosystèmes','cat-rios':'Rivières et glaciers',
+    'cat-sonidos':'Sons et arômes','cat-territorios':'Territoires','cat-saberes':'Savoirs ancestraux',
+    'label-sujeto':'Ce que vous nommez au seuil','label-testimonio':'Un souvenir ou témoignage (optionnel)',
+    'ph-sujeto':'Ex : L\'ours à lunettes, La forêt amazonienne, Le glacier du Cocuy…',
+    'ph-testimonio':'Une rencontre, une sensation, ce qui vous manquerait le plus…',
+    'btn-invoke':'Que l\'Oracle inscrive','btn-back':'← Retour',
+    'loading-heading':'L\'Oracle consulte les ombres…','loading-sub':'Inscrivant la mémoire dans le tissu du temps',
+    'result-sub':'Capsule Inscrite','share-label':'📲 Partagez cette capsule',
+    'btn-share-x':'Partager sur X','btn-copy':'Copier le texte','btn-regen':'🔄 Nouvelle version','btn-new':'Inscrire une autre',
+    'cta-text':'Voulez-vous préserver cette capsule <strong>définitivement</strong> ?<br>Sur Thanotectas vous pouvez la sceller pour qu\'elle s\'ouvre en 2050, 2075 ou 2100.',
+    'btn-deposit':'🌿 Déposer mon legs','nav-deposit':'Déposer un legs','nav-site':'Voir le site',
+    'err-empty':'Vous devez nommer quelque chose que vous souhaitez honorer.',
+    'cat-labels':{'especies':'Espèce','ecosistemas':'Écosystème','rios':'Rivière / Glacier','sonidos':'Son / Arôme','territorios':'Territoire','saberes':'Savoir ancestral'},
+    'share-template':(s,p)=>`Je viens d'inscrire "${s}" dans l'Oracle du Seuil 🌿\n\n"${p}"\n\nthanotectas.com/oraculo #DeuilÉcologique #Thanotectas`,
+    'date-prefix':'Inscrite le',
+  }
+
+function setLang(lang){
+  activeLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===lang.toUpperCase()));
+  const t=T[lang];
+  // Textos con data-i
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const key=el.getAttribute('data-i');
+    if(t[key]!==undefined) el.innerHTML=t[key];
+  });
+  // Placeholders con data-i-ph
+  document.querySelectorAll('[data-i-ph]').forEach(el=>{
+    const key=el.getAttribute('data-i-ph');
+    if(t[key]) el.placeholder=t[key];
+  });
+}
 
 // ── Fases ──────────────────────────────────────────────
 function go(id){
@@ -300,13 +463,20 @@ function go(id){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+// ── Categorías ─────────────────────────────────────────
+function selectCat(el,cat){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  activeCat=cat;
+}
+
 // ── Limpiar cápsula ────────────────────────────────────
 function clearCapsule(){
   const box=document.getElementById('capsule-box');
   box.style.backgroundImage='';
   box.style.backgroundSize='';
   box.style.backgroundPosition='';
-  ['r-subj','r-text','r-date','share-txt'].forEach(id=>{
+  ['r-cat','r-subj','r-text','r-date','share-txt'].forEach(id=>{
     document.getElementById(id).textContent='';
   });
 }
@@ -317,9 +487,10 @@ async function invoke(){
   const desc  = document.getElementById('desc').value.trim();
   const errEl = document.getElementById('inp-err');
   const btn   = document.getElementById('btn-invocar');
+  const t     = T[activeLang];
 
   if(!subj){
-    errEl.textContent='Debes nombrar aquello que deseas honrar.';
+    errEl.textContent=t['err-empty'];
     errEl.style.display='block';
     return;
   }
@@ -328,71 +499,63 @@ async function invoke(){
   clearCapsule();
   go('loading');
 
-  try {
-    const res = await fetch('/.netlify/functions/oraculo',{
+  try{
+    const res=await fetch('/.netlify/functions/oraculo',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({sujeto:subj, testimonio:desc})
+      body:JSON.stringify({sujeto:subj,testimonio:desc,categoria:activeCat,idioma:activeLang})
     });
-
-    if(!res.ok){
-      const errBody=await res.text();
-      throw new Error(`HTTP ${res.status} — ${errBody}`);
-    }
-
+    if(!res.ok){const e=await res.text();throw new Error(`HTTP ${res.status} — ${e}`);}
     const data=await res.json();
-    if(!data.poema) throw new Error('La respuesta no contiene el campo "poema".');
+    if(!data.poema) throw new Error('Empty poem response');
 
     // Poblar cápsula
-    document.getElementById('r-subj').textContent='— '+subj.toUpperCase()+' —';
-    document.getElementById('r-text').textContent=data.poema;
-    document.getElementById('r-date').textContent=
-      'Inscrita el '+new Date().toLocaleDateString('es-CO',
-        {year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('r-cat').textContent  = t['cat-labels'][activeCat]||activeCat;
+    document.getElementById('r-subj').textContent = '— '+subj.toUpperCase()+' —';
+    document.getElementById('r-text').textContent = data.poema;
+    document.getElementById('r-date').textContent =
+      t['date-prefix']+' '+new Date().toLocaleDateString(
+        activeLang==='es'?'es-CO':activeLang==='pt'?'pt-BR':activeLang==='fr'?'fr-FR':'en-US',
+        {year:'numeric',month:'long',day:'numeric'}
+      );
 
-    // Imagen de fondo
+    // Imagen
     if(data.imagen){
       const box=document.getElementById('capsule-box');
-      box.style.backgroundImage=
-        `linear-gradient(160deg,rgba(13,11,8,.82) 0%,rgba(26,22,17,.70) 100%),url(${data.imagen})`;
+      box.style.backgroundImage=`linear-gradient(160deg,rgba(13,11,8,.85) 0%,rgba(26,22,17,.75) 100%),url(${data.imagen})`;
       box.style.backgroundSize='cover';
       box.style.backgroundPosition='center';
     }
 
-    // Texto compartir
+    // Compartir
     const primera=data.poema.split('\n').find(l=>l.trim())||data.poema.slice(0,80);
-    document.getElementById('share-txt').textContent=
-      `Acabo de inscribir a "${subj}" en el Oráculo del Umbral 🌿\n\n`+
-      `"${primera}"\n\nthanotectas.com/oraculo #DueloEcológico #Thanotectas`;
+    document.getElementById('share-txt').textContent=t['share-template'](subj,primera);
 
     go('result');
 
-  } catch(e){
+  }catch(e){
     console.error('[Oráculo]',e.message);
     go('input');
     errEl.textContent='⚠️ '+e.message;
     errEl.style.display='block';
-  } finally {
+  }finally{
     btn.disabled=false;
   }
 }
 
-// ── Regenerar (nueva versión con mismo sujeto) ─────────
-function regenerar(){
-  clearCapsule();
-  invoke();
-}
+// ── Regenerar ──────────────────────────────────────────
+function regenerar(){ clearCapsule(); invoke(); }
 
 // ── Compartir ──────────────────────────────────────────
 function shareX(){
-  const txt=encodeURIComponent(document.getElementById('share-txt').textContent);
-  window.open('https://twitter.com/intent/tweet?text='+txt,'_blank');
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('share-txt').textContent),'_blank');
 }
 function copyShare(){
   navigator.clipboard.writeText(document.getElementById('share-txt').textContent);
   const b=document.getElementById('copy-btn');
-  b.textContent='✓ Copiado';
-  setTimeout(()=>{ b.textContent='Copiar texto'; },2200);
+  const orig=b.textContent;
+  b.textContent='✓';
+  setTimeout(()=>{b.textContent=orig;},2200);
 }
 
 // ── Reset ──────────────────────────────────────────────
@@ -402,6 +565,9 @@ function reset(){
   clearCapsule();
   go('hook');
 }
+
+// Init idioma por defecto
+setLang('es');
 </script>
 </body>
 </html>
