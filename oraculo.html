@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oráculo del Umbral — Thanotectas</title>
+<meta name="description" content="Nombra algo que la Tierra está perdiendo. El Oráculo inscribirá su memoria en una cápsula poética para el futuro.">
+<meta property="og:title" content="Oráculo del Umbral — Thanotectas">
+<meta property="og:description" content="¿Hay algo que temes que el mundo olvide para siempre? Inscribe su memoria ahora.">
+<meta property="og:url" content="https://thanotectas.com/oraculo">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --tierra: #1a1611;
+  --tierra-media: #2a2319;
+  --musgo: #2d4a2e;
+  --musgo-claro: #3d6a3e;
+  --musgo-glow: #4a8a4b;
+  --ocre: #c4973b;
+  --ocre-claro: #d4a74b;
+  --marfil: #f0e6d3;
+  --marfil-tenue: #f0e6d399;
+  --cristal: rgba(240,230,211,0.06);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Jost',sans-serif; background:var(--tierra); color:var(--marfil); min-height:100vh; overflow-x:hidden; }
+
+#stars { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ── NAV ── */
+.top-bar {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.9rem 2rem;
+  background:rgba(26,22,17,.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(196,151,59,.12);
+}
+.bar-logo { display:flex; align-items:center; gap:.6rem; text-decoration:none; }
+.bar-logo svg { width:28px; height:28px; }
+.bar-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:var(--ocre); letter-spacing:.08em; }
+.bar-right { display:flex; gap:1rem; align-items:center; }
+.bar-link { font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--marfil-tenue); text-decoration:none; transition:color .3s; }
+.bar-link:hover { color:var(--ocre); }
+.bar-cta { padding:.4rem 1rem; border:1px solid var(--ocre); border-radius:4px; font-family:'Jost',sans-serif; font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ocre); text-decoration:none; transition:all .3s; }
+.bar-cta:hover { background:rgba(196,151,59,.1); }
+
+/* ── MAIN ── */
+main {
+  position:relative; z-index:1;
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:5.5rem 1.5rem 3rem;
+}
+
+/* ── PHASES ── */
+.phase { display:none; flex-direction:column; align-items:center; gap:1.5rem; width:100%; max-width:600px; animation:fadeUp .8s forwards; }
+.phase.active { display:flex; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── BRAND ── */
+.brand { text-align:center; }
+.brand-svg { filter:drop-shadow(0 0 10px rgba(196,151,59,.4)); }
+.brand-name { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; letter-spacing:.3em; color:var(--ocre); text-transform:uppercase; margin-top:.3rem; }
+.brand-sub { font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; color:var(--marfil-tenue); }
+
+/* ── HOOK ── */
+.hook-counter { font-family:'Cormorant Garamond',serif; font-size:5.5rem; font-weight:300; color:var(--ocre); line-height:1; animation:cpulse 1.4s ease-in-out infinite; }
+@keyframes cpulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+.hook-label { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--marfil-tenue); margin-top:.25rem; text-align:center; }
+.hook-q { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2.4rem); font-weight:300; color:var(--marfil); text-align:center; line-height:1.3; }
+.hook-q em { color:var(--ocre); font-style:italic; }
+.hook-sub { font-size:.9rem; font-weight:300; color:var(--marfil-tenue); text-align:center; line-height:1.75; max-width:460px; }
+
+/* ── MINI CAPS ── */
+.mini-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:.8rem; width:100%; }
+.mini-cap { background:var(--cristal); border:1px solid rgba(196,151,59,.12); border-radius:10px; padding:.9rem 1rem; font-family:'Cormorant Garamond',serif; font-size:.9rem; color:var(--marfil-tenue); font-style:italic; line-height:1.5; }
+.mini-cap span { display:block; font-family:'Jost',sans-serif; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ocre); font-style:normal; margin-bottom:.3rem; }
+
+/* ── ORB ── */
+.orb {
+  width:110px; height:110px; border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, var(--musgo-claro), var(--musgo), #060c06);
+  box-shadow:0 0 45px rgba(45,74,46,.25), 0 0 90px rgba(196,151,59,.08), inset 0 0 30px rgba(0,0,0,.5);
+  animation:orbpulse 4s ease-in-out infinite;
+  cursor:pointer; transition:transform .3s; position:relative; overflow:hidden;
+}
+.orb::after { content:''; position:absolute; top:14%;left:18%;width:28%;height:18%;background:rgba(255,255,255,.07);border-radius:50%;transform:rotate(-20deg); }
+@keyframes orbpulse {
+  0%,100% { box-shadow:0 0 45px rgba(45,74,46,.25),0 0 90px rgba(196,151,59,.08); }
+  50%      { box-shadow:0 0 65px rgba(45,74,46,.4),0 0 130px rgba(196,151,59,.15); }
+}
+.orb:hover { transform:scale(1.06); }
+
+/* ── HEADINGS ── */
+.heading { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:400; color:var(--marfil); text-align:center; }
+.subtext { font-size:.9rem; font-weight:300; color:var(--marfil-tenue); text-align:center; line-height:1.75; max-width:440px; }
+
+/* ── FIELDS ── */
+.field { width:100%; display:flex; flex-direction:column; gap:.4rem; }
+.field label { font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ocre); }
+.field input, .field textarea {
+  background:rgba(13,11,8,.6); border:1px solid rgba(196,151,59,.15); border-radius:8px;
+  padding:.85rem 1.1rem; font-family:'Cormorant Garamond',serif; font-size:1rem;
+  color:var(--marfil); transition:border-color .3s; outline:none; width:100%; resize:none;
+}
+.field input:focus, .field textarea:focus { border-color:var(--ocre); }
+.field input::placeholder, .field textarea::placeholder { color:rgba(240,230,211,.3); font-style:italic; }
+
+/* ── BOTONES ── */
+.btn-main {
+  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  padding:.9rem 2.2rem; background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));
+  color:var(--marfil); font-family:'Jost',sans-serif; font-size:.9rem; font-weight:500;
+  letter-spacing:.06em; border:none; border-radius:8px; cursor:pointer; transition:all .35s;
+}
+.btn-main:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(45,74,46,.4); }
+.btn-main:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-ghost {
+  background:transparent; border:1px solid rgba(196,151,59,.3); color:var(--ocre);
+  font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:.12em;
+  padding:.5rem 1.3rem; cursor:pointer; border-radius:6px; transition:all .3s;
+}
+.btn-ghost:hover { background:rgba(196,151,59,.08); }
+.btn-gold {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:.85rem 2rem; background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));
+  color:var(--tierra); font-family:'Jost',sans-serif; font-size:.88rem; font-weight:600;
+  letter-spacing:.06em; border:none; border-radius:8px; cursor:pointer;
+  transition:all .35s; text-decoration:none;
+}
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(196,151,59,.3); }
+
+/* ── LOADING ── */
+.ring { width:54px; height:54px; border:1px solid rgba(196,151,59,.2); border-top-color:var(--ocre); border-radius:50%; animation:spin 2.5s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── CÁPSULA ── */
+.capsule {
+  border:1px solid rgba(196,151,59,.25); border-radius:16px;
+  padding:2.2rem; width:100%; position:relative; overflow:hidden;
+  background:rgba(13,11,8,.45);
+  /* imagen se aplica via JS; el overlay garantiza legibilidad */
+}
+.capsule-overlay {
+  position:absolute; inset:0; border-radius:16px;
+  background:linear-gradient(160deg, rgba(13,11,8,.82) 0%, rgba(26,22,17,.70) 100%);
+  z-index:0;
+}
+.capsule-seal {
+  position:absolute; top:-.62rem; left:50%; transform:translateX(-50%);
+  background:var(--tierra); padding:0 .6rem; color:var(--ocre); font-size:.75rem; z-index:2;
+}
+.capsule-content { position:relative; z-index:1; display:flex; flex-direction:column; gap:.9rem; }
+.cap-subject { font-size:.62rem; letter-spacing:.25em; text-transform:uppercase; color:var(--ocre); text-align:center; }
+.cap-text { font-family:'Cormorant Garamond',serif; font-size:1.08rem; line-height:1.9; color:var(--marfil); text-align:center; font-style:italic; white-space:pre-line; }
+.cap-date { font-size:.63rem; color:var(--marfil-tenue); text-align:center; letter-spacing:.12em; }
+
+/* ── SHARE ── */
+.share-block { width:100%; background:var(--cristal); border:1px solid rgba(196,151,59,.12); border-radius:12px; padding:1.2rem 1.4rem; display:flex; flex-direction:column; gap:.7rem; }
+.share-label { font-size:.63rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ocre); }
+.share-text { font-family:'Cormorant Garamond',serif; font-size:.92rem; color:var(--marfil-tenue); line-height:1.6; font-style:italic; }
+.share-btns { display:flex; gap:.6rem; flex-wrap:wrap; }
+.share-btn { background:transparent; border:1px solid rgba(196,151,59,.25); color:var(--ocre); font-family:'Jost',sans-serif; font-size:.72rem; letter-spacing:.12em; padding:.48rem 1.1rem; border-radius:6px; cursor:pointer; transition:all .3s; }
+.share-btn:hover { background:rgba(196,151,59,.1); }
+
+/* ── CTA FINAL ── */
+.final-cta { text-align:center; padding:1.5rem 2rem; border:1px solid rgba(196,151,59,.15); border-radius:14px; background:rgba(45,74,46,.06); width:100%; }
+.final-cta p { font-size:.85rem; font-weight:300; color:var(--marfil-tenue); margin-bottom:1rem; line-height:1.6; }
+
+/* ── ERROR ── */
+.err-box {
+  display:none; width:100%;
+  padding:.7rem 1rem; border-radius:8px;
+  background:rgba(180,80,60,.08); border:1px solid rgba(180,80,60,.25);
+  color:#c47050; font-size:.82rem; text-align:center; line-height:1.5;
+}
+
+/* ── FOOTER ── */
+.foot { position:relative; z-index:1; text-align:center; padding:2rem; border-top:1px solid rgba(196,151,59,.08); margin-top:2rem; }
+.foot p { font-size:.65rem; color:var(--marfil-tenue); letter-spacing:.08em; }
+.foot a { color:var(--ocre); text-decoration:none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px) {
+  .hook-counter { font-size:3.8rem; }
+  .hook-q { font-size:1.5rem; }
+  .top-bar { padding:.8rem 1.2rem; }
+  .bar-right .bar-link { display:none; }
+  .mini-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- ══ NAV ══ -->
+<header class="top-bar">
+  <a href="https://thanotectas.com" class="bar-logo">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient>
+        <linearGradient id="rg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient>
+      </defs>
+      <line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/>
+      <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#rg)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M108 148 Q94 158 80 168" stroke="url(#rg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <path d="M112 148 Q126 158 140 168" stroke="url(#rg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <path d="M108 132 Q109 110 110 72" stroke="url(#tg)" stroke-width="2.8" stroke-linecap="round"/>
+      <path d="M110 90 Q92 76 70 66" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M110 90 Q128 76 150 66" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/>
+      <circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
+    </svg>
+    <span class="bar-name">THANOTECTAS</span>
+  </a>
+  <div class="bar-right">
+    <a href="https://thanotectas.com/depositar" class="bar-link">Depositar legado</a>
+    <a href="https://thanotectas.com" class="bar-cta">Ver sitio completo</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══ FASE 1: HOOK ══ -->
+  <div class="phase active" id="ph-hook">
+    <div class="brand">
+      <svg class="brand-svg" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg" width="80">
+        <defs>
+          <linearGradient id="htg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient>
+          <linearGradient id="hrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient>
+          <filter id="hf"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <circle cx="110" cy="110" r="100" stroke="#c4973b" stroke-width="0.4" stroke-opacity="0.2" stroke-dasharray="3 5"/>
+        <line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.3"/>
+        <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#hrg)" stroke-width="2" stroke-linecap="round" filter="url(#hf)"/>
+        <path d="M108 148 Q94 158 80 168" stroke="url(#hrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+        <path d="M112 148 Q126 158 140 168" stroke="url(#hrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+        <path d="M108 132 Q109 110 110 72" stroke="url(#htg)" stroke-width="2.8" stroke-linecap="round" filter="url(#hf)"/>
+        <path d="M110 90 Q92 76 70 66" stroke="url(#htg)" stroke-width="1.6" stroke-linecap="round" filter="url(#hf)"/>
+        <path d="M110 90 Q128 76 150 66" stroke="url(#htg)" stroke-width="1.6" stroke-linecap="round" filter="url(#hf)"/>
+        <circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/>
+        <circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
+      </svg>
+      <div class="brand-name">Thanotectas</div>
+      <div class="brand-sub">Oráculo del Umbral</div>
+    </div>
+
+    <div style="text-align:center">
+      <div class="hook-counter" id="hook-n">0</div>
+      <div class="hook-label">especies perdidas desde que abriste esta página</div>
+    </div>
+
+    <h1 class="hook-q">¿Hay algo que temes que<br>el mundo <em>olvide para siempre?</em></h1>
+    <p class="hook-sub">Inscribe aquí su nombre. El Oráculo lo convertirá en una cápsula poética sellada para el futuro.</p>
+
+    <div class="mini-grid">
+      <div class="mini-cap"><span>🐸 Inscrita hoy</span>"La rana dorada del Chocó, cuyo canto era un río pequeño."</div>
+      <div class="mini-cap"><span>🏔 Inscrita hoy</span>"El glaciar del Cocuy — aprendí a ver el tiempo en su hielo."</div>
+      <div class="mini-cap"><span>🌿 Inscrita hoy</span>"El olor a tierra mojada de la selva amazónica en abril."</div>
+    </div>
+
+    <div class="orb" onclick="go('input')"></div>
+    <button class="btn-main" onclick="go('input')">🌿 Inscribir una memoria ecológica</button>
+    <p style="font-size:.75rem;color:var(--marfil-tenue);text-align:center">
+      Un proyecto de <a href="https://thanotectas.com" style="color:var(--ocre);text-decoration:none">thanotectas.com</a> · Guardianes del Umbral
+    </p>
+  </div>
+
+  <!-- ══ FASE 2: INPUT ══ -->
+  <div class="phase" id="ph-input">
+    <div class="brand">
+      <div class="brand-name">Thanotectas</div>
+      <div class="brand-sub">Oráculo del Umbral</div>
+    </div>
+    <h2 class="heading">¿Qué deseas honrar?</h2>
+    <p class="subtext">Una especie, un ecosistema, un río, un glaciar, un sonido, un aroma del bosque…</p>
+    <div class="field">
+      <label>Lo que nominas al umbral</label>
+      <input id="subj" type="text" maxlength="120"
+             placeholder="Ej: El oso de anteojos, La selva del Putumayo, El glaciar del Cocuy…"/>
+    </div>
+    <div class="field">
+      <label>Un recuerdo o testimonio (opcional)</label>
+      <textarea id="desc" rows="3"
+                placeholder="Un encuentro, una sensación, lo que más extrañarías…"></textarea>
+    </div>
+    <div class="err-box" id="inp-err"></div>
+    <button class="btn-main" id="btn-invocar" onclick="invoke()">Que el Oráculo inscriba</button>
+    <button class="btn-ghost" onclick="go('hook')">← Volver</button>
+  </div>
+
+  <!-- ══ FASE 3: LOADING ══ -->
+  <div class="phase" id="ph-loading">
+    <div class="ring"></div>
+    <h2 class="heading">El Oráculo consulta las sombras…</h2>
+    <p class="subtext">Inscribiendo la memoria en el tejido del tiempo</p>
+  </div>
+
+  <!-- ══ FASE 4: RESULTADO ══ -->
+  <div class="phase" id="ph-result">
+    <div class="brand">
+      <div class="brand-name">Thanotectas</div>
+      <div class="brand-sub">Cápsula Inscrita</div>
+    </div>
+
+    <div class="capsule" id="capsule-box">
+      <div class="capsule-overlay"></div>
+      <span class="capsule-seal">✦</span>
+      <div class="capsule-content">
+        <div class="cap-subject" id="r-subj"></div>
+        <div class="cap-text"    id="r-text"></div>
+        <div class="cap-date"    id="r-date"></div>
+      </div>
+    </div>
+
+    <div class="share-block">
+      <div class="share-label">📲 Comparte esta cápsula</div>
+      <div class="share-text" id="share-txt"></div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareX()">Compartir en X</button>
+        <button class="share-btn" id="copy-btn" onclick="copyShare()">Copiar texto</button>
+        <button class="btn-ghost" onclick="reset()">Inscribir otra</button>
+      </div>
+    </div>
+
+    <div class="final-cta">
+      <p>¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>
+         En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.</p>
+      <a href="https://thanotectas.com/depositar" class="btn-gold">🌿 Depositar mi legado</a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <p>© 2026 <a href="https://thanotectas.com">Thanotectas</a> · Guardianes del Umbral · Colombia</p>
+</footer>
+
+<script>
+// ── Estrellas ──────────────────────────────────────────
+(function(){
+  const cv=document.getElementById('stars'), cx=cv.getContext('2d'); let st=[];
+  function init(){
+    cv.width=innerWidth; cv.height=innerHeight; st=[];
+    for(let i=0;i<Math.floor(cv.width*cv.height/7000);i++)
+      st.push({x:Math.random()*cv.width, y:Math.random()*cv.height,
+               r:Math.random()*.9+.2, a:Math.random()*.5+.1,
+               s:Math.random()*.0015+.0005, p:Math.random()*Math.PI*2});
+  }
+  function draw(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t=Date.now();
+    st.forEach(s=>{
+      const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));
+      cx.beginPath(); cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      cx.fillStyle=`rgba(240,230,211,${a})`; cx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  init(); draw(); addEventListener('resize',init);
+})();
+
+// ── Contador ───────────────────────────────────────────
+let n=0;
+const hookEl=document.getElementById('hook-n');
+setInterval(()=>{ n++; hookEl.textContent=n; }, 9600);
+
+// ── Fases ──────────────────────────────────────────────
+function go(id){
+  document.querySelectorAll('.phase').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ph-'+id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Limpiar cápsula ────────────────────────────────────
+function clearCapsule(){
+  const box=document.getElementById('capsule-box');
+  box.style.backgroundImage = '';
+  box.style.backgroundSize  = '';
+  box.style.backgroundPosition = '';
+  ['r-subj','r-text','r-date','share-txt'].forEach(id=>{
+    document.getElementById(id).textContent='';
+  });
+}
+
+// ── invoke() — Llama a la función Netlify / Gemini ─────
+async function invoke(){
+  const subj  = document.getElementById('subj').value.trim();
+  const desc  = document.getElementById('desc').value.trim();
+  const errEl = document.getElementById('inp-err');
+  const btn   = document.getElementById('btn-invocar');
+
+  // Validar
+  if(!subj){
+    errEl.textContent = 'Debes nombrar aquello que deseas honrar.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  // UI de carga
+  btn.disabled = true;
+  clearCapsule();
+  go('loading');
+
+  try {
+    // ── Petición al backend ──────────────────────────────
+    const res = await fetch('/.netlify/functions/oraculo', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ sujeto: subj, testimonio: desc })
+    });
+
+    // Si el servidor responde con error, leer el mensaje real
+    if(!res.ok){
+      const errBody = await res.text();
+      throw new Error(`HTTP ${res.status} — ${errBody}`);
+    }
+
+    const data = await res.json();
+
+    // Verificar que el poema llegó
+    if(!data.poema) throw new Error('La respuesta no contiene el campo "poema".');
+
+    // ── Poblar cápsula ───────────────────────────────────
+    document.getElementById('r-subj').textContent =
+      '— ' + subj.toUpperCase() + ' —';
+
+    document.getElementById('r-text').textContent = data.poema;
+
+    document.getElementById('r-date').textContent =
+      'Inscrita el ' + new Date().toLocaleDateString('es-CO',
+        {year:'numeric', month:'long', day:'numeric'});
+
+    // ── Imagen de fondo (base64 desde Gemini) ────────────
+    if(data.imagen){
+      const box = document.getElementById('capsule-box');
+      box.style.backgroundImage    =
+        `linear-gradient(160deg, rgba(13,11,8,.82) 0%, rgba(26,22,17,.70) 100%),
+         url(${data.imagen})`;
+      box.style.backgroundSize     = 'cover';
+      box.style.backgroundPosition = 'center';
+    }
+
+    // ── Texto para compartir ─────────────────────────────
+    const primeraLinea = data.poema.split('\n').find(l=>l.trim()) || data.poema.slice(0,80);
+    document.getElementById('share-txt').textContent =
+      `Acabo de inscribir a "${subj}" en el Oráculo del Umbral 🌿\n\n` +
+      `"${primeraLinea}"\n\n` +
+      `thanotectas.com/oraculo #DueloEcológico #Thanotectas`;
+
+    go('result');
+
+  } catch(e){
+    // Mostrar error real — nunca texto estático de fallback
+    console.error('[Oráculo]', e.message);
+    go('input');
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.style.display = 'block';
+
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── Compartir ──────────────────────────────────────────
+function shareX(){
+  const txt = encodeURIComponent(document.getElementById('share-txt').textContent);
+  window.open('https://twitter.com/intent/tweet?text='+txt, '_blank');
+}
+function copyShare(){
+  navigator.clipboard.writeText(document.getElementById('share-txt').textContent);
+  const b = document.getElementById('copy-btn');
+  b.textContent = '✓ Copiado';
+  setTimeout(()=>{ b.textContent='Copiar texto'; }, 2200);
+}
+
+// ── Reset ──────────────────────────────────────────────
+function reset(){
+  document.getElementById('subj').value = '';
+  document.getElementById('desc').value = '';
+  clearCapsule();
+  go('hook');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardianes del Umbral — Thanotectas</title>
+<meta name="description" content="Conoce a quienes protegen las voces del futuro. Únete al Muro de Guardianes y participa en las Ceremonias de Depósito Colectivo.">
+<meta property="og:title" content="Guardianes — Thanotectas · Guardianes del Umbral">
+<meta property="og:url" content="https://thanotectas.com/guardianes">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tierra:#1a1611;--tierra-media:#2a2319;--tierra-clara:#332c20;
+  --musgo:#2d4a2e;--musgo-claro:#3d6a3e;--musgo-glow:#4a8a4b;
+  --ocre:#c4973b;--ocre-claro:#d4a74b;
+  --marfil:#f0e6d3;--marfil-tenue:#f0e6d399;
+  --cristal:rgba(240,230,211,0.06);--cristal-hover:rgba(240,230,211,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh;overflow-x:hidden}
+#stars-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(26,22,17,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(196,151,59,.12)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ocre);letter-spacing:.08em;text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.nav-logo svg{width:30px;height:30px;flex-shrink:0}
+.nav-logo span{color:var(--marfil-tenue);font-weight:300;font-size:.82rem;margin-left:.4rem}
+.nav-links{display:flex;gap:1.6rem;align-items:center;list-style:none}
+.nav-links a{color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;letter-spacing:.05em;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--ocre)}
+.nav-social{display:flex;gap:.8rem}
+.nav-social a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s}
+.nav-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.nav-social svg{width:13px;height:13px;fill:var(--marfil)}
+.nav-cta{padding:.4rem 1.1rem;border:1px solid var(--ocre);border-radius:4px;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;transition:all .3s;white-space:nowrap}
+.nav-cta:hover{background:rgba(196,151,59,.1)}
+
+/* PAGE HEADER */
+.page-header{position:relative;z-index:1;padding:9rem 2rem 5rem;text-align:center;background:radial-gradient(ellipse at 50% 60%,rgba(45,74,46,.12),transparent 70%)}
+.page-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);margin-bottom:1rem;opacity:0;animation:fadeUp .9s .2s forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.15;max-width:640px;margin:0 auto .9rem;opacity:0;animation:fadeUp .9s .4s forwards}
+.page-title em{color:var(--ocre);font-style:italic}
+.page-sub{font-size:1rem;font-weight:300;color:var(--marfil-tenue);max-width:480px;margin:0 auto;line-height:1.75;opacity:0;animation:fadeUp .9s .6s forwards}
+
+/* SHARED */
+section{position:relative;z-index:1;padding:5rem 2rem}
+.sec-inner{max-width:1000px;margin:0 auto}
+.sec-label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ocre);margin-bottom:.7rem}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.6rem);font-weight:400;line-height:1.2;margin-bottom:.8rem}
+.sec-desc{font-size:.93rem;font-weight:300;color:var(--marfil-tenue);max-width:560px;line-height:1.75}
+
+/* MURO COUNTER */
+.muro-counter{display:flex;justify-content:center;gap:2.5rem;margin-bottom:3.5rem;flex-wrap:wrap}
+.muro-stat{text-align:center;padding:1.2rem 1.8rem;background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:12px}
+.muro-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:600;color:var(--ocre);line-height:1}
+.muro-stat-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--marfil-tenue);margin-top:.3rem}
+
+/* TIER SECTIONS */
+.tier-section{margin-bottom:3rem}
+.tier-label{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem}
+.tier-badge{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:.28rem .85rem;border-radius:100px}
+.tier-badge.founders{background:rgba(196,151,59,.15);color:var(--ocre);border:1px solid rgba(196,151,59,.25)}
+.tier-badge.eternal{background:rgba(240,230,211,.06);color:var(--marfil);border:1px solid rgba(240,230,211,.15)}
+.tier-badge.guardian{background:rgba(45,74,46,.2);color:var(--musgo-glow);border:1px solid rgba(45,74,46,.3)}
+.tier-line{flex:1;height:1px;background:linear-gradient(to right,rgba(196,151,59,.2),transparent)}
+
+.names-wrap{display:flex;flex-wrap:wrap;gap:.7rem}
+.name-chip{padding:.5rem 1.1rem;border-radius:100px;font-size:.85rem;font-family:'Cormorant Garamond',serif;font-weight:500;letter-spacing:.04em;transition:all .3s}
+.name-chip.founder{border:1px solid rgba(196,151,59,.3);color:var(--ocre);background:rgba(196,151,59,.08)}
+.name-chip.founder:hover{background:rgba(196,151,59,.14)}
+.name-chip.eternal{border:1px solid rgba(240,230,211,.15);color:var(--marfil);background:rgba(240,230,211,.04)}
+.name-chip.guardian{border:1px solid rgba(45,74,46,.3);color:var(--musgo-glow);background:rgba(45,74,46,.08)}
+.name-chip.placeholder{border:1px solid rgba(240,230,211,.08);color:rgba(240,230,211,.3);font-style:italic;cursor:default}
+
+/* JOIN CARDS */
+.join-section{background:var(--tierra-media)}
+.join-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem;margin-top:2.5rem}
+.join-card{background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:16px;padding:2.2rem;display:flex;flex-direction:column;gap:1rem;transition:all .4s;position:relative}
+.join-card:hover{transform:translateY(-4px);border-color:rgba(196,151,59,.25)}
+.join-card.featured{border-color:var(--ocre);background:linear-gradient(160deg,rgba(196,151,59,.1),rgba(196,151,59,.03))}
+.join-badge{position:absolute;top:-11px;left:1.5rem;background:var(--ocre);color:var(--tierra);font-size:.6rem;font-weight:700;letter-spacing:.16em;padding:.28rem .85rem;border-radius:100px;text-transform:uppercase}
+.join-icon{font-size:1.8rem}
+.join-tier{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ocre)}
+.join-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500}
+.join-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:var(--ocre);line-height:1}
+.join-price span{font-size:.9rem;font-weight:300;color:var(--marfil-tenue)}
+.join-perks{list-style:none;flex:1}
+.join-perks li{font-size:.86rem;font-weight:300;color:var(--marfil-tenue);padding:.4rem 0;padding-left:1.4rem;position:relative;line-height:1.45}
+.join-perks li::before{content:'🌿';position:absolute;left:0;font-size:.68rem;top:.5rem}
+.join-btn{display:block;padding:.9rem;border-radius:10px;font-family:'Jost',sans-serif;font-size:.9rem;font-weight:500;letter-spacing:.04em;cursor:pointer;border:none;transition:all .35s;text-align:center;text-decoration:none}
+.join-btn.primary{background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra)}
+.join-btn.primary:hover{box-shadow:0 6px 22px rgba(196,151,59,.3);transform:translateY(-2px)}
+.join-btn.secondary{background:transparent;border:1px solid var(--ocre);color:var(--ocre)}
+.join-btn.secondary:hover{background:rgba(196,151,59,.1)}
+.join-btn.musgo{background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));color:var(--marfil)}
+.join-btn.musgo:hover{box-shadow:0 6px 22px rgba(45,74,46,.35);transform:translateY(-2px)}
+
+/* CEREMONIA */
+.ceremonia-section{background:var(--tierra)}
+.cer-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:2.5rem}
+.cer-features{display:flex;flex-direction:column;gap:1.2rem}
+.cer-item{display:flex;align-items:flex-start;gap:1rem;padding:1.2rem;background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;transition:border-color .3s}
+.cer-item:hover{border-color:rgba(196,151,59,.22)}
+.cer-icon{font-size:1.5rem;flex-shrink:0;margin-top:.05rem}
+.cer-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:500;margin-bottom:.25rem}
+.cer-text{font-size:.83rem;font-weight:300;color:var(--marfil-tenue);line-height:1.55}
+.cer-card{background:linear-gradient(160deg,rgba(196,151,59,.1),rgba(196,151,59,.03));border:1px solid rgba(196,151,59,.25);border-radius:18px;padding:2.5rem;text-align:center}
+.cer-card-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ocre);margin-bottom:.5rem}
+.cer-card-date{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:500;color:var(--marfil);margin-bottom:.5rem}
+.cer-card-platform{font-size:.82rem;color:var(--marfil-tenue);margin-bottom:1.5rem;font-weight:300}
+.cer-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.8rem;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));color:var(--marfil);font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;border-radius:8px;text-decoration:none;transition:all .35s}
+.cer-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,74,46,.35)}
+.past-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.9rem;margin-top:2.5rem}
+.past-card{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:10px;padding:1.1rem;text-align:center}
+.past-card-date{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ocre);margin-bottom:.3rem}
+.past-card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;color:var(--marfil);margin-bottom:.3rem}
+.past-card-num{font-size:.78rem;color:var(--marfil-tenue);font-weight:300}
+
+/* MANIFESTO */
+.manifesto-section{background:var(--tierra-media)}
+.manifesto-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2vw,1.4rem);font-style:italic;line-height:2;color:var(--marfil);max-width:680px;border-left:2px solid rgba(196,151,59,.3);padding-left:2rem;margin:2rem 0}
+.manifesto-text em{color:var(--ocre);font-style:normal}
+
+/* CTA BAND */
+.cta-band{position:relative;z-index:1;text-align:center;padding:5rem 2rem;background:linear-gradient(180deg,var(--tierra),var(--tierra-media))}
+
+/* CHATBOT */
+.chatbot-btn{position:fixed;bottom:2rem;right:2rem;z-index:150;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));border:2px solid rgba(196,151,59,.3);color:var(--marfil);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .4s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.chatbot-btn:hover{transform:scale(1.1)}
+.chatbot-panel{display:none;position:fixed;bottom:5.5rem;right:2rem;z-index:150;width:360px;max-height:500px;background:var(--tierra-media);border:1px solid rgba(196,151,59,.2);border-radius:20px;overflow:hidden;box-shadow:0 10px 50px rgba(0,0,0,.5);flex-direction:column;animation:modalIn .4s cubic-bezier(.16,1,.3,1)}
+.chatbot-panel.active{display:flex}
+.chatbot-header{padding:1rem 1.3rem;background:rgba(196,151,59,.08);border-bottom:1px solid rgba(196,151,59,.15);display:flex;align-items:center;gap:.75rem}
+.chatbot-avatar{width:32px;height:32px;border-radius:50%;background:var(--musgo);display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.chatbot-name{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500}
+.chatbot-status{font-size:.62rem;color:var(--musgo-glow);display:flex;align-items:center;gap:.3rem}
+.chatbot-status::before{content:'';width:5px;height:5px;background:var(--musgo-glow);border-radius:50%}
+.chatbot-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;max-height:300px}
+.chat-msg{max-width:88%;padding:.7rem .9rem;border-radius:14px;font-size:.84rem;line-height:1.55;font-weight:300}
+.chat-msg.bot{background:var(--cristal);border:1px solid rgba(196,151,59,.1);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:rgba(45,74,46,.3);border:1px solid rgba(45,74,46,.3);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-options{display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.4rem}
+.chat-opt-btn{padding:.32rem .7rem;border:1px solid rgba(196,151,59,.22);border-radius:100px;background:transparent;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;cursor:pointer;transition:all .3s}
+.chat-opt-btn:hover{background:rgba(196,151,59,.1)}
+.chatbot-input{display:flex;gap:.4rem;padding:.85rem 1rem;border-top:1px solid rgba(196,151,59,.1)}
+.chatbot-input input{flex:1;background:rgba(13,11,8,.5);border:1px solid rgba(196,151,59,.15);border-radius:100px;padding:.5rem .9rem;font-family:'Jost',sans-serif;font-size:.82rem;color:var(--marfil);outline:none}
+.chatbot-input input::placeholder{color:rgba(240,230,211,.3)}
+.chatbot-input input:focus{border-color:var(--ocre)}
+.chatbot-input button{width:32px;height:32px;border-radius:50%;background:var(--ocre);border:none;color:var(--tierra);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* FOOTER */
+footer{position:relative;z-index:1;padding:3.5rem 2rem 2rem;border-top:1px solid rgba(196,151,59,.1)}
+.footer-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--ocre);display:flex;align-items:center;gap:.5rem}
+.footer-logo svg{width:26px;height:26px}
+.footer-tagline{font-size:.82rem;color:var(--marfil-tenue);font-weight:300;margin-top:.5rem;line-height:1.6;max-width:270px}
+.footer-social{display:flex;gap:.7rem;margin-top:1.2rem}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s;text-decoration:none}
+.footer-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.footer-social svg{width:13px;height:13px;fill:var(--marfil)}
+.footer-col h4{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500;color:var(--ocre);margin-bottom:.85rem}
+.footer-col a{display:block;color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;font-weight:300;padding:.25rem 0;transition:color .3s}
+.footer-col a:hover{color:var(--ocre)}
+.footer-bottom{max-width:1060px;margin:2.2rem auto 0;padding-top:1.2rem;border-top:1px solid rgba(196,151,59,.08);display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.7rem;color:var(--marfil-tenue);font-weight:300}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+@media(max-width:860px){.cer-grid{grid-template-columns:1fr}}
+@media(max-width:680px){
+  .top-nav{padding:.9rem 1.2rem}.nav-links{display:none}
+  section{padding:3.5rem 1.5rem}
+  .join-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:.5rem;text-align:center}
+  .chatbot-panel{right:.5rem;left:.5rem;width:auto;bottom:5rem}
+}
+</style>
+</head>
+<body>
+<canvas id="stars-canvas"></canvas>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#nrg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#ntg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>
+    THANOTECTAS <span>Guardianes del Umbral</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="oraculo.html">Oráculo</a></li>
+    <li><a href="depositar.html">Depositar</a></li>
+    <li><a href="planes.html">Planes</a></li>
+    <li><a href="archivo.html">Archivo</a></li>
+    <li><a href="guardianes.html" class="active">Guardianes</a></li>
+    <div class="nav-social">
+      <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+      <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <a href="depositar.html" class="nav-cta">🌿 Depositar legado</a>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <p class="page-eyebrow">Muro de Guardianes</p>
+  <h1 class="page-title">Quienes protegen<br><em>las voces del futuro</em></h1>
+  <p class="page-sub">Cada nombre aquí representa a alguien que creyó que el futuro merece escuchar las voces de hoy. Son la razón por la que el archivo existe.</p>
+</div>
+
+<!-- MURO -->
+<section>
+  <div class="sec-inner">
+
+    <div class="muro-counter">
+      <div class="muro-stat"><div class="muro-stat-num">1</div><div class="muro-stat-label">Guardianes totales</div></div>
+      <div class="muro-stat"><div class="muro-stat-num">1</div><div class="muro-stat-label">Fundadores</div></div>
+      <div class="muro-stat"><div class="muro-stat-num">0</div><div class="muro-stat-label">Guardianes del Umbral</div></div>
+      <div class="muro-stat"><div class="muro-stat-num">0</div><div class="muro-stat-label">Legado Eterno</div></div>
+    </div>
+
+    <!-- Fundadores -->
+    <div class="tier-section">
+      <div class="tier-label">
+        <span class="tier-badge founders">🌳 Fundadores</span>
+        <div class="tier-line"></div>
+      </div>
+      <p style="font-size:.82rem;font-weight:300;color:var(--marfil-tenue);margin-bottom:1rem;line-height:1.6">Quienes creyeron desde el primer día y pusieron su nombre en la piedra fundacional de Thanotectas.</p>
+      <div class="names-wrap">
+        <span class="name-chip founder">Alejandro Z. 🌿</span>
+        <span class="name-chip placeholder">Tu nombre aquí →</span>
+      </div>
+    </div>
+
+    <!-- Legado Eterno -->
+    <div class="tier-section">
+      <div class="tier-label">
+        <span class="tier-badge eternal">♾️ Legado Eterno</span>
+        <div class="tier-line"></div>
+      </div>
+      <p style="font-size:.82rem;font-weight:300;color:var(--marfil-tenue);margin-bottom:1rem;line-height:1.6">Guardianes que eligieron la permanencia total — sus voces viajarán hasta el año 2100.</p>
+      <div class="names-wrap">
+        <span class="name-chip placeholder">Sé el primero en unirte →</span>
+      </div>
+    </div>
+
+    <!-- Guardianes del Umbral -->
+    <div class="tier-section">
+      <div class="tier-label">
+        <span class="tier-badge guardian">🛡️ Guardianes del Umbral</span>
+        <div class="tier-line"></div>
+      </div>
+      <p style="font-size:.82rem;font-weight:300;color:var(--marfil-tenue);margin-bottom:1rem;line-height:1.6">Guardianes que están construyendo el archivo junto a nosotros con su apoyo y sus legados.</p>
+      <div class="names-wrap">
+        <span class="name-chip placeholder">Sé el primero en unirte →</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ÚNETE -->
+<section class="join-section">
+  <div class="sec-inner">
+    <div class="sec-label">Únete al muro</div>
+    <h2 class="sec-title">Tu nombre puede ser parte<br>de la historia de Thanotectas</h2>
+    <p class="sec-desc">Cada guardián sostiene el archivo. Sin ellos, las voces no llegarían al futuro.</p>
+    <div class="join-grid">
+
+      <div class="join-card">
+        <div class="join-icon">🌱</div>
+        <div class="join-tier">Plan Semilla</div>
+        <div class="join-name">Semilla</div>
+        <div class="join-price">$0 <span>/ para siempre</span></div>
+        <ul class="join-perks">
+          <li>1 legado gratuito</li>
+          <li>Hasta 500 caracteres</li>
+          <li>Años 2030 y 2035</li>
+          <li>Certificado digital</li>
+        </ul>
+        <a href="depositar.html" class="join-btn musgo">🌿 Empezar gratis</a>
+      </div>
+
+      <div class="join-card featured">
+        <div class="join-badge">★ Más popular</div>
+        <div class="join-icon">🛡️</div>
+        <div class="join-tier">Plan Guardián</div>
+        <div class="join-name">Guardián del Umbral</div>
+        <div class="join-price">$5 <span>USD · pago único</span></div>
+        <ul class="join-perks">
+          <li>5 legados sellados</li>
+          <li>Hasta 5.000 caracteres</li>
+          <li>Todos los años hasta 2075</li>
+          <li>Garantía de permanencia 50 años</li>
+          <li><strong style="color:var(--marfil)">Nombre en el Muro de Guardianes</strong></li>
+        </ul>
+        <a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank" class="join-btn primary">Ser Guardián — $5 USD →</a>
+      </div>
+
+      <div class="join-card">
+        <div class="join-icon">♾️</div>
+        <div class="join-tier">Plan Eterno</div>
+        <div class="join-name">Legado Eterno</div>
+        <div class="join-price">$19 <span>USD · pago único</span></div>
+        <ul class="join-perks">
+          <li>Legados ilimitados</li>
+          <li>Sin límite de caracteres</li>
+          <li>Todos los años hasta 2100</li>
+          <li>Garantía 100 años</li>
+          <li><strong style="color:var(--marfil)">Nombre destacado en el Muro</strong></li>
+          <li>Acceso a ceremonias exclusivas</li>
+        </ul>
+        <a href="https://checkout.bold.co/payment/LNK_RHWIG3C02J" target="_blank" class="join-btn secondary">Legado Eterno — $19 USD →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MANIFIESTO -->
+<section class="manifesto-section">
+  <div class="sec-inner">
+    <div class="sec-label">El manifiesto del guardián</div>
+    <h2 class="sec-title">¿Qué significa<br>ser un Guardián?</h2>
+    <blockquote class="manifesto-text">
+      Ser un Guardián del Umbral significa entender que <em>el olvido también es una forma de violencia</em>.<br><br>
+      Significa creer que las voces de hoy tienen derecho a viajar al futuro — no solo las de los poderosos, sino las de quien amó un río, quien lloró por un glaciar, quien le escribió a un hijo no nacido.<br><br>
+      Ser un Guardián es decir: <em>este momento importó. Este amor fue real. Este dolor fue válido</em>.<br><br>
+      Y que el futuro lo sepa.
+    </blockquote>
+    <p style="font-size:.82rem;color:var(--marfil-tenue);font-weight:300">— Thanotectas · Guardianes del Umbral · Colombia, 2026</p>
+  </div>
+</section>
+
+<!-- CEREMONIAS -->
+<section class="ceremonia-section">
+  <div class="sec-inner">
+    <div class="sec-label">Ceremonias colectivas</div>
+    <h2 class="sec-title">Un ritual mensual<br>de duelo y legado</h2>
+    <p class="sec-desc">Una vez al mes nos reunimos en vivo para depositar legados juntos, reflexionar sobre lo que el mundo está perdiendo, y honrarlo con dignidad.</p>
+
+    <div class="cer-grid">
+      <div class="cer-features">
+        <div class="cer-item">
+          <div class="cer-icon">🕯️</div>
+          <div><div class="cer-title">Reflexión guiada</div><div class="cer-text">Lectura de legados públicos de la comunidad y meditación colectiva sobre el duelo ecológico.</div></div>
+        </div>
+        <div class="cer-item">
+          <div class="cer-icon">✍️</div>
+          <div><div class="cer-title">Depósito en vivo</div><div class="cer-text">Escribimos y sellamos legados juntos — en tiempo real, acompañados por la comunidad.</div></div>
+        </div>
+        <div class="cer-item">
+          <div class="cer-icon">🌍</div>
+          <div><div class="cer-title">Comunidad global</div><div class="cer-text">Personas de Colombia, México, Argentina, España y más, conectadas por el mismo propósito.</div></div>
+        </div>
+        <div class="cer-item">
+          <div class="cer-icon">🎁</div>
+          <div><div class="cer-title">Ceremonias exclusivas</div><div class="cer-text">Los guardianes del plan Eterno acceden a ceremonias especiales con contenido adicional y participación activa.</div></div>
+        </div>
+      </div>
+
+      <div class="cer-card">
+        <div class="cer-card-label">Próxima ceremonia</div>
+        <div class="cer-card-date">Próximamente</div>
+        <div class="cer-card-platform">Instagram Live · @thanotectas · Gratis</div>
+        <a href="https://instagram.com/thanotectas" target="_blank" class="cer-btn">📸 Seguir @thanotectas</a>
+        <p style="font-size:.72rem;color:var(--marfil-tenue);margin-top:1rem;line-height:1.55">Las fechas se anuncian con una semana de anticipación en Instagram y X. Síguenos para no perderte la próxima.</p>
+      </div>
+    </div>
+
+    <!-- Ceremonias pasadas -->
+    <div style="margin-top:3rem">
+      <p class="sec-label">Ceremonias anteriores</p>
+      <div class="past-grid">
+        <div class="past-card"><div class="past-card-date">Marzo 2026</div><div class="past-card-title">Ceremonia Fundacional</div><div class="past-card-num">Primera ceremonia · 1 guardián</div></div>
+        <div class="past-card" style="opacity:.4;border-style:dashed"><div class="past-card-date">Abril 2026</div><div class="past-card-title">Por anunciar</div><div class="past-card-num">Próximamente</div></div>
+        <div class="past-card" style="opacity:.4;border-style:dashed"><div class="past-card-date">Mayo 2026</div><div class="past-card-title">Por anunciar</div><div class="past-card-num">Próximamente</div></div>
+        <div class="past-card" style="opacity:.4;border-style:dashed"><div class="past-card-date">Junio 2026</div><div class="past-card-title">Por anunciar</div><div class="past-card-num">Próximamente</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <p style="font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ocre);margin-bottom:.7rem">Empieza hoy</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:400;margin:0 auto .8rem;max-width:520px">El umbral está abierto.<br>¿Quieres proteger las voces del futuro?</h2>
+  <p style="font-size:.9rem;font-weight:300;color:var(--marfil-tenue);max-width:420px;margin:0 auto 2rem;line-height:1.7">Empieza gratis o únete al Muro como Guardián desde $5 USD.</p>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+    <a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank" style="display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 2.2rem;background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra);font-family:'Jost',sans-serif;font-size:.95rem;font-weight:600;border-radius:6px;text-decoration:none">🛡️ Ser Guardián — $5 USD</a>
+    <a href="depositar.html" style="display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.8rem;background:transparent;border:1px solid rgba(196,151,59,.4);color:var(--ocre);font-family:'Jost',sans-serif;font-size:.9rem;border-radius:6px;text-decoration:none">🌿 Depositar gratis</a>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<button class="chatbot-btn" onclick="toggleChat()">🌿</button>
+<div class="chatbot-panel" id="chat-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🌿</div>
+    <div><div class="chatbot-name">Guardián del Umbral</div><div class="chatbot-status">En línea</div></div>
+    <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;color:var(--marfil-tenue);font-size:.95rem;cursor:pointer">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chat-messages">
+    <div class="chat-msg bot">Bienvenido al Muro de Guardianes 🌿 ¿Tienes alguna pregunta sobre cómo unirte o sobre las ceremonias?</div>
+    <div class="chat-msg bot">
+      <div class="chat-options">
+        <button class="chat-opt-btn" onclick="chatQ('muro')">¿Qué es el Muro?</button>
+        <button class="chat-opt-btn" onclick="chatQ('unirse')">¿Cómo me uno?</button>
+        <button class="chat-opt-btn" onclick="chatQ('ceremonia')">¿Cómo son las ceremonias?</button>
+        <button class="chat-opt-btn" onclick="chatQ('pago')">¿Cómo funciona el pago?</button>
+        <button class="chat-opt-btn" onclick="chatQ('contacto')">Contacto</button>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">→</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo"><svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ftg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="frg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#frg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#ftg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>THANOTECTAS</div>
+      <p class="footer-tagline">Guardianes del Umbral. Un movimiento de duelo ecológico y legado para quienes sienten el peso de lo que se está perdiendo.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="mailto:info@thanotectas.com"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Explorar</h4><a href="oraculo.html">✦ Oráculo del Umbral</a><a href="depositar.html">Depositar legado</a><a href="planes.html">Planes y precios</a><a href="archivo.html">Archivo de legados</a><a href="guardianes.html">Muro de Guardianes</a></div>
+    <div class="footer-col"><h4>Apoyar</h4><a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank">Guardián — $5 USD</a><a href="https://checkout.bold.co/payment/LNK_RHWIG3C02J" target="_blank">Legado Eterno — $19 USD</a><a href="https://vaki.co/vaki/thanotectas-la-c-psula-del-tiempo-para-el-planeta" target="_blank">Vaki</a><a href="https://ko-fi.com/thanotectas" target="_blank">Ko-fi</a></div>
+    <div class="footer-col"><h4>Contacto</h4><a href="mailto:info@thanotectas.com">info@thanotectas.com</a><a href="https://instagram.com/thanotectas" target="_blank">@thanotectas</a><a href="https://x.com/thanotectas" target="_blank">X / Twitter</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Thanotectas — Guardianes del Umbral · Colombia</p>
+    <p>Todo legado viaja sellado. Toda voz merece ser escuchada.</p>
+  </div>
+</footer>
+
+<script>
+// Stars
+const cv=document.getElementById('stars-canvas'),cx=cv.getContext('2d');let st=[];
+function initS(){cv.width=window.innerWidth;cv.height=window.innerHeight;st=[];for(let i=0;i<Math.floor(cv.width*cv.height/8000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
+function drawS(){cx.clearRect(0,0,cv.width,cv.height);const t=Date.now();st.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();});requestAnimationFrame(drawS);}
+initS();drawS();window.addEventListener('resize',initS);
+
+// Chatbot
+const BOT={
+  'muro':`El Muro de Guardianes es el espacio donde honramos a quienes apoyan económicamente el proyecto. 🛡️\n\nHay tres niveles:\n🌳 FUNDADORES: quienes creyeron desde el primer día\n♾️ LEGADO ETERNO: plan de $19 USD\n🛡️ GUARDIANES DEL UMBRAL: plan de $5 USD\n\nTu nombre aparece públicamente como parte de la historia de Thanotectas.`,
+  'unirse':`Para unirte al Muro tienes dos opciones:\n\n🛡️ Guardián del Umbral — $5 USD\nTu nombre en el Muro + 5 legados + hasta 2075\n→ checkout.bold.co/payment/LNK_I8ZLLJ4TBQ\n\n♾️ Legado Eterno — $19 USD\nNombre destacado + ilimitado + hasta 2100 + ceremonias\n→ checkout.bold.co/payment/LNK_RHWIG3C02J\n\nPagos únicos, sin suscripciones. 🌿`,
+  'ceremonia':`Las Ceremonias de Depósito Colectivo ocurren una vez al mes por Instagram Live. 🕯️\n\n• Son gratuitas y abiertas a todos\n• Incluyen lectura de legados, reflexión guiada y depósito en vivo\n• Los guardianes del plan Eterno acceden a ceremonias exclusivas con contenido adicional\n\nSíguenos @thanotectas para saber cuándo es la próxima.`,
+  'pago':`Los pagos se procesan por Bold.co — plataforma certificada de Colombia. 💳\n\nAcepta tarjetas Visa/Mastercard, PSE y más. Thanotectas nunca almacena datos de pago.\n\nSon pagos únicos — no hay suscripciones ni cargos recurrentes. 🌿`,
+  'contacto':`Escríbenos:\n✉️ info@thanotectas.com\n📸 @thanotectas\n𝕏 @thanotectas\n\nRespondemos en 24–48 horas. 🌿`,
+  'default':`Gracias por tu pregunta 🌿\nPara más ayuda: info@thanotectas.com`
+};
+const LABELS={'muro':'¿Qué es el Muro?','unirse':'¿Cómo me uno?','ceremonia':'¿Cómo son las ceremonias?','pago':'¿Cómo funciona el pago?','contacto':'Contacto'};
+function toggleChat(){document.getElementById('chat-panel').classList.toggle('active');}
+function addMsg(t,r){const m=document.getElementById('chat-messages'),d=document.createElement('div');d.className='chat-msg '+r;d.style.whiteSpace='pre-line';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function chatQ(k){addMsg(LABELS[k]||k,'user');setTimeout(()=>addMsg(BOT[k]||BOT.default,'bot'),700);}
+function sendChat(){
+  const i=document.getElementById('chat-input'),t=i.value.trim();if(!t)return;
+  addMsg(t,'user');i.value='';
+  const l=t.toLowerCase();let k='default';
+  if(l.includes('muro')||l.includes('nombre')||l.includes('aparecer'))k='muro';
+  else if(l.includes('unir')||l.includes('como')||l.includes('cómo')||l.includes('entrar'))k='unirse';
+  else if(l.includes('ceremonia')||l.includes('evento')||l.includes('live')||l.includes('cuándo'))k='ceremonia';
+  else if(l.includes('pago')||l.includes('bold')||l.includes('tarjeta')||l.includes('precio'))k='pago';
+  else if(l.includes('contact')||l.includes('correo')||l.includes('hablar'))k='contacto';
+  setTimeout(()=>addMsg(BOT[k],'bot'),800);
+}
+</script>
+</body>
+</html>

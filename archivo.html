@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archivo de Legados — Thanotectas</title>
+<meta name="description" content="Voces reales selladas en el tiempo. Cada tarjeta es un legado que viaja al futuro. El mensaje completo solo se revelará en el año elegido.">
+<meta property="og:title" content="Archivo de Legados — Thanotectas · Guardianes del Umbral">
+<meta property="og:url" content="https://thanotectas.com/archivo">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tierra:#1a1611;--tierra-media:#2a2319;
+  --musgo:#2d4a2e;--musgo-claro:#3d6a3e;--musgo-glow:#4a8a4b;
+  --ocre:#c4973b;--ocre-claro:#d4a74b;
+  --marfil:#f0e6d3;--marfil-tenue:#f0e6d399;
+  --cristal:rgba(240,230,211,0.06);--cristal-hover:rgba(240,230,211,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh;overflow-x:hidden}
+#stars-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(26,22,17,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(196,151,59,.12)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ocre);letter-spacing:.08em;text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.nav-logo svg{width:30px;height:30px;flex-shrink:0}
+.nav-logo span{color:var(--marfil-tenue);font-weight:300;font-size:.82rem;margin-left:.4rem}
+.nav-links{display:flex;gap:1.6rem;align-items:center;list-style:none}
+.nav-links a{color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;letter-spacing:.05em;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--ocre)}
+.nav-social{display:flex;gap:.8rem}
+.nav-social a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s}
+.nav-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.nav-social svg{width:13px;height:13px;fill:var(--marfil)}
+.nav-cta{padding:.4rem 1.1rem;border:1px solid var(--ocre);border-radius:4px;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;transition:all .3s;white-space:nowrap}
+.nav-cta:hover{background:rgba(196,151,59,.1)}
+
+/* PAGE HEADER */
+.page-header{position:relative;z-index:1;padding:9rem 2rem 4rem;text-align:center}
+.page-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);margin-bottom:1rem;opacity:0;animation:fadeUp .9s .2s forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.15;max-width:640px;margin:0 auto .9rem;opacity:0;animation:fadeUp .9s .4s forwards}
+.page-title em{color:var(--ocre);font-style:italic}
+.page-sub{font-size:1rem;font-weight:300;color:var(--marfil-tenue);max-width:480px;margin:0 auto 2rem;line-height:1.75;opacity:0;animation:fadeUp .9s .6s forwards}
+
+/* STATS BAR */
+.stats-bar{position:relative;z-index:1;display:flex;justify-content:center;gap:3.5rem;padding:2rem;background:rgba(26,22,17,.5);border-top:1px solid rgba(196,151,59,.1);border-bottom:1px solid rgba(196,151,59,.1);flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ocre)}
+.stat-label{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--marfil-tenue);margin-top:.2rem}
+
+/* FILTERS */
+.filters-bar{position:relative;z-index:1;padding:2.5rem 2rem 1.5rem;max-width:1060px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;justify-content:space-between}
+.filter-group{display:flex;flex-wrap:wrap;gap:.5rem}
+.filter-btn{padding:.42rem 1rem;border:1px solid rgba(196,151,59,.15);border-radius:100px;background:transparent;color:var(--marfil-tenue);font-family:'Jost',sans-serif;font-size:.76rem;cursor:pointer;transition:all .3s;letter-spacing:.04em}
+.filter-btn:hover{border-color:rgba(196,151,59,.35);color:var(--ocre)}
+.filter-btn.active{border-color:var(--ocre);background:rgba(196,151,59,.1);color:var(--ocre)}
+.search-wrap{position:relative}
+.search-input{background:rgba(13,11,8,.6);border:1px solid rgba(196,151,59,.15);border-radius:100px;padding:.48rem 1rem .48rem 2.2rem;font-family:'Jost',sans-serif;font-size:.8rem;color:var(--marfil);outline:none;width:200px;transition:all .3s}
+.search-input:focus{border-color:var(--ocre);width:240px}
+.search-input::placeholder{color:rgba(240,230,211,.3)}
+.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.8rem;opacity:.4;pointer-events:none}
+
+/* GRID */
+.archive-section{position:relative;z-index:1;padding:1rem 2rem 5rem;max-width:1060px;margin:0 auto}
+.archive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.3rem}
+
+/* LEGACY CARD */
+.legacy-card{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:16px;padding:1.8rem;position:relative;overflow:hidden;transition:all .4s;cursor:default;display:flex;flex-direction:column;gap:.9rem}
+.legacy-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(196,151,59,.35),transparent);opacity:0;transition:opacity .4s}
+.legacy-card:hover{transform:translateY(-4px);border-color:rgba(196,151,59,.22);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.legacy-card:hover::before{opacity:1}
+
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem}
+.card-type{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ocre);display:flex;align-items:center;gap:.35rem}
+.card-year{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--ocre);line-height:1;white-space:nowrap}
+
+.card-text{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;line-height:1.75;color:var(--marfil);flex:1}
+.card-text .blur{filter:blur(3.5px);user-select:none;opacity:.6}
+
+.card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:.8rem;border-top:1px solid rgba(196,151,59,.08)}
+.card-author{font-size:.78rem;color:var(--marfil-tenue);font-weight:300}
+.card-countdown{font-size:.68rem;color:var(--marfil-tenue);display:flex;align-items:center;gap:.3rem}
+.card-countdown::before{content:'🔒';font-size:.62rem}
+
+.card-badge{display:inline-block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.22rem .6rem;border-radius:100px;margin-bottom:.2rem}
+.card-badge.public{background:rgba(45,74,46,.25);color:var(--musgo-glow);border:1px solid rgba(45,74,46,.3)}
+.card-badge.sealed{background:rgba(196,151,59,.1);color:var(--ocre);border:1px solid rgba(196,151,59,.2)}
+
+/* LEGADO DEL DÍA */
+.featured-section{position:relative;z-index:1;padding:4rem 2rem;background:linear-gradient(180deg,var(--tierra-media),var(--tierra))}
+.featured-inner{max-width:680px;margin:0 auto;text-align:center}
+.sec-label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ocre);margin-bottom:.7rem}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:400;line-height:1.2;margin-bottom:2rem}
+.featured-card{background:rgba(240,230,211,.04);border:1px solid rgba(196,151,59,.2);border-radius:18px;padding:3rem 2.5rem;position:relative}
+.featured-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(196,151,59,.5),transparent);border-radius:18px 18px 0 0}
+.featured-quote{font-size:2.5rem;opacity:.22;margin-bottom:.8rem}
+.featured-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1.15rem,2.2vw,1.55rem);font-style:italic;line-height:1.65;color:var(--marfil);margin-bottom:1.3rem}
+.featured-line{width:36px;height:1px;background:var(--ocre);margin:0 auto .9rem}
+.featured-author{font-size:.82rem;color:var(--ocre);letter-spacing:.08em}
+.featured-seal{font-size:.65rem;color:var(--marfil-tenue);margin-top:1.2rem;letter-spacing:.12em}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem;color:var(--marfil-tenue);grid-column:1/-1}
+.empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.4}
+.empty-text{font-size:.9rem;font-weight:300;line-height:1.7}
+
+/* CTA BAND */
+.cta-band{position:relative;z-index:1;text-align:center;padding:4.5rem 2rem;background:var(--tierra-media);border-top:1px solid rgba(196,151,59,.1)}
+
+/* CHATBOT */
+.chatbot-btn{position:fixed;bottom:2rem;right:2rem;z-index:150;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));border:2px solid rgba(196,151,59,.3);color:var(--marfil);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .4s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.chatbot-btn:hover{transform:scale(1.1)}
+.chatbot-panel{display:none;position:fixed;bottom:5.5rem;right:2rem;z-index:150;width:360px;max-height:500px;background:var(--tierra-media);border:1px solid rgba(196,151,59,.2);border-radius:20px;overflow:hidden;box-shadow:0 10px 50px rgba(0,0,0,.5);flex-direction:column;animation:modalIn .4s cubic-bezier(.16,1,.3,1)}
+.chatbot-panel.active{display:flex}
+.chatbot-header{padding:1rem 1.3rem;background:rgba(196,151,59,.08);border-bottom:1px solid rgba(196,151,59,.15);display:flex;align-items:center;gap:.75rem}
+.chatbot-avatar{width:32px;height:32px;border-radius:50%;background:var(--musgo);display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.chatbot-name{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500}
+.chatbot-status{font-size:.62rem;color:var(--musgo-glow);display:flex;align-items:center;gap:.3rem}
+.chatbot-status::before{content:'';width:5px;height:5px;background:var(--musgo-glow);border-radius:50%}
+.chatbot-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;max-height:300px}
+.chat-msg{max-width:88%;padding:.7rem .9rem;border-radius:14px;font-size:.84rem;line-height:1.55;font-weight:300}
+.chat-msg.bot{background:var(--cristal);border:1px solid rgba(196,151,59,.1);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:rgba(45,74,46,.3);border:1px solid rgba(45,74,46,.3);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-options{display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.4rem}
+.chat-opt-btn{padding:.32rem .7rem;border:1px solid rgba(196,151,59,.22);border-radius:100px;background:transparent;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;cursor:pointer;transition:all .3s}
+.chat-opt-btn:hover{background:rgba(196,151,59,.1)}
+.chatbot-input{display:flex;gap:.4rem;padding:.85rem 1rem;border-top:1px solid rgba(196,151,59,.1)}
+.chatbot-input input{flex:1;background:rgba(13,11,8,.5);border:1px solid rgba(196,151,59,.15);border-radius:100px;padding:.5rem .9rem;font-family:'Jost',sans-serif;font-size:.82rem;color:var(--marfil);outline:none}
+.chatbot-input input::placeholder{color:rgba(240,230,211,.3)}
+.chatbot-input input:focus{border-color:var(--ocre)}
+.chatbot-input button{width:32px;height:32px;border-radius:50%;background:var(--ocre);border:none;color:var(--tierra);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* FOOTER */
+footer{position:relative;z-index:1;padding:3.5rem 2rem 2rem;border-top:1px solid rgba(196,151,59,.1)}
+.footer-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--ocre);display:flex;align-items:center;gap:.5rem}
+.footer-logo svg{width:26px;height:26px}
+.footer-tagline{font-size:.82rem;color:var(--marfil-tenue);font-weight:300;margin-top:.5rem;line-height:1.6;max-width:270px}
+.footer-social{display:flex;gap:.7rem;margin-top:1.2rem}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s;text-decoration:none}
+.footer-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.footer-social svg{width:13px;height:13px;fill:var(--marfil)}
+.footer-col h4{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500;color:var(--ocre);margin-bottom:.85rem}
+.footer-col a{display:block;color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;font-weight:300;padding:.25rem 0;transition:color .3s}
+.footer-col a:hover{color:var(--ocre)}
+.footer-bottom{max-width:1060px;margin:2.2rem auto 0;padding-top:1.2rem;border-top:1px solid rgba(196,151,59,.08);display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.7rem;color:var(--marfil-tenue);font-weight:300}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+@media(max-width:680px){
+  .top-nav{padding:.9rem 1.2rem}.nav-links{display:none}
+  .stats-bar{gap:1.5rem}
+  .filters-bar{flex-direction:column;align-items:flex-start}
+  .archive-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:.5rem;text-align:center}
+  .chatbot-panel{right:.5rem;left:.5rem;width:auto;bottom:5rem}
+}
+</style>
+</head>
+<body>
+<canvas id="stars-canvas"></canvas>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#nrg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#ntg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>
+    THANOTECTAS <span>Guardianes del Umbral</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="oraculo.html">Oráculo</a></li>
+    <li><a href="depositar.html">Depositar</a></li>
+    <li><a href="planes.html">Planes</a></li>
+    <li><a href="archivo.html" class="active">Archivo</a></li>
+    <li><a href="guardianes.html">Guardianes</a></li>
+    <div class="nav-social">
+      <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+      <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <a href="depositar.html" class="nav-cta">🌿 Depositar legado</a>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <p class="page-eyebrow">Archivo público</p>
+  <h1 class="page-title">Voces que viajan<br><em>al futuro</em></h1>
+  <p class="page-sub">Cada tarjeta es una voz real sellada en el tiempo. El mensaje completo solo se revelará en el año elegido por su guardián.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num" id="stat-total">9</div><div class="stat-label">Legados en tránsito</div></div>
+  <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Países representados</div></div>
+  <div class="stat-item"><div class="stat-num">2100</div><div class="stat-label">Año más lejano</div></div>
+  <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Permanencia</div></div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <div class="filter-group">
+    <button class="filter-btn active" onclick="filter('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filter('carta',this)">✉️ Cartas</button>
+    <button class="filter-btn" onclick="filter('idea',this)">💡 Ideas</button>
+    <button class="filter-btn" onclick="filter('memoria',this)">🌿 Memorias</button>
+    <button class="filter-btn" onclick="filter('promesa',this)">🕯️ Promesas</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" placeholder="Buscar legados…" oninput="search(this.value)">
+  </div>
+</div>
+
+<!-- ARCHIVE GRID -->
+<div class="archive-section">
+  <div class="archive-grid" id="archive-grid"></div>
+  <div style="text-align:center;margin-top:2.5rem">
+    <p style="font-size:.85rem;color:var(--marfil-tenue);margin-bottom:1.2rem">¿Quieres que tu voz también viaje al futuro?</p>
+    <a href="depositar.html" style="display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra);font-family:'Jost',sans-serif;font-size:.9rem;font-weight:600;border-radius:6px;text-decoration:none;transition:all .4s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">🌿 Depositar mi legado</a>
+  </div>
+</div>
+
+<!-- LEGADO DEL DÍA -->
+<div class="featured-section">
+  <div class="featured-inner">
+    <p class="sec-label">Legado del día</p>
+    <h2 class="sec-title">Una voz elegida<br>por el tiempo</h2>
+    <div class="featured-card">
+      <div class="featured-quote">❝</div>
+      <p class="featured-text" id="feat-text">A quien lea esto en 2075: los colibríes aún existían. Eran diminutos y brillantes. Ojalá los conozcas.</p>
+      <div class="featured-line"></div>
+      <p class="featured-author" id="feat-author">— Guardián anónimo, Colombia, 2026</p>
+      <p class="featured-seal" id="feat-seal">SELLADO HASTA 2075</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <p style="font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ocre);margin-bottom:.7rem">Únete al archivo</p>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:400;margin:0 auto .8rem;max-width:500px">Tu legado merece<br>viajar al futuro</h2>
+  <p style="font-size:.9rem;font-weight:300;color:var(--marfil-tenue);max-width:420px;margin:0 auto 2rem;line-height:1.7">El plan básico es gratuito. En menos de 5 minutos tu voz queda sellada.</p>
+  <a href="depositar.html" style="display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 2.2rem;background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra);font-family:'Jost',sans-serif;font-size:.95rem;font-weight:600;border-radius:6px;text-decoration:none">🌿 Depositar gratis</a>
+</div>
+
+<!-- CHATBOT -->
+<button class="chatbot-btn" onclick="toggleChat()">🌿</button>
+<div class="chatbot-panel" id="chat-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🌿</div>
+    <div><div class="chatbot-name">Guardián del Umbral</div><div class="chatbot-status">En línea</div></div>
+    <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;color:var(--marfil-tenue);font-size:.95rem;cursor:pointer">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chat-messages">
+    <div class="chat-msg bot">Bienvenido al Archivo 🌿 Aquí descansan las voces que viajan al futuro. ¿Tienes alguna pregunta?</div>
+    <div class="chat-msg bot">
+      <div class="chat-options">
+        <button class="chat-opt-btn" onclick="chatQ('ver')">¿Por qué no veo el texto completo?</button>
+        <button class="chat-opt-btn" onclick="chatQ('depositar')">¿Cómo deposito el mío?</button>
+        <button class="chat-opt-btn" onclick="chatQ('publico')">¿Todos los legados son públicos?</button>
+        <button class="chat-opt-btn" onclick="chatQ('cuando')">¿Cuándo se abren?</button>
+        <button class="chat-opt-btn" onclick="chatQ('contacto')">Contacto</button>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">→</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo"><svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ftg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="frg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#frg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#ftg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>THANOTECTAS</div>
+      <p class="footer-tagline">Guardianes del Umbral. Un movimiento de duelo ecológico y legado para quienes sienten el peso de lo que se está perdiendo.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="mailto:info@thanotectas.com"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Explorar</h4><a href="oraculo.html">✦ Oráculo del Umbral</a><a href="depositar.html">Depositar legado</a><a href="planes.html">Planes y precios</a><a href="archivo.html">Archivo de legados</a><a href="guardianes.html">Muro de Guardianes</a></div>
+    <div class="footer-col"><h4>Apoyar</h4><a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank">Guardián — $5 USD</a><a href="https://checkout.bold.co/payment/LNK_RHWIG3C02J" target="_blank">Legado Eterno — $19 USD</a><a href="https://vaki.co/vaki/thanotectas-la-c-psula-del-tiempo-para-el-planeta" target="_blank">Vaki</a><a href="https://ko-fi.com/thanotectas" target="_blank">Ko-fi</a></div>
+    <div class="footer-col"><h4>Contacto</h4><a href="mailto:info@thanotectas.com">info@thanotectas.com</a><a href="https://instagram.com/thanotectas" target="_blank">@thanotectas</a><a href="https://x.com/thanotectas" target="_blank">X / Twitter</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Thanotectas — Guardianes del Umbral · Colombia</p>
+    <p>Todo legado viaja sellado. Toda voz merece ser escuchada.</p>
+  </div>
+</footer>
+
+<script>
+// Stars
+const cv=document.getElementById('stars-canvas'),cx=cv.getContext('2d');let st=[];
+function initS(){cv.width=window.innerWidth;cv.height=window.innerHeight;st=[];for(let i=0;i<Math.floor(cv.width*cv.height/8000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
+function drawS(){cx.clearRect(0,0,cv.width,cv.height);const t=Date.now();st.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();});requestAnimationFrame(drawS);}
+initS();drawS();window.addEventListener('resize',initS);
+
+// Archive data
+const ICONS={carta:'✉️',idea:'💡',memoria:'🌿',promesa:'🕯️'};
+const DATA=[
+  {nombre:"Valentina M.",tipo:"carta",pais:"Colombia",mensaje:"A mi hija que aún no ha nacido: el mundo no es perfecto, pero tiene atardeceres que te van a dejar sin palabras. Búscalos cada semana.",año:2050,fecha:"2026-03-15"},
+  {nombre:"Diego R.",tipo:"idea",pais:"México",mensaje:"Una red de sensores que escuche el canto de los pájaros y lo preserve para siempre. Si alguien la construye, fue mi sueño primero.",año:2075,fecha:"2026-03-14"},
+  {nombre:"Sarah K.",tipo:"memoria",pais:"USA",mensaje:"I remember the coral reefs in their full color. They were alive, breathing, dancing with the current. I hope you can imagine it.",año:2060,fecha:"2026-03-13"},
+  {nombre:"Andrés P.",tipo:"promesa",pais:"Colombia",mensaje:"Prometo plantar un árbol cada año hasta que ya no pueda. Si lees esto, espero que ese bosque siga creciendo sin mí.",año:2040,fecha:"2026-03-12"},
+  {nombre:"Camila L.",tipo:"carta",pais:"Argentina",mensaje:"Querido 2100: hoy llovió y el olor a tierra mojada fue lo más hermoso que he sentido en semanas. Ojalá la lluvia aún huela así.",año:2100,fecha:"2026-03-11"},
+  {nombre:"Guardián anónimo",tipo:"memoria",pais:"Colombia",mensaje:"Los colibríes aún existían. Eran diminutos y brillantes. Venían al jardín cada mañana. No sé si seguirán existiendo cuando leas esto.",año:2075,fecha:"2026-03-10"},
+  {nombre:"Laura G.",tipo:"idea",pais:"España",mensaje:"¿Y si cada ciudad del mundo tuviera un bosque memorial donde se plantan árboles por cada especie extinta? Una deuda verde.",año:2050,fecha:"2026-03-09"},
+  {nombre:"Miguel A.",tipo:"promesa",pais:"Colombia",mensaje:"Le prometí a mi abuelo que cuidaría la finca. La finca ya no existe, pero su nombre sí. Aquí lo escribo para que no muera del todo.",año:2045,fecha:"2026-03-08"},
+  {nombre:"Jae-won L.",tipo:"carta",pais:"Corea",mensaje:"To the forest that once stood where my city now stands: I'm sorry we didn't know how to share. I hope someone replanted you.",año:2080,fecha:"2026-03-07"},
+];
+
+let activeFilter='all', searchTerm='';
+
+function daysLeft(year){return Math.max(0,Math.floor((new Date(year,0,1)-new Date())/86400000));}
+
+function blurText(text){
+  const words=text.split(' ');
+  const visible=words.slice(0,12).join(' ');
+  const hidden=words.slice(12).join(' ');
+  return hidden?`${visible} <span class="blur">${hidden}</span>`:visible;
+}
+
+function renderCard(item){
+  const days=daysLeft(item.año);
+  const d=document.createElement('div');
+  d.className='legacy-card';
+  d.setAttribute('data-tipo',item.tipo);
+  d.setAttribute('data-text',(item.nombre+' '+item.mensaje).toLowerCase());
+  d.innerHTML=`
+    <div class="card-header">
+      <div>
+        <span class="card-badge sealed">Sellado</span><br>
+        <span class="card-type">${ICONS[item.tipo]||'📜'} ${item.tipo.toUpperCase()}</span>
+      </div>
+      <div class="card-year">${item.año}</div>
+    </div>
+    <div class="card-text">"${blurText(item.mensaje)}"</div>
+    <div class="card-footer">
+      <span class="card-author">${item.nombre} · ${item.pais}</span>
+      <span class="card-countdown">${days.toLocaleString()} días</span>
+    </div>`;
+  return d;
+}
+
+function renderGrid(data){
+  const grid=document.getElementById('archive-grid');
+  grid.innerHTML='';
+  document.getElementById('stat-total').textContent=DATA.length;
+  if(!data.length){
+    grid.innerHTML='<div class="empty-state"><div class="empty-icon">🌿</div><div class="empty-text">No se encontraron legados con ese filtro.<br>Prueba con otra categoría o término.</div></div>';
+    return;
+  }
+  data.forEach(item=>grid.appendChild(renderCard(item)));
+}
+
+function filter(type,btn){
+  activeFilter=type;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function search(val){searchTerm=val.toLowerCase();applyFilters();}
+
+function applyFilters(){
+  let result=DATA;
+  if(activeFilter!=='all')result=result.filter(i=>i.tipo===activeFilter);
+  if(searchTerm)result=result.filter(i=>i['data-text']||((i.nombre+' '+i.mensaje).toLowerCase()).includes(searchTerm));
+  renderGrid(result);
+}
+
+renderGrid(DATA);
+
+// Legado del día
+const FEATURED=[
+  {text:"A quien lea esto en 2075: los colibríes aún existían. Eran diminutos y brillantes. Ojalá los conozcas.",author:"Guardián anónimo, Colombia, 2026",seal:"SELLADO HASTA 2075"},
+  {text:"Deposité una idea sobre energía limpia que espero que en 2050 ya sea realidad. Si no lo es, al menos sabrán que alguien la soñó.",author:"Guardián anónimo, México, 2026",seal:"SELLADO HASTA 2050"},
+  {text:"Hoy vi el último glaciar del nevado. Era pequeño y triste. Estoy llorando mientras escribo esto. Que alguien sepa que alguien lloró por él.",author:"Guardián anónimo, Colombia, 2026",seal:"SELLADO HASTA 2040"},
+  {text:"To the forest that once stood where my city now stands: I'm sorry we didn't know how to share.",author:"Jae-won L., Corea, 2026",seal:"SELLADO HASTA 2080"},
+];
+const d=new Date(),fi=(d.getFullYear()*366+d.getMonth()*31+d.getDate())%FEATURED.length;
+document.getElementById('feat-text').textContent=FEATURED[fi].text;
+document.getElementById('feat-author').textContent='— '+FEATURED[fi].author;
+document.getElementById('feat-seal').textContent=FEATURED[fi].seal;
+
+// Chatbot
+const BOT={
+  'ver':`El texto completo de cada legado está sellado y cifrado. Nadie puede leerlo hasta el año elegido por su guardián — ni nosotros. 🔒\n\nSolo se muestra un fragmento como ventana a lo que hay dentro. El resto permanece en tránsito hacia el futuro.`,
+  'depositar':`Para depositar tu propio legado ve a:\nthanotectas.com/depositar\n\nEl plan básico es gratuito. En menos de 5 minutos tu voz queda sellada y en camino al año que elijas. 🌿`,
+  'publico':`No todos. Al depositar, cada guardián elige:\n\n🌍 PÚBLICO: aparece en este Archivo cuando llegue el año.\n🔐 PRIVADO: solo accesible con un código para la persona que el guardián designe.\n\nLos legados que ves aquí son los que sus guardianes eligieron compartir públicamente.`,
+  'cuando':`Cuando llegue el año elegido:\n\n📬 Los legados públicos aparecen automáticamente en este Archivo.\n🔐 Los legados privados: el guardián recibe un código para acceder o compartir con su destinatario.\n📧 Todos los guardianes reciben una notificación de apertura en su correo.`,
+  'contacto':`Escríbenos a:\n✉️ info@thanotectas.com\n📸 @thanotectas\n𝕏 @thanotectas\n\nRespondemos en 24–48 horas. 🌿`,
+  'default':`Gracias por tu pregunta 🌿\nPara más ayuda: info@thanotectas.com`
+};
+const LABELS={'ver':'¿Por qué no veo el texto completo?','depositar':'¿Cómo deposito el mío?','publico':'¿Todos son públicos?','cuando':'¿Cuándo se abren?','contacto':'Contacto'};
+function toggleChat(){document.getElementById('chat-panel').classList.toggle('active');}
+function addMsg(t,r){const m=document.getElementById('chat-messages'),d=document.createElement('div');d.className='chat-msg '+r;d.style.whiteSpace='pre-line';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function chatQ(k){addMsg(LABELS[k]||k,'user');setTimeout(()=>addMsg(BOT[k]||BOT.default,'bot'),700);}
+function sendChat(){
+  const i=document.getElementById('chat-input'),t=i.value.trim();if(!t)return;
+  addMsg(t,'user');i.value='';
+  const l=t.toLowerCase();let k='default';
+  if(l.includes('texto')||l.includes('leer')||l.includes('ver')||l.includes('borroso'))k='ver';
+  else if(l.includes('deposit')||l.includes('crear')||l.includes('subir')||l.includes('mío'))k='depositar';
+  else if(l.includes('público')||l.includes('publico')||l.includes('privado')||l.includes('todos'))k='publico';
+  else if(l.includes('cuándo')||l.includes('cuando')||l.includes('abre')||l.includes('apertura'))k='cuando';
+  else if(l.includes('contact')||l.includes('correo')||l.includes('hablar'))k='contacto';
+  setTimeout(()=>addMsg(BOT[k],'bot'),800);
+}
+</script>
+</body>
+</html>

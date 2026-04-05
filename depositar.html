@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depositar Legado — Thanotectas</title>
+<meta name="description" content="Escríbele al futuro. Deposita tu carta, idea, memoria o promesa y séllala en el tiempo para que sea abierta cuando más se necesite.">
+<meta property="og:title" content="Depositar Legado — Thanotectas · Guardianes del Umbral">
+<meta property="og:url" content="https://thanotectas.com/depositar">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tierra:#1a1611;--tierra-media:#2a2319;--tierra-clara:#332c20;
+  --musgo:#2d4a2e;--musgo-claro:#3d6a3e;--musgo-glow:#4a8a4b;
+  --ocre:#c4973b;--ocre-claro:#d4a74b;
+  --marfil:#f0e6d3;--marfil-tenue:#f0e6d399;
+  --cristal:rgba(240,230,211,0.06);--cristal-hover:rgba(240,230,211,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh;overflow-x:hidden}
+#stars-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ══ NAV ══ */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(26,22,17,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(196,151,59,.12)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ocre);letter-spacing:.08em;text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.nav-logo svg{width:30px;height:30px;flex-shrink:0}
+.nav-logo span{color:var(--marfil-tenue);font-weight:300;font-size:.82rem;margin-left:.4rem}
+.nav-links{display:flex;gap:1.6rem;align-items:center;list-style:none}
+.nav-links a{color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;letter-spacing:.05em;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--ocre)}
+.nav-social{display:flex;gap:.8rem}
+.nav-social a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s}
+.nav-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.nav-social svg{width:13px;height:13px;fill:var(--marfil)}
+.nav-cta{padding:.4rem 1.1rem;border:1px solid var(--ocre);border-radius:4px;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;transition:all .3s;white-space:nowrap}
+.nav-cta:hover{background:rgba(196,151,59,.1)}
+
+/* ══ PAGE HEADER ══ */
+.page-header{position:relative;z-index:1;padding:9rem 2rem 4rem;text-align:center}
+.page-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);margin-bottom:1rem;opacity:0;animation:fadeUp .9s .2s forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.15;max-width:640px;margin:0 auto .9rem;opacity:0;animation:fadeUp .9s .4s forwards}
+.page-title em{color:var(--ocre);font-style:italic}
+.page-sub{font-size:1rem;font-weight:300;color:var(--marfil-tenue);max-width:460px;margin:0 auto;line-height:1.75;opacity:0;animation:fadeUp .9s .6s forwards}
+
+/* ══ LAYOUT ══ */
+.deposit-layout{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 2rem 5rem;display:grid;grid-template-columns:1fr 380px;gap:3rem;align-items:start}
+
+/* ══ FORM CONTAINER ══ */
+.form-wrap{background:var(--cristal);border:1px solid rgba(196,151,59,.15);border-radius:20px;padding:2.8rem;position:relative}
+.form-wrap::before{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(170deg,rgba(196,151,59,.18),transparent 55%);z-index:-1;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;padding:1px}
+
+.form-section-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:500;color:var(--ocre);margin-bottom:1.4rem;padding-bottom:.8rem;border-bottom:1px solid rgba(196,151,59,.12)}
+
+.form-group{margin-bottom:1.6rem}
+.form-label{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ocre);margin-bottom:.55rem;font-weight:500}
+.form-label span{color:var(--marfil-tenue);font-size:.65rem;letter-spacing:.08em;text-transform:none;font-weight:300;margin-left:.4rem}
+
+.form-input,.form-textarea,.form-select{width:100%;background:rgba(13,11,8,.65);border:1px solid rgba(196,151,59,.15);border-radius:8px;padding:.9rem 1.1rem;font-family:'Jost',sans-serif;font-size:.95rem;color:var(--marfil);transition:border-color .3s,box-shadow .3s;outline:none}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--ocre);box-shadow:0 0 0 3px rgba(196,151,59,.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(240,230,211,.28);font-style:italic}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c4973b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;cursor:pointer}
+.form-select option{background:var(--tierra-media);color:var(--marfil)}
+.form-textarea{min-height:180px;resize:vertical;line-height:1.65;font-family:'Cormorant Garamond',serif;font-size:1rem}
+
+/* TYPE SELECTOR */
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.type-opt{padding:.9rem .5rem;border:1px solid rgba(196,151,59,.15);border-radius:10px;text-align:center;cursor:pointer;transition:all .3s;background:transparent;color:var(--marfil)}
+.type-opt:hover{border-color:rgba(196,151,59,.3)}
+.type-opt.active{border-color:var(--ocre);background:rgba(196,151,59,.1)}
+.type-icon{font-size:1.4rem;margin-bottom:.35rem}
+.type-name{font-size:.72rem;font-weight:400;letter-spacing:.04em}
+
+/* YEAR CHIPS */
+.year-grid{display:flex;flex-wrap:wrap;gap:.6rem}
+.year-chip{padding:.55rem 1.1rem;border:1px solid rgba(196,151,59,.2);border-radius:100px;font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--marfil-tenue);background:transparent;cursor:pointer;transition:all .3s}
+.year-chip:hover{border-color:var(--ocre);color:var(--ocre)}
+.year-chip.active{background:var(--ocre);color:var(--tierra);border-color:var(--ocre);font-weight:600}
+.year-chip.locked{position:relative}
+.year-chip.locked::after{content:'🔒';font-size:.55rem;margin-left:.25rem}
+.year-chip.locked:not(.active){opacity:.6}
+
+/* VISIBILITY */
+.vis-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.vis-opt{padding:1rem 1.2rem;border:1px solid rgba(196,151,59,.15);border-radius:10px;cursor:pointer;transition:all .3s;background:transparent;text-align:left}
+.vis-opt:hover{border-color:rgba(196,151,59,.3)}
+.vis-opt.active{border-color:var(--ocre);background:rgba(196,151,59,.08)}
+.vis-title{font-size:.85rem;font-weight:500;color:var(--marfil);margin-bottom:.2rem}
+.vis-desc{font-size:.75rem;font-weight:300;color:var(--marfil-tenue);line-height:1.45}
+
+/* CHAR COUNT */
+.char-row{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem}
+.char-count{font-size:.72rem;color:var(--marfil-tenue)}
+.char-count.warn{color:var(--ocre)}
+.char-count.limit{color:#c44}
+.char-hint{font-size:.7rem;color:var(--marfil-tenue);font-weight:300}
+
+/* SUBMIT */
+.submit-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:1.2rem;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));color:var(--marfil);font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;letter-spacing:.05em;border:none;border-radius:10px;cursor:pointer;transition:all .4s;margin-top:1.2rem}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(45,74,46,.4)}
+.submit-btn.upgrade{background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ══ SIDEBAR ══ */
+.sidebar{display:flex;flex-direction:column;gap:1.4rem;position:sticky;top:6rem}
+
+.side-card{background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:14px;padding:1.6rem}
+.side-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;color:var(--ocre);margin-bottom:1rem}
+.side-item{display:flex;align-items:flex-start;gap:.75rem;padding:.6rem 0;border-bottom:1px solid rgba(240,230,211,.05)}
+.side-item:last-child{border-bottom:none}
+.side-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.side-text{font-size:.82rem;font-weight:300;color:var(--marfil-tenue);line-height:1.55}
+.side-text strong{color:var(--marfil);font-weight:500}
+
+.plan-mini{border:1px solid rgba(196,151,59,.2);border-radius:10px;padding:1rem 1.2rem;margin-bottom:.8rem;cursor:pointer;transition:all .3s;background:transparent}
+.plan-mini:hover{border-color:rgba(196,151,59,.4);background:rgba(196,151,59,.04)}
+.plan-mini-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+.plan-mini-name{font-size:.88rem;font-weight:500;color:var(--marfil)}
+.plan-mini-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--ocre)}
+.plan-mini-desc{font-size:.75rem;font-weight:300;color:var(--marfil-tenue);line-height:1.45}
+
+/* ══ MODAL ══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,11,8,.92);backdrop-filter:blur(20px);z-index:200;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--tierra-media);border:1px solid rgba(196,151,59,.2);border-radius:24px;padding:3rem;max-width:500px;width:92%;text-align:center;animation:modalIn .6s cubic-bezier(.16,1,.3,1)}
+.modal-icon{width:78px;height:78px;margin:0 auto 1.4rem;background:linear-gradient(135deg,rgba(45,74,46,.3),rgba(196,151,59,.2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.4rem;animation:pulse 2s infinite}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:400;margin-bottom:.8rem}
+.modal p{font-size:.9rem;font-weight:300;color:var(--marfil-tenue);line-height:1.7;margin-bottom:.4rem}
+.modal-year{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:var(--ocre);margin:.8rem 0}
+.modal-share{display:flex;gap:.7rem;justify-content:center;margin-top:1.3rem;flex-wrap:wrap}
+.modal-share a{display:flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border:1px solid rgba(196,151,59,.2);border-radius:8px;color:var(--marfil);text-decoration:none;font-size:.8rem;transition:all .3s}
+.modal-share a:hover{border-color:var(--ocre);background:var(--cristal)}
+.modal-close{margin-top:1.5rem;padding:.75rem 2rem;background:transparent;border:1px solid var(--ocre);color:var(--ocre);border-radius:8px;font-family:'Jost',sans-serif;font-size:.88rem;cursor:pointer;transition:all .3s}
+.modal-close:hover{background:rgba(196,151,59,.1)}
+
+/* ══ CHATBOT ══ */
+.chatbot-btn{position:fixed;bottom:2rem;right:2rem;z-index:150;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));border:2px solid rgba(196,151,59,.3);color:var(--marfil);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .4s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.chatbot-btn:hover{transform:scale(1.1)}
+.chatbot-panel{display:none;position:fixed;bottom:5.5rem;right:2rem;z-index:150;width:360px;max-height:500px;background:var(--tierra-media);border:1px solid rgba(196,151,59,.2);border-radius:20px;overflow:hidden;box-shadow:0 10px 50px rgba(0,0,0,.5);flex-direction:column;animation:modalIn .4s cubic-bezier(.16,1,.3,1)}
+.chatbot-panel.active{display:flex}
+.chatbot-header{padding:1rem 1.3rem;background:rgba(196,151,59,.08);border-bottom:1px solid rgba(196,151,59,.15);display:flex;align-items:center;gap:.75rem}
+.chatbot-avatar{width:32px;height:32px;border-radius:50%;background:var(--musgo);display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.chatbot-name{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500}
+.chatbot-status{font-size:.62rem;color:var(--musgo-glow);display:flex;align-items:center;gap:.3rem}
+.chatbot-status::before{content:'';width:5px;height:5px;background:var(--musgo-glow);border-radius:50%}
+.chatbot-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;max-height:300px}
+.chat-msg{max-width:88%;padding:.7rem .9rem;border-radius:14px;font-size:.84rem;line-height:1.55;font-weight:300}
+.chat-msg.bot{background:var(--cristal);border:1px solid rgba(196,151,59,.1);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:rgba(45,74,46,.3);border:1px solid rgba(45,74,46,.3);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-options{display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.4rem}
+.chat-opt-btn{padding:.32rem .7rem;border:1px solid rgba(196,151,59,.22);border-radius:100px;background:transparent;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;cursor:pointer;transition:all .3s}
+.chat-opt-btn:hover{background:rgba(196,151,59,.1)}
+.chatbot-input{display:flex;gap:.4rem;padding:.85rem 1rem;border-top:1px solid rgba(196,151,59,.1)}
+.chatbot-input input{flex:1;background:rgba(13,11,8,.5);border:1px solid rgba(196,151,59,.15);border-radius:100px;padding:.5rem .9rem;font-family:'Jost',sans-serif;font-size:.82rem;color:var(--marfil);outline:none}
+.chatbot-input input::placeholder{color:rgba(240,230,211,.3)}
+.chatbot-input input:focus{border-color:var(--ocre)}
+.chatbot-input button{width:32px;height:32px;border-radius:50%;background:var(--ocre);border:none;color:var(--tierra);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ══ FOOTER ══ */
+footer{position:relative;z-index:1;padding:3.5rem 2rem 2rem;border-top:1px solid rgba(196,151,59,.1)}
+.footer-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--ocre);display:flex;align-items:center;gap:.5rem}
+.footer-logo svg{width:26px;height:26px}
+.footer-tagline{font-size:.82rem;color:var(--marfil-tenue);font-weight:300;margin-top:.5rem;line-height:1.6;max-width:270px}
+.footer-social{display:flex;gap:.7rem;margin-top:1.2rem}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s;text-decoration:none}
+.footer-social a:hover{background:var(--cristal-hover);border-color:var(--ocre)}
+.footer-social svg{width:13px;height:13px;fill:var(--marfil)}
+.footer-col h4{font-family:'Cormorant Garamond',serif;font-size:.98rem;font-weight:500;color:var(--ocre);margin-bottom:.85rem}
+.footer-col a{display:block;color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;font-weight:300;padding:.25rem 0;transition:color .3s}
+.footer-col a:hover{color:var(--ocre)}
+.footer-bottom{max-width:1060px;margin:2.2rem auto 0;padding-top:1.2rem;border-top:1px solid rgba(196,151,59,.08);display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.7rem;color:var(--marfil-tenue);font-weight:300}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(196,151,59,.2)}50%{box-shadow:0 0 0 14px rgba(196,151,59,0)}}
+
+@media(max-width:860px){.deposit-layout{grid-template-columns:1fr}.sidebar{position:static}}
+@media(max-width:680px){
+  .top-nav{padding:.9rem 1.2rem}.nav-links{display:none}
+  .page-header{padding:7rem 1.5rem 3rem}
+  .deposit-layout{padding:0 1.5rem 4rem}
+  .form-wrap{padding:1.8rem 1.4rem}
+  .type-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-inner{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:.5rem;text-align:center}
+  .chatbot-panel{right:.5rem;left:.5rem;width:auto;bottom:5rem}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<!-- ══ NAV ══ -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs>
+      <line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/>
+      <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#nrg)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <path d="M108 132 Q109 110 110 72" stroke="url(#ntg)" stroke-width="2.8" stroke-linecap="round"/>
+      <path d="M110 90 Q92 76 70 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M110 90 Q128 76 150 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
+    </svg>
+    THANOTECTAS <span>Guardianes del Umbral</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="oraculo.html">Oráculo</a></li>
+    <li><a href="depositar.html" class="active">Depositar</a></li>
+    <li><a href="planes.html">Planes</a></li>
+    <li><a href="archivo.html">Archivo</a></li>
+    <li><a href="guardianes.html">Guardianes</a></li>
+    <div class="nav-social">
+      <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+      <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <a href="depositar.html" class="nav-cta">🌿 Depositar legado</a>
+  </ul>
+</nav>
+
+<!-- ══ PAGE HEADER ══ -->
+<div class="page-header">
+  <p class="page-eyebrow">Deposita tu legado</p>
+  <h1 class="page-title">Escríbele al futuro.<br><em>Sella tu voz en el tiempo.</em></h1>
+  <p class="page-sub">Tu mensaje viajará intacto a través del tiempo. Nadie podrá leerlo hasta el año que elijas — ni siquiera nosotros.</p>
+</div>
+
+<!-- ══ LAYOUT ══ -->
+<div class="deposit-layout">
+
+  <!-- FORM -->
+  <div>
+    <form id="legacy-form" onsubmit="submitForm(event)">
+
+      <!-- Identidad -->
+      <div class="form-wrap" style="margin-bottom:1.5rem">
+        <div class="form-section-title">✦ &nbsp; Sobre ti</div>
+
+        <div class="form-group">
+          <label class="form-label">Tu nombre o seudónimo</label>
+          <input type="text" class="form-input" id="dep-name" required placeholder="Guardián anónimo, tu nombre, o un alias…" maxlength="80">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo electrónico <span>Para enviarte el certificado de depósito</span></label>
+          <input type="email" class="form-input" id="dep-email" required placeholder="tu@correo.com">
+        </div>
+      </div>
+
+      <!-- Legado -->
+      <div class="form-wrap" style="margin-bottom:1.5rem">
+        <div class="form-section-title">✦ &nbsp; Tu legado</div>
+
+        <div class="form-group">
+          <label class="form-label">Tipo de legado</label>
+          <div class="type-grid">
+            <div class="type-opt active" onclick="selectType(this,'carta')"><div class="type-icon">✉️</div><div class="type-name">Carta</div></div>
+            <div class="type-opt" onclick="selectType(this,'idea')"><div class="type-icon">💡</div><div class="type-name">Idea</div></div>
+            <div class="type-opt" onclick="selectType(this,'memoria')"><div class="type-icon">🌿</div><div class="type-name">Memoria</div></div>
+            <div class="type-opt" onclick="selectType(this,'promesa')"><div class="type-icon">🕯️</div><div class="type-name">Promesa</div></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tu legado al futuro</label>
+          <textarea class="form-textarea" id="dep-message" required maxlength="500" placeholder="Escribe aquí lo que quieres que el futuro reciba…&#10;&#10;Una carta a alguien que aún no ha nacido, una idea que merece sobrevivir, un recuerdo que no debe perderse, o una promesa al mundo que viene." oninput="updateCount()"></textarea>
+          <div class="char-row">
+            <span class="char-hint">Plan gratuito: hasta 500 caracteres</span>
+            <span class="char-count" id="char-count">0 / 500</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tiempo y visibilidad -->
+      <div class="form-wrap" style="margin-bottom:1.5rem">
+        <div class="form-section-title">✦ &nbsp; Cuándo y cómo se abrirá</div>
+
+        <div class="form-group">
+          <label class="form-label">Año de apertura</label>
+          <div class="year-grid">
+            <button type="button" class="year-chip active" onclick="selectYear(this,2030)">2030</button>
+            <button type="button" class="year-chip" onclick="selectYear(this,2035)">2035</button>
+            <button type="button" class="year-chip locked" onclick="selectYear(this,2040)">2040</button>
+            <button type="button" class="year-chip locked" onclick="selectYear(this,2050)">2050</button>
+            <button type="button" class="year-chip locked" onclick="selectYear(this,2060)">2060</button>
+            <button type="button" class="year-chip locked" onclick="selectYear(this,2075)">2075</button>
+            <button type="button" class="year-chip locked" onclick="selectYear(this,2100)">2100</button>
+          </div>
+          <p style="font-size:.72rem;color:var(--marfil-tenue);margin-top:.6rem;font-weight:300">Los años 🔒 requieren plan Guardián ($5) o Legado Eterno ($19). <a href="planes.html" style="color:var(--ocre);text-decoration:none">Ver planes →</a></p>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Visibilidad al abrirse</label>
+          <div class="vis-grid">
+            <div class="vis-opt active" onclick="selectVis(this,'publico')">
+              <div class="vis-title">🌍 Público</div>
+              <div class="vis-desc">Visible para todos en el Archivo de Thanotectas cuando llegue el año</div>
+            </div>
+            <div class="vis-opt" onclick="selectVis(this,'privado')">
+              <div class="vis-title">🔐 Privado</div>
+              <div class="vis-desc">Solo accesible con un código que enviamos a tu correo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="submit-btn" id="submit-btn">🌿 Sellar mi legado</button>
+      <p style="font-size:.72rem;color:var(--marfil-tenue);text-align:center;margin-top:.8rem;line-height:1.55">Al sellar tu legado aceptas que no podrá ser modificado ni leído hasta el año elegido. <a href="planes.html" style="color:var(--ocre);text-decoration:none">Ver términos →</a></p>
+
+    </form>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Qué pasa después -->
+    <div class="side-card">
+      <div class="side-title">¿Qué pasa después de sellar?</div>
+      <div class="side-item"><div class="side-icon">📧</div><div class="side-text">Recibes un <strong>certificado digital de depósito</strong> en tu correo con el año de apertura y tu código de seguimiento.</div></div>
+      <div class="side-item"><div class="side-icon">🔒</div><div class="side-text">Tu legado queda <strong>cifrado inmediatamente</strong>. Nadie — ni nosotros — puede acceder al contenido.</div></div>
+      <div class="side-item"><div class="side-icon">📚</div><div class="side-text">Se respalda en <strong>múltiples servidores</strong> con redundancia geográfica para garantizar su permanencia.</div></div>
+      <div class="side-item"><div class="side-icon">📬</div><div class="side-text">Al llegar el año elegido, tu legado se <strong>desbloquea automáticamente</strong> y recibes una notificación.</div></div>
+    </div>
+
+    <!-- Ampliar -->
+    <div class="side-card">
+      <div class="side-title">¿Quieres más espacio y más años?</div>
+      <a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank" class="plan-mini">
+        <div class="plan-mini-header"><span class="plan-mini-name">🛡️ Guardián del Umbral</span><span class="plan-mini-price">$5 USD</span></div>
+        <div class="plan-mini-desc">5 legados · 5.000 caracteres · hasta 2075 · Muro de Guardianes</div>
+      </a>
+      <a href="https://checkout.bold.co/payment/LNK_RHWIG3C02J" target="_blank" class="plan-mini">
+        <div class="plan-mini-header"><span class="plan-mini-name">♾️ Legado Eterno</span><span class="plan-mini-price">$19 USD</span></div>
+        <div class="plan-mini-desc">Ilimitados · Sin límite de caracteres · hasta 2100 · Ceremonias</div>
+      </a>
+      <p style="font-size:.72rem;color:var(--marfil-tenue);line-height:1.5;margin-top:.4rem">Pagos únicos, sin suscripciones. Procesados por Bold.co de forma segura.</p>
+    </div>
+
+    <!-- Oráculo -->
+    <div class="side-card" style="text-align:center;background:linear-gradient(160deg,rgba(45,74,46,.12),rgba(196,151,59,.04))">
+      <div style="font-size:1.6rem;margin-bottom:.6rem">🔮</div>
+      <div class="side-title" style="text-align:center;margin-bottom:.5rem">Oráculo del Umbral</div>
+      <p style="font-size:.82rem;font-weight:300;color:var(--marfil-tenue);line-height:1.6;margin-bottom:1rem">¿Quieres honrar algo que la Tierra está perdiendo? Prueba el Oráculo — gratis, sin registro.</p>
+      <a href="oraculo.html" style="display:inline-block;padding:.6rem 1.4rem;border:1px solid rgba(196,151,59,.3);border-radius:8px;color:var(--ocre);text-decoration:none;font-size:.8rem;transition:all .3s" onmouseover="this.style.background='rgba(196,151,59,.08)'" onmouseout="this.style.background='transparent'">✦ Ir al Oráculo →</a>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">🌿</div>
+    <h2>Tu legado ha sido sellado</h2>
+    <p>Tu voz viajará intacta a través del tiempo.</p>
+    <div class="modal-year" id="modal-year">2030</div>
+    <p>Nadie podrá leerlo hasta entonces. Ni siquiera nosotros.<br>Revisa tu correo — te enviamos el certificado de depósito.</p>
+    <div class="modal-share">
+      <a href="#" onclick="shareX();return false">𝕏 Compartir en X</a>
+      <a href="https://instagram.com/thanotectas" target="_blank">📸 Instagram</a>
+    </div>
+    <button class="modal-close" onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- ══ CHATBOT ══ -->
+<button class="chatbot-btn" onclick="toggleChat()">🌿</button>
+<div class="chatbot-panel" id="chat-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🌿</div>
+    <div><div class="chatbot-name">Guardián del Umbral</div><div class="chatbot-status">En línea</div></div>
+    <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;color:var(--marfil-tenue);font-size:.95rem;cursor:pointer">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chat-messages">
+    <div class="chat-msg bot">Estás a punto de sellar tu legado 🌿 ¿Tienes alguna duda antes de hacerlo?</div>
+    <div class="chat-msg bot">
+      <div class="chat-options">
+        <button class="chat-opt-btn" onclick="chatQ('quien')">¿Quién puede leerlo?</button>
+        <button class="chat-opt-btn" onclick="chatQ('modificar')">¿Puedo modificarlo?</button>
+        <button class="chat-opt-btn" onclick="chatQ('gratis')">¿El gratuito es real?</button>
+        <button class="chat-opt-btn" onclick="chatQ('anonimo')">¿Puedo ser anónimo?</button>
+        <button class="chat-opt-btn" onclick="chatQ('apertura')">¿Cómo se abre?</button>
+        <button class="chat-opt-btn" onclick="chatQ('mas-espacio')">Necesito más espacio</button>
+        <button class="chat-opt-btn" onclick="chatQ('contacto')">Hablar con alguien</button>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chat-input" placeholder="Escribe tu duda…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">→</button>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">
+        <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ftg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="frg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#frg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#ftg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>
+        THANOTECTAS
+      </div>
+      <p class="footer-tagline">Guardianes del Umbral. Un movimiento de duelo ecológico y legado para quienes sienten el peso de lo que se está perdiendo.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="mailto:info@thanotectas.com"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Explorar</h4><a href="oraculo.html">✦ Oráculo del Umbral</a><a href="depositar.html">Depositar legado</a><a href="planes.html">Planes y precios</a><a href="archivo.html">Archivo de legados</a><a href="guardianes.html">Muro de Guardianes</a></div>
+    <div class="footer-col"><h4>Apoyar</h4><a href="https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ" target="_blank">Guardián — $5 USD</a><a href="https://checkout.bold.co/payment/LNK_RHWIG3C02J" target="_blank">Legado Eterno — $19 USD</a><a href="https://vaki.co/vaki/thanotectas-la-c-psula-del-tiempo-para-el-planeta" target="_blank">Vaki</a><a href="https://ko-fi.com/thanotectas" target="_blank">Ko-fi</a></div>
+    <div class="footer-col"><h4>Contacto</h4><a href="mailto:info@thanotectas.com">info@thanotectas.com</a><a href="https://instagram.com/thanotectas" target="_blank">@thanotectas</a><a href="https://x.com/thanotectas" target="_blank">X / Twitter</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Thanotectas — Guardianes del Umbral · Colombia</p>
+    <p>Todo legado viaja sellado. Toda voz merece ser escuchada.</p>
+  </div>
+</footer>
+
+<script>
+// Stars
+const cv=document.getElementById('stars-canvas'),cx=cv.getContext('2d');let st=[];
+function initS(){cv.width=window.innerWidth;cv.height=window.innerHeight;st=[];for(let i=0;i<Math.floor(cv.width*cv.height/8000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
+function drawS(){cx.clearRect(0,0,cv.width,cv.height);const t=Date.now();st.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();});requestAnimationFrame(drawS);}
+initS();drawS();window.addEventListener('resize',initS);
+
+// Form state
+let selType='carta', selYear=2030, selVis='publico';
+const FREE_YEARS=[2030,2035];
+
+function selectType(el,t){document.querySelectorAll('.type-opt').forEach(e=>e.classList.remove('active'));el.classList.add('active');selType=t;}
+
+function selectYear(el,y){
+  document.querySelectorAll('.year-chip').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  selYear=y;
+  const btn=document.getElementById('submit-btn');
+  if(!FREE_YEARS.includes(y)){
+    btn.className='submit-btn upgrade';
+    btn.textContent='🔒 Desbloquear año '+y+' — desde $5';
+  } else {
+    btn.className='submit-btn';
+    btn.textContent='🌿 Sellar mi legado';
+  }
+}
+
+function selectVis(el,v){document.querySelectorAll('.vis-opt').forEach(e=>e.classList.remove('active'));el.classList.add('active');selVis=v;}
+
+function updateCount(){
+  const msg=document.getElementById('dep-message'),len=msg.value.length,max=parseInt(msg.maxLength),el=document.getElementById('char-count');
+  el.textContent=len+' / '+max;
+  el.className='char-count'+(len>=max?'limit':len>=max*.85?' warn':'');
+}
+
+function submitForm(e){
+  e.preventDefault();
+  if(!FREE_YEARS.includes(selYear)){window.open('https://checkout.bold.co/payment/LNK_I8ZLLJ4TBQ','_blank');return;}
+  const nombre=document.getElementById('dep-name').value;
+  const email=document.getElementById('dep-email').value;
+  const mensaje=document.getElementById('dep-message').value;
+  // Enviar a Google Sheets
+  fetch('https://script.google.com/macros/s/AKfycbyoHf1aPFDR25hDpezlpvX3OGdn825hQ74khWFwhjkw1cNujVI8nOSAYvXGqmNz-bs/exec',{
+    method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({nombre,email,tipo:selType,mensaje,año:selYear,visibilidad:selVis})
+  }).catch(_=>{});
+  document.getElementById('modal-year').textContent=selYear;
+  document.getElementById('modal').classList.add('active');
+  document.getElementById('legacy-form').reset();
+  document.querySelectorAll('.type-opt').forEach((e,i)=>e.classList.toggle('active',i===0));
+  document.querySelectorAll('.year-chip').forEach((e,i)=>e.classList.toggle('active',i===0));
+  document.querySelectorAll('.vis-opt').forEach((e,i)=>e.classList.toggle('active',i===0));
+  selType='carta';selYear=2030;selVis='publico';
+  document.getElementById('char-count').textContent='0 / 500';
+  document.getElementById('submit-btn').className='submit-btn';
+  document.getElementById('submit-btn').textContent='🌿 Sellar mi legado';
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('active');}
+
+function shareX(){
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('Acabo de sellar un legado para el año '+document.getElementById('modal-year').textContent+'. Mi voz viajará al futuro 🌿 thanotectas.com/depositar'),'_blank');
+}
+
+// Chatbot
+const BOT={
+  'quien':`Solo tú decides quién puede leer tu legado:\n\n🌍 PÚBLICO: cuando llegue el año, aparece en el Archivo de Thanotectas — visible para todos.\n\n🔐 PRIVADO: solo accesible con un código que enviamos a tu correo, para que lo compartas con quien quieras.\n\nDurante el tiempo de espera, nadie puede leerlo — ni tú, ni nosotros.`,
+  'modificar':`No. Una vez que sellas tu legado, es permanente. 🔒\n\nEsto no es un error — es el corazón del proyecto. La imposibilidad de modificar es lo que le da peso y significado al acto de depositar.\n\nSi necesitas decir más, puedes depositar un nuevo legado complementario.`,
+  'gratis':`Sí, completamente real. 🌱\n\nEl plan Semilla te permite depositar 1 legado de hasta 500 caracteres para el año 2030 o 2035, sin tarjeta ni pago.\n\nPuedes hacerlo ahora mismo en este formulario.`,
+  'anonimo':`Sí. En el campo "nombre o seudónimo" puedes escribir cualquier cosa:\n\n• Un alias ("Guardián del Putumayo")\n• "Anónimo"\n• Un apodo\n• Tu nombre real\n\nLa única información que sí necesitamos es tu correo — solo para enviarte el certificado de depósito.`,
+  'apertura':`Cuando llegue el año:\n\n📬 Legado PÚBLICO: aparece automáticamente en el Archivo de Thanotectas.\n🔐 Legado PRIVADO: te enviamos un código al correo para acceder.\n📧 Recibes una notificación de apertura.\n\nPuedes ver los legados públicos ya abiertos en:\nthanotectas.com/archivo`,
+  'mas-espacio':`El plan gratuito incluye 500 caracteres. Para más necesitas:\n\n🛡️ Guardián ($5 USD):\n• 5 legados · 5.000 caracteres · hasta 2075\n\n♾️ Eterno ($19 USD):\n• Ilimitados · Sin límite · hasta 2100\n\nPuedes adquirirlos en:\nthanotectas.com/planes`,
+  'contacto':`Con mucho gusto 🌿\n\n✉️ info@thanotectas.com\n📸 @thanotectas (Instagram)\n𝕏 @thanotectas (Twitter)\n\nRespondemos en 24–48 horas.`,
+  'default':`Gracias por tu pregunta 🌿\n\nPara más ayuda escríbenos a:\ninfo@thanotectas.com`
+};
+const LABELS={'quien':'¿Quién puede leerlo?','modificar':'¿Puedo modificarlo?','gratis':'¿El gratuito es real?','anonimo':'¿Puedo ser anónimo?','apertura':'¿Cómo se abre?','mas-espacio':'Necesito más espacio','contacto':'Hablar con alguien'};
+
+function toggleChat(){document.getElementById('chat-panel').classList.toggle('active');}
+function addMsg(t,r){const m=document.getElementById('chat-messages'),d=document.createElement('div');d.className='chat-msg '+r;d.style.whiteSpace='pre-line';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function chatQ(k){addMsg(LABELS[k]||k,'user');setTimeout(()=>addMsg(BOT[k]||BOT.default,'bot'),700);}
+function sendChat(){
+  const i=document.getElementById('chat-input'),t=i.value.trim();if(!t)return;
+  addMsg(t,'user');i.value='';
+  const l=t.toLowerCase();let k='default';
+  if(l.includes('quién')||l.includes('quien')||l.includes('leer')||l.includes('lee'))k='quien';
+  else if(l.includes('modific')||l.includes('cambiar')||l.includes('editar')||l.includes('borrar'))k='modificar';
+  else if(l.includes('gratis')||l.includes('gratuito')||l.includes('free')||l.includes('costo'))k='gratis';
+  else if(l.includes('anónim')||l.includes('anonimo')||l.includes('identidad')||l.includes('nombre'))k='anonimo';
+  else if(l.includes('abre')||l.includes('apertura')||l.includes('cuándo'))k='apertura';
+  else if(l.includes('espacio')||l.includes('caracter')||l.includes('más')||l.includes('plan'))k='mas-espacio';
+  else if(l.includes('contact')||l.includes('correo')||l.includes('hablar'))k='contacto';
+  setTimeout(()=>addMsg(BOT[k],'bot'),800);
+}
+</script>
+</body>
+</html>
