@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   let poema = "";
   try {
     const modelText = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash-latest",
       systemInstruction: `Eres el Oráculo del Umbral de Thanotectas — Guardianes del Umbral.
 Escribes inscripciones poéticas de cápsulas del tiempo para honrar lo que la Tierra está perdiendo.
 Usa primera persona plural (nosotros, los que quedamos).
