@@ -322,6 +322,7 @@ main {
       <div class="share-btns">
         <button class="share-btn" onclick="shareX()">Compartir en X</button>
         <button class="share-btn" id="copy-btn" onclick="copyShare()">Copiar texto</button>
+        <button class="share-btn" onclick="regenerar()">🔄 Nueva versión</button>
         <button class="btn-ghost" onclick="reset()">Inscribir otra</button>
       </div>
     </div>
@@ -467,7 +468,12 @@ async function invoke(){
 }
 
 // ── Compartir ──────────────────────────────────────────
-function shareX(){
+function regenerar(){
+  // Vuelve a invocar con los mismos datos guardados
+  invoke();
+}
+
+
   const txt = encodeURIComponent(document.getElementById('share-txt').textContent);
   window.open('https://twitter.com/intent/tweet?text='+txt, '_blank');
 }
