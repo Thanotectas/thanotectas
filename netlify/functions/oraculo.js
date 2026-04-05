@@ -9,9 +9,9 @@ exports.handler = async (event) => {
     const { sujeto, testimonio } = JSON.parse(event.body);
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    // ── 1. POEMA — gemini-1.5-flash ──────────────────────────
+    // ── 1. POEMA — gemini-2.0-flash ──────────────────────────
     const modelText = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction: "Eres el Oráculo del Umbral. Crea una inscripción poética breve (máx 60 palabras) para algo que la Tierra pierde. Tono: místico, solemne, melancólico. Usa un español elegante de Colombia."
     });
 
