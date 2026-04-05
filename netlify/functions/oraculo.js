@@ -9,42 +9,37 @@ exports.handler = async (event) => {
     const { sujeto, testimonio } = JSON.parse(event.body);
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    // ── 1. POEMA — gemini-1.5-flash (modelo estable) ──
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // ── 1. POEMA ─────────────────────────────────────────
+    // gemini-2.0-flash-exp funciona en v1beta con facturación activa
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
     const prompt = `Actúa como el Oráculo del Umbral de Thanotectas.
 Escribe una cápsula poética y mística breve (máximo 60 palabras) sobre la pérdida de: ${sujeto}.
-${testimonio ? `Contexto del guardián: ${testimonio}.` : ""}
+${testimonio ? `Testimonio del guardián: ${testimonio}.` : ""}
 Tono: solemne, melancólico, místico. Español elegante de Colombia.
 Usa primera persona plural (nosotros, los que quedamos).
 Cierra con un verso corto en latín, quechua o lengua indígena colombiana.
 Sin asteriscos, sin comillas, sin markdown. Solo el texto poético.`;
 
-    const result   = await model.generateContent(prompt);
-    const response = await result.response;
-    const poema    = response.text().trim();
+    const result = await model.generateContent(prompt);
+    const poema  = result.response.text().trim();
 
-    // ── 2. IMAGEN — intento separado, no bloquea el poema ──
+    // ── 2. IMAGEN — fallo silencioso, no cancela el poema ──
     let imagen = "";
     try {
       const modelImage = genAI.getGenerativeModel({
         model: "imagen-3.0-generate-002"
       });
-
       const resultImage = await modelImage.generateImages({
         prompt: `Una visión artística, oscura y etérea de "${sujeto}" emergiendo de neblina mística.
-                 Estilo Thanotectas, colores ocre y musgo oscuro, cinematográfico, sagrado,
-                 sin texto, sin personas, fotorrealista.`,
+                 Colores ocre y musgo oscuro, cinematográfico, sagrado, sin texto, sin personas.`,
         numberOfImages: 1,
         aspectRatio: "16:9",
       });
-
       const bytes = resultImage.images?.[0]?.imageBytes;
       if (bytes) imagen = `data:image/png;base64,${bytes}`;
-
     } catch (imgErr) {
-      // La imagen falla silenciosamente — el poema siempre llega
-      console.warn("[Oráculo] Imagen no generada:", imgErr.message);
+      console.warn("[Imagen] No generada:", imgErr.message);
     }
 
     return {
