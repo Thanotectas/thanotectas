@@ -1,4 +1,5 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+// Sin SDK — llamada directa a la API REST de Gemini
+// Esto evita el problema de v1beta del SDK de Node.js
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -7,11 +8,7 @@ exports.handler = async (event) => {
 
   try {
     const { sujeto, testimonio } = JSON.parse(event.body);
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    // ── 1. POEMA ─────────────────────────────────────────
-    // gemini-2.0-flash-exp funciona en v1beta con facturación activa
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    const API_KEY = process.env.GEMINI_API_KEY;
 
     const prompt = `Actúa como el Oráculo del Umbral de Thanotectas.
 Escribe una cápsula poética y mística breve (máximo 60 palabras) sobre la pérdida de: ${sujeto}.
@@ -21,26 +18,31 @@ Usa primera persona plural (nosotros, los que quedamos).
 Cierra con un verso corto en latín, quechua o lengua indígena colombiana.
 Sin asteriscos, sin comillas, sin markdown. Solo el texto poético.`;
 
-    const result = await model.generateContent(prompt);
-    const poema  = result.response.text().trim();
+    // Llamada directa a v1 (no v1beta) — evita el error del SDK
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: 200,
+            temperature: 0.9,
+          }
+        })
+      }
+    );
 
-    // ── 2. IMAGEN — fallo silencioso, no cancela el poema ──
-    let imagen = "";
-    try {
-      const modelImage = genAI.getGenerativeModel({
-        model: "imagen-3.0-generate-002"
-      });
-      const resultImage = await modelImage.generateImages({
-        prompt: `Una visión artística, oscura y etérea de "${sujeto}" emergiendo de neblina mística.
-                 Colores ocre y musgo oscuro, cinematográfico, sagrado, sin texto, sin personas.`,
-        numberOfImages: 1,
-        aspectRatio: "16:9",
-      });
-      const bytes = resultImage.images?.[0]?.imageBytes;
-      if (bytes) imagen = `data:image/png;base64,${bytes}`;
-    } catch (imgErr) {
-      console.warn("[Imagen] No generada:", imgErr.message);
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`Gemini API ${res.status}: ${errBody}`);
     }
+
+    const data  = await res.json();
+    const poema = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+
+    if (!poema) throw new Error("Respuesta vacía de Gemini");
 
     return {
       statusCode: 200,
@@ -48,11 +50,11 @@ Sin asteriscos, sin comillas, sin markdown. Solo el texto poético.`;
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify({ poema, imagen }),
+      body: JSON.stringify({ poema, imagen: "" }),
     };
 
   } catch (error) {
-    console.error("[Oráculo] Error:", error.message);
+    console.error("[Oráculo]", error.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
