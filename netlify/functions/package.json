@@ -1,7 +1,4 @@
 {
   "name": "thanotectas-functions",
-  "version": "1.0.0",
-  "dependencies": {
-    "@google/generative-ai": "^0.21.0"
-  }
+  "version": "1.0.0"
 }
