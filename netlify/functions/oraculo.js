@@ -5,80 +5,62 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: "Método no permitido" };
   }
 
-  let sujeto = "", testimonio = "";
   try {
-    const body = JSON.parse(event.body);
-    sujeto     = (body.sujeto     || "").trim();
-    testimonio = (body.testimonio || "").trim();
-  } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Body JSON inválido" }) };
-  }
+    const { sujeto, testimonio } = JSON.parse(event.body);
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  if (!sujeto) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'El campo "sujeto" es obligatorio' }) };
-  }
+    // ── 1. POEMA — gemini-1.5-flash (modelo estable) ──
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: "GEMINI_API_KEY no configurada" }) };
-  }
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  // ── 1. POEMA ─────────────────────────────────────────
-  let poema = "";
-  try {
-    const modelText = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
-      systemInstruction: `Eres el Oráculo del Umbral de Thanotectas — Guardianes del Umbral.
-Escribes inscripciones poéticas de cápsulas del tiempo para honrar lo que la Tierra está perdiendo.
+    const prompt = `Actúa como el Oráculo del Umbral de Thanotectas.
+Escribe una cápsula poética y mística breve (máximo 60 palabras) sobre la pérdida de: ${sujeto}.
+${testimonio ? `Contexto del guardián: ${testimonio}.` : ""}
+Tono: solemne, melancólico, místico. Español elegante de Colombia.
 Usa primera persona plural (nosotros, los que quedamos).
-La voz es colectiva, del futuro, que recuerda con serenidad y amor ecológico profundo.
-Máximo 60 palabras. Tono: místico, solemne, melancólico. Español elegante de Colombia.
 Cierra con un verso corto en latín, quechua o lengua indígena colombiana.
-Sin asteriscos, sin comillas, sin markdown.`
-    });
+Sin asteriscos, sin comillas, sin markdown. Solo el texto poético.`;
 
-    const resultado = await modelText.generateContent(
-      `Inscribe en el umbral: ${sujeto}. ${testimonio ? `Testimonio del guardián: ${testimonio}` : ""}`
-    );
-    poema = resultado.response.text().trim();
+    const result   = await model.generateContent(prompt);
+    const response = await result.response;
+    const poema    = response.text().trim();
 
-  } catch (err) {
-    console.error("[Oráculo] Error generando poema:", err.message);
+    // ── 2. IMAGEN — intento separado, no bloquea el poema ──
+    let imagen = "";
+    try {
+      const modelImage = genAI.getGenerativeModel({
+        model: "imagen-3.0-generate-002"
+      });
+
+      const resultImage = await modelImage.generateImages({
+        prompt: `Una visión artística, oscura y etérea de "${sujeto}" emergiendo de neblina mística.
+                 Estilo Thanotectas, colores ocre y musgo oscuro, cinematográfico, sagrado,
+                 sin texto, sin personas, fotorrealista.`,
+        numberOfImages: 1,
+        aspectRatio: "16:9",
+      });
+
+      const bytes = resultImage.images?.[0]?.imageBytes;
+      if (bytes) imagen = `data:image/png;base64,${bytes}`;
+
+    } catch (imgErr) {
+      // La imagen falla silenciosamente — el poema siempre llega
+      console.warn("[Oráculo] Imagen no generada:", imgErr.message);
+    }
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify({ poema, imagen }),
+    };
+
+  } catch (error) {
+    console.error("[Oráculo] Error:", error.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ error: error.message }),
     };
   }
-
-  // ── 2. IMAGEN ────────────────────────────────────────
-  // Intento separado — si falla, el poema igual se entrega
-  let imagen = "";
-  try {
-    const modelImage = genAI.getGenerativeModel({
-      model: "imagen-3.0-generate-002"
-    });
-
-    const resultImage = await modelImage.generateImages({
-      prompt: `Una visión artística, oscura y etérea de "${sujeto}" emergiendo de neblina mística. 
-               Estilo Thanotectas, colores ocre y musgo oscuro, cinematográfico, sagrado, 
-               sin texto, sin personas, fotorrealista.`,
-      numberOfImages: 1,
-      aspectRatio: "16:9",
-    });
-
-    const bytes = resultImage.images?.[0]?.imageBytes;
-    if (bytes) imagen = `data:image/png;base64,${bytes}`;
-
-  } catch (imgErr) {
-    console.warn("[Oráculo] Imagen no generada:", imgErr.message);
-    // No interrumpe — imagen queda vacía string
-  }
-
-  return {
-    statusCode: 200,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ poema, imagen }),
-  };
 };
