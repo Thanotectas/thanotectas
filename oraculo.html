@@ -199,6 +199,218 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 </style>
 </head>
 <body>
+
+<!-- ONBOARDING OVERLAY -->
+<div id="onboarding" class="ob-overlay">
+
+  <!-- PASO 1: Bienvenida -->
+  <div class="ob-step ob-active" data-step="1">
+    <div class="ob-glow"></div>
+    <div class="ob-icon">🌿</div>
+    <h2 class="ob-title">Bienvenido al Umbral</h2>
+    <p class="ob-text">Este es el <strong>Oráculo de Thanotectas</strong> — un santuario digital donde puedes inscribir la memoria de aquello que la Tierra está perdiendo.</p>
+    <p class="ob-text ob-dim">Especies, ecosistemas, ríos, sonidos, territorios, saberes ancestrales… todo lo que merece ser recordado.</p>
+    <div class="ob-dots">
+      <span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span>
+    </div>
+    <button class="ob-btn" onclick="obNext()">Continuar →</button>
+  </div>
+
+  <!-- PASO 2: Cómo funciona -->
+  <div class="ob-step" data-step="2">
+    <div class="ob-glow"></div>
+    <div class="ob-icon">✦</div>
+    <h2 class="ob-title">¿Cómo funciona?</h2>
+    <div class="ob-steps-list">
+      <div class="ob-step-item">
+        <span class="ob-step-num">1</span>
+        <div><strong>Elige una categoría</strong><br><span class="ob-dim">🐾 Especies · 🌿 Ecosistemas · 💧 Ríos · 🎵 Sonidos · 🏔 Territorios · 🌺 Saberes</span></div>
+      </div>
+      <div class="ob-step-item">
+        <span class="ob-step-num">2</span>
+        <div><strong>Nombra lo que deseas honrar</strong><br><span class="ob-dim">Escribe el nombre de la especie, lugar o saber que temes que el mundo olvide</span></div>
+      </div>
+      <div class="ob-step-item">
+        <span class="ob-step-num">3</span>
+        <div><strong>El Oráculo inscribe su memoria</strong><br><span class="ob-dim">Genera una cápsula única que puedes guardar, compartir o enviar por correo</span></div>
+      </div>
+    </div>
+    <div class="ob-dots">
+      <span class="ob-dot"></span><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span>
+    </div>
+    <button class="ob-btn" onclick="obNext()">Continuar →</button>
+  </div>
+
+  <!-- PASO 3: Tipos de salida -->
+  <div class="ob-step" data-step="3">
+    <div class="ob-glow"></div>
+    <div class="ob-icon">📜</div>
+    <h2 class="ob-title">6 formas de recordar</h2>
+    <p class="ob-text">Elige cómo quieres que el Oráculo inscriba la memoria:</p>
+    <div class="ob-types-grid">
+      <div class="ob-type-card">📜<br><span>Poema</span></div>
+      <div class="ob-type-card">🔬<br><span>Dato científico</span></div>
+      <div class="ob-type-card">✉️<br><span>Carta al futuro</span></div>
+      <div class="ob-type-card">🕯️<br><span>Obituario</span></div>
+      <div class="ob-type-card">⚠️<br><span>Alerta</span></div>
+      <div class="ob-type-card">🙏<br><span>Ritual</span></div>
+    </div>
+    <p class="ob-text ob-dim" style="font-size:.78rem;margin-top:.6rem">El Poema es gratuito. Los demás tipos se desbloquean con un plan.</p>
+    <div class="ob-dots">
+      <span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span>
+    </div>
+    <button class="ob-btn" onclick="obNext()">Continuar →</button>
+  </div>
+
+  <!-- PASO 4: Ejemplo real -->
+  <div class="ob-step" data-step="4">
+    <div class="ob-glow"></div>
+    <div class="ob-icon">🌊</div>
+    <h2 class="ob-title">Así se ve una cápsula</h2>
+    <div class="ob-demo-capsule">
+      <div class="ob-demo-tipo">CÁPSULA POÉTICA</div>
+      <div class="ob-demo-subject">— DELFÍN ROSADO DEL AMAZONAS —</div>
+      <div class="ob-demo-text">
+Nadaba entre dos mundos: el agua turbia y el mito.
+Los pescadores decían que de noche tomaba forma humana,
+que bailaba en las fiestas ribereñas con sombrero blanco.
+
+Nosotros, los que quedamos, guardamos el eco
+de su aleta cortando el río al amanecer,
+un sonido que era también una oración.
+
+Cuando el último delfín rosado se sumerja sin volver,
+el Amazonas perderá su testigo más antiguo.
+
+<em style="color:#4a8a4b;font-size:.85rem">Yaku mama, kawsay yaku — madre agua, agua de vida.</em>
+      </div>
+      <div class="ob-demo-date">Inscrita el 5 de abril de 2026</div>
+    </div>
+    <div class="ob-dots">
+      <span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot active"></span><span class="ob-dot"></span>
+    </div>
+    <button class="ob-btn" onclick="obNext()">Continuar →</button>
+  </div>
+
+  <!-- PASO 5: Comenzar -->
+  <div class="ob-step" data-step="5">
+    <div class="ob-glow"></div>
+    <div class="ob-orb-container">
+      <div class="ob-orb-demo"></div>
+    </div>
+    <h2 class="ob-title">Tu turno</h2>
+    <p class="ob-text">Tienes <strong>2 inscripciones gratuitas</strong>. Nombra algo que la Tierra está perdiendo y el Oráculo inscribirá su memoria.</p>
+    <p class="ob-text ob-dim" style="font-size:.82rem">Toca el orbe o el botón verde para comenzar.</p>
+    <div class="ob-dots">
+      <span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot active"></span>
+    </div>
+    <button class="ob-btn ob-btn-final" onclick="obClose()">🌿 Inscribir mi primera memoria</button>
+    <button class="ob-skip" onclick="obClose()" style="margin-top:.8rem">Omitir guía</button>
+  </div>
+
+  <!-- Skip button (visible on all steps except last) -->
+  <button class="ob-skip ob-skip-corner" onclick="obClose()">Omitir</button>
+</div>
+
+<style>
+/* ══ ONBOARDING STYLES ═════════════════════════════════ */
+.ob-overlay{position:fixed;inset:0;z-index:9999;background:rgba(10,8,5,.96);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .5s}
+.ob-overlay.hidden{opacity:0;pointer-events:none}
+
+.ob-step{display:none;flex-direction:column;align-items:center;gap:1.1rem;max-width:520px;width:90%;padding:2rem 1.5rem;animation:obFadeIn .6s ease-out}
+.ob-step.ob-active{display:flex}
+@keyframes obFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.ob-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(196,151,59,.08) 0%,transparent 70%);pointer-events:none;top:-80px}
+
+.ob-icon{font-size:2.8rem;margin-bottom:.3rem}
+.ob-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:400;color:#f0e6d3;text-align:center;letter-spacing:.03em}
+.ob-text{font-family:'Jost',sans-serif;font-size:.92rem;color:rgba(240,230,211,.75);text-align:center;line-height:1.75;max-width:440px}
+.ob-text strong{color:#c4973b}
+.ob-dim{color:rgba(240,230,211,.45)!important}
+
+/* Steps list */
+.ob-steps-list{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:400px}
+.ob-step-item{display:flex;gap:.9rem;align-items:flex-start}
+.ob-step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:1px solid #c4973b;color:#c4973b;font-family:'Cormorant Garamond',serif;font-size:1rem;display:flex;align-items:center;justify-content:center;margin-top:.1rem}
+.ob-step-item div{font-size:.85rem;color:rgba(240,230,211,.8);line-height:1.6}
+.ob-step-item strong{color:#f0e6d3}
+
+/* Types grid */
+.ob-types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;width:100%;max-width:360px}
+.ob-type-card{background:rgba(240,230,211,.04);border:1px solid rgba(196,151,59,.15);border-radius:10px;padding:.65rem .4rem;text-align:center;font-size:1.3rem;line-height:1.2}
+.ob-type-card span{font-family:'Jost',sans-serif;font-size:.6rem;color:rgba(240,230,211,.5);letter-spacing:.04em}
+
+/* Demo capsule */
+.ob-demo-capsule{border:1px solid rgba(196,151,59,.25);border-radius:14px;padding:1.6rem 1.4rem;background:rgba(13,11,8,.6);width:100%;max-width:460px}
+.ob-demo-tipo{font-family:'Jost',sans-serif;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:#4a8a4b;text-align:center;margin-bottom:.4rem}
+.ob-demo-subject{font-family:'Jost',sans-serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#c4973b;text-align:center;margin-bottom:1rem}
+.ob-demo-text{font-family:'Cormorant Garamond',Georgia,serif;font-size:.95rem;line-height:1.9;color:#f0e6d3;text-align:center;font-style:italic;white-space:pre-line}
+.ob-demo-date{font-family:'Jost',sans-serif;font-size:.58rem;color:rgba(240,230,211,.35);text-align:center;margin-top:1rem;letter-spacing:.1em}
+
+/* Orb demo */
+.ob-orb-container{display:flex;justify-content:center}
+.ob-orb-demo{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#3d6a3e,#2d4a2e,#060c06);box-shadow:0 0 45px rgba(45,74,46,.3),0 0 90px rgba(196,151,59,.1);animation:orbpulse 4s ease-in-out infinite}
+
+/* Dots */
+.ob-dots{display:flex;gap:.5rem;margin-top:.4rem}
+.ob-dot{width:7px;height:7px;border-radius:50%;background:rgba(196,151,59,.2);transition:all .3s}
+.ob-dot.active{background:#c4973b;transform:scale(1.2)}
+
+/* Buttons */
+.ob-btn{padding:.82rem 2.2rem;background:linear-gradient(135deg,#2d4a2e,#3d6a3e);color:#f0e6d3;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.06em;border:none;border-radius:8px;cursor:pointer;transition:all .3s;margin-top:.5rem}
+.ob-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(45,74,46,.4)}
+.ob-btn-final{background:linear-gradient(135deg,#c4973b,#d4a74b);color:#1a1611;font-weight:600}
+.ob-btn-final:hover{box-shadow:0 8px 28px rgba(196,151,59,.3)}
+
+.ob-skip{background:none;border:none;color:rgba(240,230,211,.3);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;cursor:pointer;transition:color .3s}
+.ob-skip:hover{color:rgba(240,230,211,.6)}
+.ob-skip-corner{position:fixed;top:1.2rem;right:1.5rem}
+
+@media(max-width:580px){
+  .ob-types-grid{grid-template-columns:repeat(2,1fr)}
+  .ob-demo-capsule{padding:1.2rem 1rem}
+  .ob-demo-text{font-size:.85rem}
+}
+</style>
+
+<script>
+/* ══ ONBOARDING LOGIC ══════════════════════════════════ */
+(function(){
+  var OB_KEY='thano_onboarded';
+  var overlay=document.getElementById('onboarding');
+
+  // Si ya vio el onboarding, ocultarlo inmediatamente
+  if(localStorage.getItem(OB_KEY)==='true'){
+    overlay.style.display='none';
+    return;
+  }
+
+  var currentStep=1;
+  var totalSteps=5;
+
+  window.obNext=function(){
+    var current=overlay.querySelector('.ob-step[data-step="'+currentStep+'"]');
+    current.classList.remove('ob-active');
+    currentStep++;
+    if(currentStep>totalSteps){
+      obClose();
+      return;
+    }
+    var next=overlay.querySelector('.ob-step[data-step="'+currentStep+'"]');
+    next.classList.add('ob-active');
+  };
+
+  window.obClose=function(){
+    localStorage.setItem(OB_KEY,'true');
+    overlay.classList.add('hidden');
+    setTimeout(function(){overlay.style.display='none';},500);
+  };
+})();
+</script>
+
+<!-- ═══ FIN ONBOARDING ═══ -->
+
 <canvas id="stars"></canvas>
 
 <!-- PLAN BANNER -->
