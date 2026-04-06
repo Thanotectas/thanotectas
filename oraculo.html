@@ -87,8 +87,10 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .type-btn{display:flex;flex-direction:column;align-items:center;gap:.35rem;padding:.75rem .4rem;background:rgba(45,74,46,.08);border:1px solid rgba(45,74,46,.2);border-radius:10px;cursor:pointer;transition:all .3s;color:var(--marfil-tenue)}
 .type-btn:hover{border-color:rgba(45,74,46,.5);color:var(--marfil)}
 .type-btn.active{border-color:var(--musgo-glow);background:rgba(45,74,46,.2);color:var(--musgo-glow)}
+.type-btn.locked{opacity:.35;pointer-events:none}
 .type-icon{font-size:1.3rem}
 .type-name{font-size:.64rem;letter-spacing:.04em;text-align:center;font-weight:400}
+.type-lock{font-size:.5rem;color:var(--ocre);letter-spacing:.06em}
 
 /* FIELDS */
 .field{width:100%;display:flex;flex-direction:column;gap:.38rem}
@@ -164,14 +166,21 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .paywall-counter-display{text-align:center}
 .paywall-big-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--rojo);line-height:1}
 .paywall-num-label{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--marfil-tenue);margin-top:.2rem}
-.paywall-price-box{text-align:center;padding:1.5rem;background:rgba(196,151,59,.06);border:1px solid rgba(196,151,59,.2);border-radius:14px;width:100%}
-.paywall-amount{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:var(--ocre);line-height:1}
-.paywall-period{font-size:.75rem;color:var(--marfil-tenue);margin-top:.3rem;letter-spacing:.1em}
-.paywall-includes{font-size:.8rem;color:var(--marfil-tenue);margin-top:.6rem;line-height:1.6}
 .paywall-confirm{display:none;background:rgba(196,151,59,.06);border:1px solid rgba(196,151,59,.2);border-radius:10px;padding:1rem 1.2rem;text-align:center;width:100%}
 .paywall-confirm p{font-size:.8rem;color:var(--marfil-tenue);margin-bottom:.7rem}
 .paywall-divider{font-size:.7rem;letter-spacing:.2em;color:var(--marfil-tenue);text-align:center}
 .share-confirm-btn{display:none}
+.pw-plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%}
+.pw-plan-card{border:1px solid rgba(196,151,59,.25);border-radius:14px;padding:1.4rem;text-align:center;background:rgba(196,151,59,.04)}
+.pw-plan-card.featured{border-color:var(--ocre);background:rgba(196,151,59,.08);position:relative}
+.pw-plan-badge{position:absolute;top:-.6rem;left:50%;transform:translateX(-50%);background:var(--ocre);color:var(--tierra);font-size:.52rem;font-weight:600;letter-spacing:.15em;padding:.2rem .7rem;border-radius:10px;white-space:nowrap}
+.pw-plan-tier{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--musgo-glow);margin-bottom:.3rem}
+.pw-plan-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--ocre);line-height:1}
+.pw-plan-period{font-size:.7rem;color:var(--marfil-tenue);margin:.3rem 0 .8rem}
+.pw-plan-features{font-size:.72rem;color:var(--marfil-tenue);line-height:1.7;margin-bottom:1rem;text-align:left}
+
+/* PLAN BANNER */
+.plan-banner{position:fixed;top:48px;width:100%;z-index:99;text-align:center;padding:.5rem;font-size:.7rem;letter-spacing:.05em;background:rgba(45,74,46,.15);color:var(--musgo-glow);display:none}
 
 /* FOOTER */
 .foot{position:relative;z-index:1;text-align:center;padding:2rem;border-top:1px solid rgba(196,151,59,.08);margin-top:2rem}
@@ -185,11 +194,15 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   .bar-link,.bar-cta{display:none}
   .mini-grid{grid-template-columns:1fr}
   .cat-grid,.type-grid{grid-template-columns:repeat(2,1fr)}
+  .pw-plans-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
+
+<!-- PLAN BANNER -->
+<div class="plan-banner" id="plan-banner"></div>
 
 <!-- NAV -->
 <header class="top-bar">
@@ -218,8 +231,12 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
       <button class="lang-btn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('pt')">PT</button>
       <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn lang-btn-ext" onclick="setLang('de')" style="display:none">DE</button>
+      <button class="lang-btn lang-btn-ext" onclick="setLang('it')" style="display:none">IT</button>
+      <button class="lang-btn lang-btn-ext" onclick="setLang('ja')" style="display:none">JA</button>
+      <button class="lang-btn lang-btn-ext" onclick="setLang('ar')" style="display:none">AR</button>
     </div>
-    <a href="https://thanotectas.com" class="bar-cta" id="nav-site">Ver sitio</a>
+    <a href="https://thanotectas.com/planes" class="bar-cta" id="nav-planes">Planes</a>
   </div>
 </header>
 
@@ -285,12 +302,12 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 
   <div class="grid-label" id="type-label">¿Cómo quieres recibirlo?</div>
   <div class="type-grid">
-    <button class="type-btn active" onclick="selectType(this,'poema')"><span class="type-icon">📜</span><span class="type-name" id="type-poema">Poema</span></button>
-    <button class="type-btn" onclick="selectType(this,'dato')"><span class="type-icon">🔬</span><span class="type-name" id="type-dato">Dato científico</span></button>
-    <button class="type-btn" onclick="selectType(this,'carta')"><span class="type-icon">✉️</span><span class="type-name" id="type-carta">Carta al futuro</span></button>
-    <button class="type-btn" onclick="selectType(this,'obituario')"><span class="type-icon">🕯️</span><span class="type-name" id="type-obituario">Obituario</span></button>
-    <button class="type-btn" onclick="selectType(this,'alerta')"><span class="type-icon">⚠️</span><span class="type-name" id="type-alerta">Alerta</span></button>
-    <button class="type-btn" onclick="selectType(this,'ritual')"><span class="type-icon">🙏</span><span class="type-name" id="type-ritual">Ritual</span></button>
+    <button class="type-btn active" data-tipo="poema" onclick="selectType(this,'poema')"><span class="type-icon">📜</span><span class="type-name" id="type-poema">Poema</span></button>
+    <button class="type-btn" data-tipo="dato" onclick="selectType(this,'dato')"><span class="type-icon">🔬</span><span class="type-name" id="type-dato">Dato científico</span></button>
+    <button class="type-btn" data-tipo="carta" onclick="selectType(this,'carta')"><span class="type-icon">✉️</span><span class="type-name" id="type-carta">Carta al futuro</span></button>
+    <button class="type-btn" data-tipo="obituario" onclick="selectType(this,'obituario')"><span class="type-icon">🕯️</span><span class="type-name" id="type-obituario">Obituario</span></button>
+    <button class="type-btn" data-tipo="alerta" onclick="selectType(this,'alerta')"><span class="type-icon">⚠️</span><span class="type-name" id="type-alerta">Alerta</span></button>
+    <button class="type-btn" data-tipo="ritual" onclick="selectType(this,'ritual')"><span class="type-icon">🙏</span><span class="type-name" id="type-ritual">Ritual</span></button>
   </div>
 
   <div class="field">
@@ -383,15 +400,37 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   </div>
 
   <h2 class="heading" id="pw-heading">El Oráculo ha guardado silencio</h2>
-  <p class="subtext" id="pw-sub">Has usado tus 2 inscripciones gratuitas. Por menos que un café, el Oráculo puede seguir hablando.</p>
+  <p class="subtext" id="pw-sub">Has usado tus 2 inscripciones gratuitas. Elige un plan para continuar.</p>
 
-  <div class="paywall-price-box">
-    <div class="paywall-amount">$0.70</div>
-    <div class="paywall-period">USD · pago único</div>
-    <div class="paywall-includes" id="pw-includes">✦ 5 inscripciones adicionales · ✦ Cápsula enviada a tu correo · ✦ Certificado digital</div>
+  <div class="pw-plans-grid">
+    <div class="pw-plan-card">
+      <div class="pw-plan-tier">Plan Explorador</div>
+      <div class="pw-plan-price">$0.70</div>
+      <div class="pw-plan-period">USD · pago único</div>
+      <div class="pw-plan-features">
+        ✦ 5 inscripciones<br>
+        ✦ Poema + Dato científico<br>
+        ✦ 4 idiomas<br>
+        ✦ Cápsula por correo
+      </div>
+      <button class="btn-gold" onclick="openPaymentExplorador()" style="width:100%;font-size:.78rem;padding:.7rem">🌱 $0.70 USD</button>
+    </div>
+    <div class="pw-plan-card featured">
+      <div class="pw-plan-badge">★ RECOMENDADO</div>
+      <div class="pw-plan-tier" style="margin-top:.3rem">Plan Guardián</div>
+      <div class="pw-plan-price">$5</div>
+      <div class="pw-plan-period">USD · pago único</div>
+      <div class="pw-plan-features">
+        ✦ 100 inscripciones<br>
+        ✦ Los 6 tipos de salida<br>
+        ✦ 8 idiomas<br>
+        ✦ Contenido extendido<br>
+        ✦ Certificado PDF<br>
+        ✦ Nombre en Guardianes
+      </div>
+      <button class="btn-gold" onclick="openPaymentGuardian()" style="width:100%;font-size:.78rem;padding:.7rem">🌿 $5 USD</button>
+    </div>
   </div>
-
-  <button class="btn-gold" onclick="openPayment()" id="pw-pay-btn" style="width:100%;justify-content:center">🌿 Continuar por $0.70 USD</button>
 
   <div class="paywall-confirm" id="pw-confirm">
     <p id="pw-confirm-text">Después de completar el pago, haz clic aquí:</p>
@@ -437,20 +476,73 @@ var activeType='poema';
 var currentPoema='';
 var currentSujeto='';
 
-/* ══ FREEMIUM ══════════════════════════════════════════ */
+/* ══ SISTEMA DE PLANES ═════════════════════════════════ */
 var USES_KEY='tnk_uses';
-var PAID_KEY='tnk_paid';
 var EXTRA_KEY='tnk_extra';
+var PLAN_KEY='thano_plan';
+var CREDITS_KEY='thano_creditos';
 var MAX_FREE=2;
 
 function getUses(){return parseInt(localStorage.getItem(USES_KEY)||'0');}
 function incUses(){localStorage.setItem(USES_KEY,String(getUses()+1));}
-function isPaid(){return localStorage.getItem(PAID_KEY)==='true';}
-function setPaid(){localStorage.setItem(PAID_KEY,'true');localStorage.setItem(USES_KEY,'0');}
 function getExtra(){return parseInt(localStorage.getItem(EXTRA_KEY)||'0');}
 function addExtra(){localStorage.setItem(EXTRA_KEY,String(getExtra()+1));}
 function useExtra(){localStorage.setItem(EXTRA_KEY,String(Math.max(0,getExtra()-1)));}
-function canGenerate(){return isPaid()||getUses()<MAX_FREE||getExtra()>0;}
+
+function getPlan(){return localStorage.getItem(PLAN_KEY)||'gratis';}
+function getCredits(){return parseInt(localStorage.getItem(CREDITS_KEY)||'0');}
+function useCredit(){var c=getCredits();if(c>0)localStorage.setItem(CREDITS_KEY,String(c-1));}
+function addCredits(n){localStorage.setItem(CREDITS_KEY,String(getCredits()+n));}
+
+function activarPlan(plan){
+  localStorage.setItem(PLAN_KEY,plan);
+  if(plan==='explorador')addCredits(5);
+  else if(plan==='guardian')addCredits(100);
+  actualizarTiposIdiomas();
+  updateUsesBar();
+  showPlanBanner();
+}
+
+function canGenerate(){
+  var plan=getPlan();
+  if(plan!=='gratis')return getCredits()>0;
+  return getUses()<MAX_FREE||getExtra()>0;
+}
+
+function actualizarTiposIdiomas(){
+  var plan=getPlan();
+  var tiposOK;
+  if(plan==='guardian')tiposOK=['poema','dato','carta','obituario','alerta','ritual'];
+  else if(plan==='explorador')tiposOK=['poema','dato'];
+  else tiposOK=['poema'];
+
+  document.querySelectorAll('.type-btn').forEach(function(btn){
+    var tipo=btn.getAttribute('data-tipo');
+    if(!tipo)return;
+    if(tiposOK.indexOf(tipo)===-1){
+      btn.classList.add('locked');
+    } else {
+      btn.classList.remove('locked');
+    }
+  });
+
+  document.querySelectorAll('.lang-btn-ext').forEach(function(b){
+    b.style.display=(plan==='guardian')?'inline-block':'none';
+  });
+}
+
+function showPlanBanner(){
+  var plan=getPlan();
+  var banner=document.getElementById('plan-banner');
+  if(plan!=='gratis'){
+    var creditos=getCredits();
+    var label=plan==='guardian'?'Guardián':'Explorador';
+    banner.textContent='✦ Plan '+label+' activo — '+creditos+' inscripciones restantes';
+    banner.style.display='block';
+  } else {
+    banner.style.display='none';
+  }
+}
 
 function updateUsesBar(){
   var bar=document.getElementById('uses-bar');
@@ -458,10 +550,14 @@ function updateUsesBar(){
   var dot0=document.getElementById('dot0');
   var dot1=document.getElementById('dot1');
   var t=T[activeLang];
-  if(isPaid()){
+  var plan=getPlan();
+
+  if(plan!=='gratis'){
+    var creditos=getCredits();
+    var label=plan==='guardian'?'Guardián':'Explorador';
     bar.style.background='rgba(45,74,46,.08)';
     bar.style.borderColor='rgba(45,74,46,.2)';
-    usesText.textContent=t['uses-unlimited']||'Acceso ilimitado';
+    usesText.textContent='Plan '+label+' · '+creditos+' inscripciones restantes';
     usesText.style.color='var(--musgo-glow)';
     dot0.className='uses-dot paid';
     dot1.className='uses-dot paid';
@@ -495,7 +591,7 @@ var T={
     'label-sujeto':'Lo que nominas al umbral','label-test':'Un recuerdo o testimonio (opcional)',
     'ph-subj':'Ej: El oso de anteojos, La selva del Putumayo, El glaciar del Cocuy…',
     'ph-desc':'Un encuentro, una sensación, lo que más extrañarías…',
-    'uses-remaining':'inscripciones gratuitas restantes','uses-unlimited':'Acceso ilimitado activo',
+    'uses-remaining':'inscripciones gratuitas restantes',
     'btn-invoke-text':'Que el Oráculo inscriba','btn-back':'← Volver',
     'loading-heading':'El Oráculo consulta las sombras…','loading-sub':'Inscribiendo la memoria en el tejido del tiempo',
     'result-sub':'Cápsula Inscrita','email-label':'📧 Recibir esta cápsula en tu correo (gratis)',
@@ -504,23 +600,21 @@ var T={
     'share-label':'📲 Comparte esta cápsula',
     'btn-share-x':'Compartir en X','btn-regen':'🔄 Nueva versión','btn-new':'Inscribir otra',
     'cta-text':'¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.',
-    'btn-deposit':'🌿 Depositar mi legado','nav-deposit':'Depositar legado','nav-site':'Ver sitio',
+    'btn-deposit':'🌿 Depositar mi legado','nav-deposit':'Depositar legado',
     'err-empty':'Debes nombrar aquello que deseas honrar.',
     'witness-first':'Eres el primer guardián del mundo en inscribir esta memoria en Thanotectas.',
     'witness-n':' guardianes han inscrito memorias similares en el umbral.',
     'date-prefix':'Inscrita el','locale':'es-CO',
     'tipo-labels':{'poema':'Cápsula Poética','dato':'Dato Científico','carta':'Carta al Futuro','obituario':'Obituario Ecológico','alerta':'Mensaje de Alerta','ritual':'Ritual del Umbral'},
-    'share-tpl':function(s,p){return 'Acabo de inscribir a "'+s+'" en el Oráculo del Umbral de @thanotectas \xf0\x9f\x8c\xbf\n\n"'+p+'"\n\nthanotectas.com/oraculo #DueloEcol\u00f3gico #Thanotectas';},
+    'share-tpl':function(s,p){return 'Acabo de inscribir a "'+s+'" en el Oráculo del Umbral de @thanotectas 🌿\n\n"'+p+'"\n\nthanotectas.com/oraculo #DueloEcológico #Thanotectas';},
     'pw-brand-sub':'Oráculo del Umbral','pw-uses-label':'inscripciones gratuitas disponibles',
     'pw-heading':'El Oráculo ha guardado silencio',
-    'pw-sub':'Has usado tus 2 inscripciones gratuitas. Por menos que un café, el Oráculo puede seguir hablando.',
-    'pw-includes':'✦ 5 inscripciones adicionales · ✦ Cápsula a tu correo · ✦ Certificado digital',
-    'pw-pay-btn':'🌿 Continuar por $0.70 USD',
+    'pw-sub':'Has usado tus 2 inscripciones gratuitas. Elige un plan para continuar.',
     'pw-confirm-text':'Después de completar el pago, haz clic aquí:',
     'pw-paid-btn':'Ya pagué → Continuar','pw-or':'— o —',
     'pw-share-text':'Compartir en X para obtener 1 inscripción gratis',
     'pw-shared-text':'✓ Ya compartí → Dame 1 más','pw-back':'← Volver',
-    'share-unlock':'Descubr\u00ed @thanotectas, el primer santuario digital de duelo ecol\u00f3gico \xf0\x9f\x8c\xbf thanotectas.com/oraculo'
+    'share-unlock':'Descubrí @thanotectas, el primer santuario digital de duelo ecológico 🌿 thanotectas.com/oraculo'
   },
   en:{
     'brand-sub':'Oracle of the Threshold','hook-label':'species lost since you opened this page',
@@ -537,9 +631,9 @@ var T={
     'type-poema':'Poem','type-dato':'Scientific data','type-carta':'Letter to the future',
     'type-obituario':'Obituary','type-alerta':'Alert','type-ritual':'Ritual',
     'label-sujeto':'What you nominate to the threshold','label-test':'A memory or testimony (optional)',
-    'ph-subj':'E.g.: The spectacled bear, The Amazon rainforest, The Cocuy glacier…',
+    'ph-subj':'E.g.: The spectacled bear, The Amazon rainforest…',
     'ph-desc':'An encounter, a feeling, what you would miss most…',
-    'uses-remaining':'free inscriptions remaining','uses-unlimited':'Unlimited access active',
+    'uses-remaining':'free inscriptions remaining',
     'btn-invoke-text':'Let the Oracle inscribe','btn-back':'← Back',
     'loading-heading':'The Oracle consults the shadows…','loading-sub':'Inscribing the memory in the fabric of time',
     'result-sub':'Inscribed Capsule','email-label':'📧 Receive this capsule by email (free)',
@@ -548,23 +642,21 @@ var T={
     'share-label':'📲 Share this capsule',
     'btn-share-x':'Share on X','btn-regen':'🔄 New version','btn-new':'Inscribe another',
     'cta-text':'Do you want to preserve this capsule <strong>permanently</strong>?<br>In Thanotectas you can seal it to be opened in 2050, 2075 or 2100.',
-    'btn-deposit':'🌿 Deposit my legacy','nav-deposit':'Deposit legacy','nav-site':'Full site',
+    'btn-deposit':'🌿 Deposit my legacy','nav-deposit':'Deposit legacy',
     'err-empty':'You must name something you wish to honor.',
     'witness-first':'You are the first guardian in the world to inscribe this memory in Thanotectas.',
     'witness-n':' guardians have inscribed similar memories at the threshold.',
     'date-prefix':'Inscribed on','locale':'en-US',
     'tipo-labels':{'poema':'Poetic Capsule','dato':'Scientific Data','carta':'Letter to the Future','obituario':'Ecological Obituary','alerta':'Alert Message','ritual':'Threshold Ritual'},
-    'share-tpl':function(s,p){return 'I just inscribed "'+s+'" in the Oracle of the Threshold @thanotectas \xf0\x9f\x8c\xbf\n\n"'+p+'"\n\nthanotectas.com/oraculo #EcologicalGrief #Thanotectas';},
+    'share-tpl':function(s,p){return 'I just inscribed "'+s+'" in the Oracle of the Threshold @thanotectas 🌿\n\n"'+p+'"\n\nthanotectas.com/oraculo #EcologicalGrief #Thanotectas';},
     'pw-brand-sub':'Oracle of the Threshold','pw-uses-label':'free inscriptions available',
     'pw-heading':'The Oracle has fallen silent',
-    'pw-sub':'You have used your 2 free inscriptions. For less than a coffee, the Oracle can speak again.',
-    'pw-includes':'✦ 5 additional inscriptions · ✦ Capsule to your email · ✦ Digital certificate',
-    'pw-pay-btn':'🌿 Continue for $0.70 USD',
+    'pw-sub':'You have used your 2 free inscriptions. Choose a plan to continue.',
     'pw-confirm-text':'After completing payment, click here:',
     'pw-paid-btn':'I paid → Continue','pw-or':'— or —',
     'pw-share-text':'Share on X to get 1 free inscription',
     'pw-shared-text':'✓ I shared → Give me 1 more','pw-back':'← Back',
-    'share-unlock':'I just discovered @thanotectas, the first digital sanctuary for ecological grief \xf0\x9f\x8c\xbf thanotectas.com/oraculo'
+    'share-unlock':'I just discovered @thanotectas, the first digital sanctuary for ecological grief 🌿 thanotectas.com/oraculo'
   },
   pt:{
     'brand-sub':'Oráculo do Umbral','hook-label':'espécies perdidas desde que você abriu esta página',
@@ -581,9 +673,9 @@ var T={
     'type-poema':'Poema','type-dato':'Dado científico','type-carta':'Carta ao futuro',
     'type-obituario':'Obituário','type-alerta':'Alerta','type-ritual':'Ritual',
     'label-sujeto':'O que você nomeia para o umbral','label-test':'Uma lembrança ou testemunho (opcional)',
-    'ph-subj':'Ex: O urso-de-óculos, A floresta amazônica, A geleira do Cocuy…',
+    'ph-subj':'Ex: O urso-de-óculos, A floresta amazônica…',
     'ph-desc':'Um encontro, uma sensação, o que você mais sentiria falta…',
-    'uses-remaining':'inscrições gratuitas restantes','uses-unlimited':'Acesso ilimitado ativo',
+    'uses-remaining':'inscrições gratuitas restantes',
     'btn-invoke-text':'Que o Oráculo inscreva','btn-back':'← Voltar',
     'loading-heading':'O Oráculo consulta as sombras…','loading-sub':'Inscrevendo a memória no tecido do tempo',
     'result-sub':'Cápsula Inscrita','email-label':'📧 Receber esta cápsula por email (grátis)',
@@ -592,23 +684,21 @@ var T={
     'share-label':'📲 Compartilhe esta cápsula',
     'btn-share-x':'Compartilhar no X','btn-regen':'🔄 Nova versão','btn-new':'Inscrever outra',
     'cta-text':'Você quer preservar esta cápsula <strong>permanentemente</strong>?<br>No Thanotectas você pode selá-la para ser aberta em 2050, 2075 ou 2100.',
-    'btn-deposit':'🌿 Depositar meu legado','nav-deposit':'Depositar legado','nav-site':'Ver site',
+    'btn-deposit':'🌿 Depositar meu legado','nav-deposit':'Depositar legado',
     'err-empty':'Você deve nomear algo que deseja honrar.',
     'witness-first':'Você é o primeiro guardião do mundo a inscrever esta memória no Thanotectas.',
     'witness-n':' guardiões inscreveram memórias similares no umbral.',
     'date-prefix':'Inscrita em','locale':'pt-BR',
     'tipo-labels':{'poema':'Cápsula Poética','dato':'Dado Científico','carta':'Carta ao Futuro','obituario':'Obituário Ecológico','alerta':'Mensagem de Alerta','ritual':'Ritual do Umbral'},
-    'share-tpl':function(s,p){return 'Acabei de inscrever "'+s+'" no Oráculo do Umbral @thanotectas \xf0\x9f\x8c\xbf\n\n"'+p+'"\n\nthanotectas.com/oraculo #LutoEcologico #Thanotectas';},
+    'share-tpl':function(s,p){return 'Acabei de inscrever "'+s+'" no Oráculo do Umbral @thanotectas 🌿\n\n"'+p+'"\n\nthanotectas.com/oraculo #LutoEcologico #Thanotectas';},
     'pw-brand-sub':'Oráculo do Umbral','pw-uses-label':'inscrições gratuitas disponíveis',
     'pw-heading':'O Oráculo guardou silêncio',
-    'pw-sub':'Você usou suas 2 inscrições gratuitas. Por menos que um café, o Oráculo pode continuar falando.',
-    'pw-includes':'✦ 5 inscrições adicionais · ✦ Cápsula para seu email · ✦ Certificado digital',
-    'pw-pay-btn':'🌿 Continuar por $0.70 USD',
+    'pw-sub':'Você usou suas 2 inscrições gratuitas. Escolha um plano para continuar.',
     'pw-confirm-text':'Após concluir o pagamento, clique aqui:',
     'pw-paid-btn':'Já paguei → Continuar','pw-or':'— ou —',
     'pw-share-text':'Compartilhar no X para obter 1 inscrição grátis',
     'pw-shared-text':'✓ Já compartilhei → Me dê 1 mais','pw-back':'← Voltar',
-    'share-unlock':'Descobri @thanotectas, o primeiro santuário digital de luto ecológico \xf0\x9f\x8c\xbf thanotectas.com/oraculo'
+    'share-unlock':'Descobri @thanotectas, o primeiro santuário digital de luto ecológico 🌿 thanotectas.com/oraculo'
   },
   fr:{
     'brand-sub':'Oracle du Seuil','hook-label':'espèces perdues depuis que vous avez ouvert cette page',
@@ -625,9 +715,9 @@ var T={
     'type-poema':'Poème','type-dato':'Donnée scientifique','type-carta':'Lettre au futur',
     'type-obituario':'Nécrologie','type-alerta':'Alerte','type-ritual':'Rituel',
     'label-sujeto':'Ce que vous nommez au seuil','label-test':'Un souvenir ou témoignage (optionnel)',
-    'ph-subj':'Ex : L\'ours à lunettes, La forêt amazonienne, Le glacier du Cocuy…',
+    'ph-subj':'Ex : L\'ours à lunettes, La forêt amazonienne…',
     'ph-desc':'Une rencontre, une sensation, ce qui vous manquerait le plus…',
-    'uses-remaining':'inscriptions gratuites restantes','uses-unlimited':'Accès illimité actif',
+    'uses-remaining':'inscriptions gratuites restantes',
     'btn-invoke-text':'Que l\'Oracle inscrive','btn-back':'← Retour',
     'loading-heading':'L\'Oracle consulte les ombres…','loading-sub':'Inscrivant la mémoire dans le tissu du temps',
     'result-sub':'Capsule Inscrite','email-label':'📧 Recevoir cette capsule par email (gratuit)',
@@ -636,23 +726,21 @@ var T={
     'share-label':'📲 Partagez cette capsule',
     'btn-share-x':'Partager sur X','btn-regen':'🔄 Nouvelle version','btn-new':'Inscrire une autre',
     'cta-text':'Voulez-vous préserver cette capsule <strong>définitivement</strong> ?<br>Sur Thanotectas vous pouvez la sceller pour qu\'elle s\'ouvre en 2050, 2075 ou 2100.',
-    'btn-deposit':'🌿 Déposer mon legs','nav-deposit':'Déposer un legs','nav-site':'Voir le site',
+    'btn-deposit':'🌿 Déposer mon legs','nav-deposit':'Déposer un legs',
     'err-empty':'Vous devez nommer quelque chose que vous souhaitez honorer.',
     'witness-first':'Vous êtes le premier gardien du monde à inscrire cette mémoire sur Thanotectas.',
     'witness-n':' gardiens ont inscrit des mémoires similaires au seuil.',
     'date-prefix':'Inscrite le','locale':'fr-FR',
     'tipo-labels':{'poema':'Capsule Poétique','dato':'Donnée Scientifique','carta':'Lettre au Futur','obituario':'Nécrologie Écologique','alerta':'Message d\'Alerte','ritual':'Rituel du Seuil'},
-    'share-tpl':function(s,p){return 'Je viens d\'inscrire "'+s+'" dans l\'Oracle du Seuil @thanotectas \xf0\x9f\x8c\xbf\n\n"'+p+'"\n\nthanotectas.com/oraculo #DeuilEcologique #Thanotectas';},
+    'share-tpl':function(s,p){return 'Je viens d\'inscrire "'+s+'" dans l\'Oracle du Seuil @thanotectas 🌿\n\n"'+p+'"\n\nthanotectas.com/oraculo #DeuilEcologique #Thanotectas';},
     'pw-brand-sub':'Oracle du Seuil','pw-uses-label':'inscriptions gratuites disponibles',
     'pw-heading':'L\'Oracle s\'est tu',
-    'pw-sub':'Vous avez utilisé vos 2 inscriptions gratuites. Pour moins qu\'un café, l\'Oracle peut parler à nouveau.',
-    'pw-includes':'✦ 5 inscriptions supplémentaires · ✦ Capsule à votre email · ✦ Certificat numérique',
-    'pw-pay-btn':'🌿 Continuer pour $0.70 USD',
+    'pw-sub':'Vous avez utilisé vos 2 inscriptions gratuites. Choisissez un plan pour continuer.',
     'pw-confirm-text':'Après avoir effectué le paiement, cliquez ici :',
     'pw-paid-btn':'J\'ai payé → Continuer','pw-or':'— ou —',
     'pw-share-text':'Partager sur X pour obtenir 1 inscription gratuite',
     'pw-shared-text':'✓ J\'ai partagé → Donnez-m\'en 1 de plus','pw-back':'← Retour',
-    'share-unlock':'Je viens de découvrir @thanotectas, le premier sanctuaire numérique de deuil écologique \xf0\x9f\x8c\xbf thanotectas.com/oraculo'
+    'share-unlock':'Je viens de découvrir @thanotectas, le premier sanctuaire numérique de deuil écologique 🌿 thanotectas.com/oraculo'
   }
 };
 
@@ -662,17 +750,17 @@ var TEXT_IDS=['brand-sub','brand-sub2','hook-label','hook-q','hook-sub',
   'btn-start','footer-tag','footer-tag2','input-heading','cat-label','type-label',
   'cat-especies','cat-ecosistemas','cat-rios','cat-sonidos','cat-territorios','cat-saberes',
   'type-poema','type-dato','type-carta','type-obituario','type-alerta','type-ritual',
-  'label-sujeto','label-test','uses-remaining',
+  'label-sujeto','label-test',
   'btn-invoke-text','btn-back','loading-heading','loading-sub',
   'result-sub','email-label','send-btn-text','share-label',
-  'btn-share-x','btn-regen','btn-new','cta-text','btn-deposit','nav-deposit','nav-site',
-  'pw-brand-sub','pw-uses-label','pw-heading','pw-sub','pw-includes',
-  'pw-pay-btn','pw-confirm-text','pw-paid-btn','pw-or','pw-share-text','pw-shared-text','pw-back'];
+  'btn-share-x','btn-regen','btn-new','cta-text','btn-deposit','nav-deposit',
+  'pw-brand-sub','pw-uses-label','pw-heading','pw-sub',
+  'pw-confirm-text','pw-paid-btn','pw-or','pw-share-text','pw-shared-text','pw-back'];
 
 function setLang(lang){
   activeLang=lang;
   document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});
-  var t=T[lang];
+  var t=T[lang]||T.es;
   TEXT_IDS.forEach(function(id){var el=document.getElementById(id);if(el&&t[id]!==undefined)el.innerHTML=t[id];});
   document.getElementById('subj').placeholder=t['ph-subj']||'';
   document.getElementById('desc').placeholder=t['ph-desc']||'';
@@ -686,11 +774,15 @@ function go(id){
   document.getElementById('ph-'+id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function goInput(){updateUsesBar();go('input');}
+function goInput(){actualizarTiposIdiomas();updateUsesBar();go('input');}
 
 /* ══ SELECTORES ════════════════════════════════════════ */
 function selectCat(el,cat){document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeCat=cat;}
-function selectType(el,tp){document.querySelectorAll('.type-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeType=tp;}
+function selectType(el,tp){
+  if(el.classList.contains('locked'))return;
+  document.querySelectorAll('.type-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');activeType=tp;
+}
 
 /* ══ LIMPIAR ════════════════════════════════════════════ */
 function clearCapsule(){
@@ -717,7 +809,7 @@ function isFirstTime(sujeto){
 function showWitness(sujeto){
   var box=document.getElementById('witness-box');
   var txt=document.getElementById('witness-text');
-  var t=T[activeLang];
+  var t=T[activeLang]||T.es;
   if(isFirstTime(sujeto)){
     txt.innerHTML='<span class="witness-first">'+t['witness-first']+'</span>';
   } else {
@@ -733,7 +825,7 @@ async function invoke(){
   var desc=document.getElementById('desc').value.trim();
   var errEl=document.getElementById('inp-err');
   var btn=document.getElementById('btn-invocar');
-  var t=T[activeLang];
+  var t=T[activeLang]||T.es;
 
   if(!subj){errEl.textContent=t['err-empty'];errEl.style.display='block';return;}
   errEl.style.display='none';
@@ -745,13 +837,15 @@ async function invoke(){
   go('loading');
 
   // Registrar uso
-  if(!isPaid()){if(getExtra()>0){useExtra();}else{incUses();}}
+  var plan=getPlan();
+  if(plan!=='gratis'){useCredit();}
+  else{if(getExtra()>0){useExtra();}else{incUses();}}
 
   try{
     var res=await fetch('/.netlify/functions/oraculo',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({sujeto:subj,testimonio:desc,categoria:activeCat,tipo:activeType,idioma:activeLang})
+      body:JSON.stringify({sujeto:subj,testimonio:desc,categoria:activeCat,tipo:activeType,idioma:activeLang,plan:getPlan()})
     });
     if(!res.ok){var e=await res.text();throw new Error('HTTP '+res.status+' — '+e);}
     var data=await res.json();
@@ -760,7 +854,6 @@ async function invoke(){
     currentPoema=data.poema;
     currentSujeto=subj;
 
-    // Poblar cápsula
     var tipoLabel=(t['tipo-labels']&&t['tipo-labels'][activeType])||activeType;
     document.getElementById('r-tipo').textContent=tipoLabel;
     document.getElementById('r-subj').textContent='— '+subj.toUpperCase()+' —';
@@ -779,6 +872,7 @@ async function invoke(){
 
     showWitness(subj);
     updateUsesBar();
+    showPlanBanner();
     go('result');
 
   }catch(e){
@@ -787,7 +881,10 @@ async function invoke(){
     errEl.textContent='⚠️ '+e.message;
     errEl.style.display='block';
     // Deshacer uso si hubo error
-    if(!isPaid()&&getExtra()===0){var u=getUses();if(u>0)localStorage.setItem(USES_KEY,String(u-1));}
+    var p=getPlan();
+    if(p!=='gratis'){addCredits(1);}
+    else if(getExtra()>0){}
+    else{var u=getUses();if(u>0)localStorage.setItem(USES_KEY,String(u-1));}
   }finally{
     btn.disabled=false;
   }
@@ -798,7 +895,7 @@ async function sendEmail(){
   var email=document.getElementById('user-email').value.trim();
   var status=document.getElementById('email-status');
   var btn=document.getElementById('send-email-btn');
-  var t=T[activeLang];
+  var t=T[activeLang]||T.es;
 
   if(!email||!email.includes('@')){
     status.textContent=t['email-invalid'];status.style.color='#c47050';return;
@@ -828,23 +925,33 @@ async function sendEmail(){
   }
 }
 
-/* ══ PAYWALL ════════════════════════════════════════════ */
-function openPayment(){
-  // REEMPLAZA ESTA URL con tu link de Bold.co para $0.70
-  window.open('https://checkout.bold.co/payment/TU_LINK_070_AQUI','_blank');
+/* ══ PAGOS CON BOLD.CO ═════════════════════════════════ */
+function openPaymentExplorador(){
+  window.open('https://checkout.bold.co/payment/LNK_UVSP2A0O0U','_blank');
+  localStorage.setItem('thano_pending_plan','explorador');
   setTimeout(function(){document.getElementById('pw-confirm').style.display='block';},3000);
 }
-function confirmPayment(){setPaid();updateUsesBar();go('input');invoke();}
+function openPaymentGuardian(){
+  window.open('https://checkout.bold.co/payment/LNK_X1LLSJCK4P','_blank');
+  localStorage.setItem('thano_pending_plan','guardian');
+  setTimeout(function(){document.getElementById('pw-confirm').style.display='block';},3000);
+}
+function confirmPayment(){
+  var pending=localStorage.getItem('thano_pending_plan')||'explorador';
+  activarPlan(pending);
+  localStorage.removeItem('thano_pending_plan');
+  go('input');
+}
 
 function shareToUnlock(){
-  var t=T[activeLang];
+  var t=T[activeLang]||T.es;
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(t['share-unlock']||''),'_blank');
   setTimeout(function(){
     var b=document.getElementById('share-confirm-btn');
     b.style.display='inline-flex';b.className='share-btn share-confirm-btn';
   },3000);
 }
-function confirmShare(){addExtra();updateUsesBar();go('input');invoke();}
+function confirmShare(){addExtra();updateUsesBar();go('input');}
 
 /* ══ COMPARTIR ══════════════════════════════════════════ */
 function regenerar(){clearCapsule();invoke();}
@@ -868,7 +975,22 @@ function resetAll(){
 
 /* ══ INIT ════════════════════════════════════════════════ */
 setLang('es');
+actualizarTiposIdiomas();
 updateUsesBar();
+showPlanBanner();
+
+// Detectar regreso de Bold.co
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  if(params.get('status')==='ok'){
+    var plan=params.get('plan');
+    if(plan==='explorador'||plan==='guardian'){
+      activarPlan(plan);
+      history.replaceState({},'','oraculo.html');
+      goInput();
+    }
+  }
+})();
 </script>
 </body>
 </html>
