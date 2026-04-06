@@ -162,7 +162,7 @@ exports.handler = async function(event) {
     // ✅ FIX 2: Usar node-fetch como fallback si fetch global no existe
     var fetchFn = typeof fetch !== "undefined" ? fetch : require("node-fetch");
 
-    var resEmail = await fetchFn("https://api.resend.com/emails", {
+    var resEmail = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + RESEND,
