@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel — Thanotectas · Guardianes del Umbral</title>
+    <meta name="description" content="Tu espacio personal de memoria ecológica. Visualiza, comparte y gestiona tus cápsulas del Oráculo del Umbral.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0f0d;
+            --bg-card: #111916;
+            --bg-card-hover: #16201c;
+            --bg-surface: #1a2520;
+            --border: rgba(95, 180, 140, 0.12);
+            --border-hover: rgba(95, 180, 140, 0.25);
+            --text-primary: #e8f0eb;
+            --text-secondary: #8fa89a;
+            --text-muted: #5c7a6a;
+            --accent: #3db87a;
+            --accent-soft: rgba(61, 184, 122, 0.12);
+            --accent-glow: rgba(61, 184, 122, 0.06);
+            --gold: #c9a84c;
+            --gold-soft: rgba(201, 168, 76, 0.12);
+            --purple: #8b7ec8;
+            --purple-soft: rgba(139, 126, 200, 0.12);
+            --coral: #d08060;
+            --coral-soft: rgba(208, 128, 96, 0.12);
+            --blue: #5a9ec8;
+            --blue-soft: rgba(90, 158, 200, 0.12);
+            --pink: #c87a9a;
+            --pink-soft: rgba(200, 122, 154, 0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', system-ui, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 15, 13, 0.95);
+            backdrop-filter: blur(12px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-brand {
+            font-family: var(--font-display); font-size: 22px; font-weight: 600;
+            color: var(--accent); text-decoration: none; letter-spacing: 0.5px;
+        }
+        .navbar-brand span { color: var(--text-muted); font-weight: 400; font-size: 14px; margin-left: 8px; }
+        .navbar-links { display: flex; gap: 8px; align-items: center; }
+        .navbar-links a {
+            font-size: 13px; color: var(--text-secondary); text-decoration: none;
+            padding: 6px 14px; border-radius: var(--radius-sm);
+            border: 1px solid transparent; transition: all 0.2s;
+        }
+        .navbar-links a:hover { color: var(--text-primary); border-color: var(--border-hover); }
+        .navbar-links a.active { background: var(--accent-soft); color: var(--accent); border-color: rgba(61,184,122,0.2); }
+        .btn-oraculo {
+            background: var(--accent); color: var(--bg-deep); font-weight: 600;
+            padding: 8px 18px; border-radius: var(--radius-sm); border: none;
+            font-size: 13px; cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .btn-oraculo:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        /* --- LAYOUT --- */
+        .container { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; }
+
+        /* --- LOADING --- */
+        .loading-state {
+            text-align: center; padding: 80px 24px;
+            color: var(--text-muted); font-size: 15px;
+        }
+        .loading-state .spinner {
+            width: 32px; height: 32px; border: 2px solid var(--border);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- NO AUTH --- */
+        .auth-required {
+            text-align: center; padding: 80px 24px;
+        }
+        .auth-required h2 {
+            font-family: var(--font-display); font-size: 28px; margin-bottom: 12px; color: var(--accent);
+        }
+        .auth-required p { color: var(--text-secondary); margin-bottom: 24px; }
+
+        /* --- PROFILE HEADER --- */
+        .profile-header {
+            display: flex; align-items: center; gap: 20px;
+            padding: 24px; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+        .profile-avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; flex-shrink: 0;
+        }
+        .profile-avatar.gratis { background: var(--accent-soft); }
+        .profile-avatar.explorador { background: var(--blue-soft); }
+        .profile-avatar.guardian { background: var(--gold-soft); }
+        .profile-avatar.admin { background: var(--purple-soft); }
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-name { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .profile-email { font-size: 13px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; }
+        .plan-pill {
+            font-size: 11px; padding: 3px 10px; border-radius: 20px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .plan-pill.gratis { background: var(--accent-soft); color: var(--accent); }
+        .plan-pill.explorador { background: var(--blue-soft); color: var(--blue); }
+        .plan-pill.guardian { background: var(--gold-soft); color: var(--gold); }
+        .plan-pill.admin { background: var(--purple-soft); color: var(--purple); }
+        .credits-section { margin-top: 10px; }
+        .credits-bar-track {
+            width: 100%; height: 5px; background: var(--bg-surface);
+            border-radius: 3px; overflow: hidden; margin-top: 6px;
+        }
+        .credits-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+        .credits-bar-fill.gratis { background: var(--accent); }
+        .credits-bar-fill.explorador { background: var(--blue); }
+        .credits-bar-fill.guardian { background: var(--gold); }
+        .credits-bar-fill.admin { background: var(--purple); }
+        .credits-label { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; }
+
+        /* --- STATS --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 16px; text-align: center;
+        }
+        .stat-num { font-size: 26px; font-weight: 600; font-family: var(--font-display); }
+        .stat-num.accent { color: var(--accent); }
+        .stat-num.gold { color: var(--gold); }
+        .stat-num.blue { color: var(--blue); }
+        .stat-num.coral { color: var(--coral); }
+        .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* --- REFERRAL BANNER --- */
+        .referral-banner {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(61,184,122,0.05) 100%);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 20px 24px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .referral-icon { font-size: 36px; flex-shrink: 0; }
+        .referral-text { flex: 1; min-width: 200px; }
+        .referral-text h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .referral-text p { font-size: 13px; color: var(--text-secondary); }
+        .referral-text strong { color: var(--accent); }
+        .referral-link-box {
+            display: flex; gap: 6px; align-items: center; width: 100%;
+            margin-top: 12px;
+        }
+        .referral-input {
+            flex: 1; background: var(--bg-surface); border: 1px solid var(--border);
+            color: var(--text-primary); padding: 10px 14px; border-radius: var(--radius-sm);
+            font-size: 13px; font-family: var(--font-body);
+        }
+        .referral-input:focus { outline: none; border-color: var(--accent); }
+        .btn-copy, .btn-share-ref {
+            background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(61,184,122,0.2);
+            padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
+            font-size: 13px; font-weight: 500; font-family: var(--font-body); transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-copy:hover, .btn-share-ref:hover { background: rgba(61,184,122,0.2); }
+        .referral-stats {
+            display: flex; gap: 20px; margin-top: 10px; font-size: 12px; color: var(--text-muted);
+        }
+        .referral-stats span strong { color: var(--accent); }
+
+        /* --- SECTION TITLES --- */
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .section-title {
+            font-family: var(--font-display); font-size: 22px; font-weight: 600;
+            color: var(--text-primary);
+        }
+        .section-subtitle { font-size: 13px; color: var(--text-muted); }
+        .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-pill {
+            font-size: 12px; padding: 4px 12px; border-radius: 20px;
+            border: 1px solid var(--border); color: var(--text-secondary);
+            cursor: pointer; background: transparent; font-family: var(--font-body); transition: all 0.15s;
+        }
+        .filter-pill:hover { border-color: var(--border-hover); color: var(--text-primary); }
+        .filter-pill.active { background: var(--accent-soft); color: var(--accent); border-color: rgba(61,184,122,0.3); }
+
+        /* --- CAPSULE CARDS --- */
+        .capsules-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+        .capsule-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 18px 20px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .capsule-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+        .capsule-top { display: flex; align-items: center; gap: 12px; }
+        .capsule-type-icon {
+            width: 40px; height: 40px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .type-poema { background: var(--purple-soft); }
+        .type-carta { background: var(--blue-soft); }
+        .type-ofrenda { background: var(--gold-soft); }
+        .type-cronica { background: var(--coral-soft); }
+        .type-epitafio { background: var(--pink-soft); }
+        .type-informe { background: var(--accent-soft); }
+        .capsule-info { flex: 1; min-width: 0; }
+        .capsule-subject {
+            font-size: 15px; font-weight: 500; color: var(--text-primary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .capsule-tags { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+        .capsule-tag {
+            font-size: 10px; padding: 2px 7px; border-radius: 4px;
+            font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .tag-tipo { background: var(--purple-soft); color: var(--purple); }
+        .tag-idioma { background: var(--accent-soft); color: var(--accent); }
+        .capsule-date { font-size: 12px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+        .capsule-preview {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+            margin-top: 10px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        /* --- EXPANDED CAPSULE --- */
+        .capsule-expanded {
+            display: none; margin-top: 14px; padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .capsule-expanded.open { display: block; }
+        .capsule-full-text {
+            font-family: var(--font-display); font-size: 16px; line-height: 1.8;
+            color: var(--text-primary); white-space: pre-wrap;
+        }
+        .share-bar {
+            display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap;
+        }
+        .share-btn {
+            font-size: 12px; padding: 6px 12px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--bg-surface);
+            color: var(--text-secondary); cursor: pointer; font-family: var(--font-body);
+            transition: all 0.15s; display: flex; align-items: center; gap: 4px;
+        }
+        .share-btn:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg-card-hover); }
+        .share-btn svg { width: 14px; height: 14px; }
+
+        /* --- ACTIONS GRID --- */
+        .actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 32px; }
+        .action-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px; cursor: pointer;
+            transition: all 0.2s; text-decoration: none; display: block;
+        }
+        .action-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); transform: translateY(-1px); }
+        .action-icon { font-size: 24px; margin-bottom: 8px; }
+        .action-label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .action-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            text-align: center; padding: 48px 24px;
+            background: var(--bg-card); border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+        .empty-state h3 { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
+        .empty-state p { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+
+        /* --- TOAST --- */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: var(--accent); color: var(--bg-deep); padding: 12px 24px;
+            border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
+            opacity: 0; transition: all 0.3s ease; z-index: 200; pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 640px) {
+            .container { padding: 20px 14px 48px; }
+            .profile-header { flex-direction: column; text-align: center; gap: 14px; padding: 20px 16px; }
+            .profile-name { justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .actions-grid { grid-template-columns: 1fr; }
+            .referral-banner { flex-direction: column; text-align: center; }
+            .navbar-links a.hide-mobile { display: none; }
+            .capsule-top { flex-wrap: wrap; }
+            .capsule-date { width: 100%; margin-top: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">Thanotectas <span>Guardianes del Umbral</span></a>
+    <div class="navbar-links">
+        <a href="/panel.html" class="active">Mi panel</a>
+        <a href="/oraculo.html" class="hide-mobile">Oráculo</a>
+        <a href="/oraculo.html" class="btn-oraculo">+ Nueva cápsula</a>
+    </div>
+</nav>
+
+<!-- LOADING -->
+<div class="container" id="loading-view">
+    <div class="loading-state">
+        <div class="spinner"></div>
+        Conectando con el Umbral...
+    </div>
+</div>
+
+<!-- NO AUTH -->
+<div class="container" id="auth-view" style="display:none;">
+    <div class="auth-required">
+        <h2>Inicia sesión para ver tu panel</h2>
+        <p>Necesitas una cuenta activa para acceder a tus cápsulas y configuración.</p>
+        <a href="/oraculo.html" class="btn-oraculo">Ir al Oráculo</a>
+    </div>
+</div>
+
+<!-- MAIN PANEL -->
+<div class="container" id="panel-view" style="display:none;">
+
+    <!-- PROFILE -->
+    <div class="profile-header" id="profile-header"></div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <!-- REFERRAL -->
+    <div class="referral-banner" id="referral-banner"></div>
+
+    <!-- CAPSULES -->
+    <div class="section-header">
+        <div>
+            <div class="section-title">Mis cápsulas</div>
+        </div>
+        <div class="filter-pills" id="filter-pills"></div>
+    </div>
+    <div class="capsules-list" id="capsules-list"></div>
+
+    <!-- ACTIONS -->
+    <div class="section-header"><div class="section-title">Acciones</div></div>
+    <div class="actions-grid">
+        <a href="/oraculo.html" class="action-card">
+            <div class="action-icon">✦</div>
+            <div class="action-label">Nueva cápsula</div>
+            <div class="action-sub">Inscribir una memoria ecológica</div>
+        </a>
+        <div class="action-card" onclick="showUpgrade()">
+            <div class="action-icon">💎</div>
+            <div class="action-label">Mejorar plan</div>
+            <div class="action-sub">Más créditos, formatos e idiomas</div>
+        </div>
+        <div class="action-card" onclick="exportAll()">
+            <div class="action-icon">📥</div>
+            <div class="action-label">Exportar cápsulas</div>
+            <div class="action-sub">Descargar todas en texto</div>
+        </div>
+        <div class="action-card" onclick="logout()">
+            <div class="action-icon">🚪</div>
+            <div class="action-label">Cerrar sesión</div>
+            <div class="action-sub">Salir de tu cuenta</div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+// =============================================
+// CONFIG — reemplaza con tus credenciales reales
+// =============================================
+const SUPABASE_URL = 'https://oygwnmfwfxbxdogaqwmi.supabase.co';
+const SUPABASE_ANON_KEY = 'TU_ANON_KEY_AQUI'; // la anon key pública, NO la secret key
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// =============================================
+// STATE
+// =============================================
+let currentUser = null;
+let userProfile = null;
+let capsulas = [];
+let activeFilter = 'todas';
+
+// =============================================
+// TYPE CONFIG
+// =============================================
+const TYPE_CONFIG = {
+    poema:   { icon: '✍', class: 'type-poema',   label: 'Poema' },
+    carta:   { icon: '✉', class: 'type-carta',    label: 'Carta' },
+    ofrenda: { icon: '🕯', class: 'type-ofrenda', label: 'Ofrenda' },
+    cronica: { icon: '📜', class: 'type-cronica',  label: 'Crónica' },
+    epitafio:{ icon: '🪦', class: 'type-epitafio', label: 'Epitafio' },
+    informe: { icon: '📊', class: 'type-informe',  label: 'Informe' },
+};
+const PLAN_CONFIG = {
+    gratis:    { emoji: '🌱', label: 'Gratis',     max: 3 },
+    explorador:{ emoji: '🌿', label: 'Explorador', max: 10 },
+    guardian:  { emoji: '🛡', label: 'Guardián',   max: 20 },
+    admin:     { emoji: '⚡', label: 'Admin',       max: 999999 },
+};
+
+// =============================================
+// INIT
+// =============================================
+async function init() {
+    // Check for referral code in URL and store it
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+        sessionStorage.setItem('thanotectas_ref', refCode);
+    }
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+        document.getElementById('loading-view').style.display = 'none';
+        document.getElementById('auth-view').style.display = '';
+        return;
+    }
+    currentUser = session.user;
+    await loadProfile();
+    await loadCapsulas();
+    render();
+}
+
+async function loadProfile() {
+    const { data, error } = await supabase
+        .from('guardianes')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+    if (error) { console.error('Error loading profile:', error); return; }
+    userProfile = data;
+}
+
+async function loadCapsulas() {
+    const { data, error } = await supabase
+        .from('capsulas')
+        .select('*')
+        .eq('guardian_id', currentUser.id)
+        .order('created_at', { ascending: false });
+    if (error) { console.error('Error loading capsulas:', error); return; }
+    capsulas = data || [];
+}
+
+// =============================================
+// RENDER
+// =============================================
+function render() {
+    document.getElementById('loading-view').style.display = 'none';
+    document.getElementById('panel-view').style.display = '';
+
+    renderProfile();
+    renderStats();
+    renderReferral();
+    renderFilters();
+    renderCapsulas();
+}
+
+function renderProfile() {
+    const plan = userProfile.plan || 'gratis';
+    const pc = PLAN_CONFIG[plan] || PLAN_CONFIG.gratis;
+    const cred = userProfile.consultas_disponibles || 0;
+    const pct = plan === 'admin' ? 100 : Math.min(100, (cred / pc.max) * 100);
+    const name = userProfile.nombre || currentUser.email.split('@')[0];
+
+    document.getElementById('profile-header').innerHTML = `
+        <div class="profile-avatar ${plan}">${pc.emoji}</div>
+        <div class="profile-info">
+            <div class="profile-name">
+                ${name}
+                <span class="plan-pill ${plan}">${pc.label}</span>
+            </div>
+            <div class="profile-email">${currentUser.email}</div>
+            <div class="credits-section">
+                <div class="credits-label">
+                    <span>Consultas disponibles</span>
+                    <span>${plan === 'admin' ? '∞' : cred + ' / ' + pc.max}</span>
+                </div>
+                <div class="credits-bar-track">
+                    <div class="credits-bar-fill ${plan}" style="width:${pct}%"></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderStats() {
+    const shared = capsulas.filter(c => c.compartida).length;
+    const tipos = new Set(capsulas.map(c => c.tipo)).size;
+    document.getElementById('stats-grid').innerHTML = `
+        <div class="stat-card"><div class="stat-num accent">${capsulas.length}</div><div class="stat-label">Cápsulas creadas</div></div>
+        <div class="stat-card"><div class="stat-num gold">${userProfile.consultas_disponibles || 0}</div><div class="stat-label">Créditos restantes</div></div>
+        <div class="stat-card"><div class="stat-num blue">${tipos}</div><div class="stat-label">Tipos usados</div></div>
+        <div class="stat-card"><div class="stat-num coral">${userProfile.referidos_exitosos || 0}</div><div class="stat-label">Referidos</div></div>
+    `;
+}
+
+function renderReferral() {
+    const code = userProfile.codigo_referido || generateRefCode();
+    const link = `https://thanotectas.com/oraculo.html?ref=${code}`;
+    const exitosos = userProfile.referidos_exitosos || 0;
+    const ganadas = exitosos * 2;
+
+    document.getElementById('referral-banner').innerHTML = `
+        <div class="referral-icon">🎁</div>
+        <div class="referral-text">
+            <h3>Invita y gana 2 cápsulas gratis</h3>
+            <p>Comparte tu enlace. Cuando alguien se registre con tu invitación, <strong>ambos reciben 2 consultas extra</strong>.</p>
+            <div class="referral-link-box">
+                <input class="referral-input" id="ref-link" value="${link}" readonly onclick="this.select()">
+                <button class="btn-copy" onclick="copyRefLink()">Copiar</button>
+                <button class="btn-share-ref" onclick="shareRefLink()">Compartir</button>
+            </div>
+            <div class="referral-stats">
+                <span>Invitaciones exitosas: <strong>${exitosos}</strong></span>
+                <span>Cápsulas ganadas: <strong>${ganadas}</strong></span>
+            </div>
+        </div>
+    `;
+}
+
+function renderFilters() {
+    const tipos = [...new Set(capsulas.map(c => c.tipo))];
+    let html = `<button class="filter-pill ${activeFilter === 'todas' ? 'active' : ''}" onclick="setFilter('todas')">Todas</button>`;
+    tipos.forEach(t => {
+        const tc = TYPE_CONFIG[t] || { label: t };
+        html += `<button class="filter-pill ${activeFilter === t ? 'active' : ''}" onclick="setFilter('${t}')">${tc.label}</button>`;
+    });
+    document.getElementById('filter-pills').innerHTML = html;
+}
+
+function renderCapsulas() {
+    const filtered = activeFilter === 'todas' ? capsulas : capsulas.filter(c => c.tipo === activeFilter);
+    const container = document.getElementById('capsules-list');
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">🌍</div>
+                <h3>${capsulas.length === 0 ? 'Aún no tienes cápsulas' : 'Sin cápsulas de este tipo'}</h3>
+                <p>${capsulas.length === 0 ? 'Visita el Oráculo del Umbral para inscribir tu primera memoria ecológica.' : 'Prueba otro filtro o crea una nueva cápsula.'}</p>
+                <a href="/oraculo.html" class="btn-oraculo">Ir al Oráculo</a>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map((c, i) => {
+        const tc = TYPE_CONFIG[c.tipo] || { icon: '📝', class: 'type-poema', label: c.tipo };
+        const fecha = new Date(c.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+        const preview = (c.contenido || '').substring(0, 180) + '...';
+        return `
+            <div class="capsule-card" onclick="toggleCapsule(${i})">
+                <div class="capsule-top">
+                    <div class="capsule-type-icon ${tc.class}">${tc.icon}</div>
+                    <div class="capsule-info">
+                        <div class="capsule-subject">${escapeHtml(c.sujeto || 'Sin título')}</div>
+                        <div class="capsule-tags">
+                            <span class="capsule-tag tag-tipo">${tc.label}</span>
+                            <span class="capsule-tag tag-idioma">${(c.idioma || 'ES').toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <span class="capsule-date">${fecha}</span>
+                </div>
+                <div class="capsule-preview">${escapeHtml(preview)}</div>
+                <div class="capsule-expanded" id="capsule-exp-${i}">
+                    <div class="capsule-full-text">${escapeHtml(c.contenido || '')}</div>
+                    <div class="share-bar">
+                        <button class="share-btn" onclick="event.stopPropagation(); shareX(${i})">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            Compartir
+                        </button>
+                        <button class="share-btn" onclick="event.stopPropagation(); shareWhatsApp(${i})">WhatsApp</button>
+                        <button class="share-btn" onclick="event.stopPropagation(); shareFacebook(${i})">Facebook</button>
+                        <button class="share-btn" onclick="event.stopPropagation(); shareLinkedIn(${i})">LinkedIn</button>
+                        <button class="share-btn" onclick="event.stopPropagation(); copyCapsule(${i})">📋 Copiar</button>
+                        <button class="share-btn" onclick="event.stopPropagation(); emailCapsule(${i})">📧 Email</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// =============================================
+// INTERACTIONS
+// =============================================
+function toggleCapsule(i) {
+    const el = document.getElementById(`capsule-exp-${i}`);
+    if (el) el.classList.toggle('open');
+}
+
+function setFilter(f) {
+    activeFilter = f;
+    renderFilters();
+    renderCapsulas();
+}
+
+function generateRefCode() {
+    return currentUser.id.substring(0, 8).toUpperCase();
+}
+
+function copyRefLink() {
+    const input = document.getElementById('ref-link');
+    navigator.clipboard.writeText(input.value).then(() => showToast('Enlace copiado'));
+}
+
+function shareRefLink() {
+    const link = document.getElementById('ref-link').value;
+    if (navigator.share) {
+        navigator.share({ title: 'Thanotectas — Guardianes del Umbral', text: 'Inscribe la memoria de lo que la Tierra está perdiendo. Usa mi invitación y ambos ganamos 2 cápsulas:', url: link });
+    } else {
+        copyRefLink();
+    }
+}
+
+// --- SHARE FUNCTIONS ---
+function getShareText(i) {
+    const c = capsulas[i];
+    const tc = TYPE_CONFIG[c.tipo] || { label: c.tipo };
+    return `${tc.label}: ${c.sujeto}\n\n${(c.contenido || '').substring(0, 250)}...\n\n🌍 Generado en thanotectas.com — Guardianes del Umbral`;
+}
+
+function shareX(i) {
+    const text = encodeURIComponent(getShareText(i).substring(0, 260));
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent('https://thanotectas.com')}`, '_blank');
+}
+function shareWhatsApp(i) {
+    const text = encodeURIComponent(getShareText(i));
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+function shareFacebook(i) {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://thanotectas.com')}&quote=${encodeURIComponent(getShareText(i).substring(0, 200))}`, '_blank');
+}
+function shareLinkedIn(i) {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://thanotectas.com')}`, '_blank');
+}
+function copyCapsule(i) {
+    navigator.clipboard.writeText(capsulas[i].contenido || '').then(() => showToast('Cápsula copiada'));
+}
+function emailCapsule(i) {
+    const c = capsulas[i];
+    const subject = encodeURIComponent(`Cápsula Thanotectas: ${c.sujeto}`);
+    const body = encodeURIComponent(getShareText(i));
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+}
+
+// --- ACTIONS ---
+function showUpgrade() {
+    const plan = userProfile.plan;
+    if (plan === 'admin' || plan === 'guardian') {
+        showToast('Ya tienes el plan más alto disponible');
+        return;
+    }
+    // Open Bold.co payment links
+    const explorador = 'https://checkout.bold.co/payment/LNK_UVSP2A0O0U';
+    const guardian = 'https://checkout.bold.co/payment/LNK_X1LLSJCK4P';
+    if (plan === 'explorador') {
+        window.open(guardian, '_blank');
+    } else {
+        // Show choice - simple approach: open explorador first
+        if (confirm('¿Quieres el Plan Explorador ($3,000 COP, 10 consultas)?\n\nPresiona Cancelar para ver el Plan Guardián ($21,000 COP, 20 consultas).')) {
+            window.open(explorador, '_blank');
+        } else {
+            window.open(guardian, '_blank');
+        }
+    }
+}
+
+function exportAll() {
+    if (capsulas.length === 0) { showToast('No hay cápsulas para exportar'); return; }
+    let text = '═══════════════════════════════════════\n';
+    text += '  THANOTECTAS — Guardianes del Umbral\n';
+    text += '  Mis Cápsulas del Oráculo\n';
+    text += '═══════════════════════════════════════\n\n';
+    capsulas.forEach((c, i) => {
+        const fecha = new Date(c.created_at).toLocaleDateString('es-CO');
+        text += `── Cápsula ${i + 1} ──────────────────\n`;
+        text += `Tipo: ${(TYPE_CONFIG[c.tipo] || {}).label || c.tipo}\n`;
+        text += `Sujeto: ${c.sujeto}\n`;
+        text += `Idioma: ${(c.idioma || 'es').toUpperCase()}\n`;
+        text += `Fecha: ${fecha}\n\n`;
+        text += `${c.contenido || ''}\n\n`;
+    });
+    text += '═══════════════════════════════════════\n';
+    text += `Exportado el ${new Date().toLocaleDateString('es-CO')}\n`;
+    text += 'thanotectas.com\n';
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `thanotectas-capsulas-${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    showToast('Cápsulas exportadas');
+}
+
+async function logout() {
+    await sb.auth.signOut();
+    window.location.href = '/';
+}
+
+// --- HELPERS ---
+function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+}
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// =============================================
+// BOOT
+// =============================================
+init();
+</script>
+</body>
+</html>
