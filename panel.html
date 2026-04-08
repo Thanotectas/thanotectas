@@ -48,9 +48,9 @@
         /* --- NAVBAR --- */
         .navbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 24px;
+            padding: 14px 24px;
             border-bottom: 1px solid var(--border);
-            background: rgba(10, 15, 13, 0.95);
+            background: rgba(10, 15, 13, 0.97);
             backdrop-filter: blur(12px);
             position: sticky; top: 0; z-index: 100;
         }
@@ -59,18 +59,19 @@
             color: var(--accent); text-decoration: none; letter-spacing: 0.5px;
         }
         .navbar-brand span { color: var(--text-muted); font-weight: 400; font-size: 14px; margin-left: 8px; }
-        .navbar-links { display: flex; gap: 8px; align-items: center; }
+        .navbar-links { display: flex; gap: 10px; align-items: center; }
         .navbar-links a {
-            font-size: 13px; color: var(--text-secondary); text-decoration: none;
-            padding: 6px 14px; border-radius: var(--radius-sm);
-            border: 1px solid transparent; transition: all 0.2s;
+            font-size: 14px; color: var(--text-secondary); text-decoration: none;
+            padding: 8px 16px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); transition: all 0.2s;
+            font-weight: 500;
         }
-        .navbar-links a:hover { color: var(--text-primary); border-color: var(--border-hover); }
-        .navbar-links a.active { background: var(--accent-soft); color: var(--accent); border-color: rgba(61,184,122,0.2); }
+        .navbar-links a:hover { color: var(--text-primary); border-color: var(--border-hover); background: var(--bg-card); }
+        .navbar-links a.active { background: var(--accent-soft); color: var(--accent); border-color: rgba(61,184,122,0.3); }
         .btn-oraculo {
-            background: var(--accent); color: var(--bg-deep); font-weight: 600;
-            padding: 8px 18px; border-radius: var(--radius-sm); border: none;
-            font-size: 13px; cursor: pointer; text-decoration: none; transition: all 0.2s;
+            background: var(--accent) !important; color: var(--bg-deep) !important; font-weight: 600 !important;
+            padding: 8px 20px !important; border-radius: var(--radius-sm) !important; border: none !important;
+            font-size: 14px !important; cursor: pointer; text-decoration: none; transition: all 0.2s;
         }
         .btn-oraculo:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
@@ -298,12 +299,15 @@
         /* --- RESPONSIVE --- */
         @media (max-width: 640px) {
             .container { padding: 20px 14px 48px; }
+            .navbar { padding: 12px 14px; flex-wrap: wrap; gap: 10px; }
+            .navbar-brand span { display: none; }
+            .navbar-links { width: 100%; justify-content: space-between; }
+            .navbar-links a { flex: 1; text-align: center; font-size: 13px; padding: 8px 8px; }
             .profile-header { flex-direction: column; text-align: center; gap: 14px; padding: 20px 16px; }
             .profile-name { justify-content: center; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .actions-grid { grid-template-columns: 1fr; }
             .referral-banner { flex-direction: column; text-align: center; }
-            .navbar-links a.hide-mobile { display: none; }
             .capsule-top { flex-wrap: wrap; }
             .capsule-date { width: 100%; margin-top: 4px; }
         }
@@ -315,9 +319,9 @@
 <nav class="navbar">
     <a href="/" class="navbar-brand">Thanotectas <span>Guardianes del Umbral</span></a>
     <div class="navbar-links">
-        <a href="/panel.html" class="active">Mi panel</a>
-        <a href="/oraculo.html" class="hide-mobile">Oráculo</a>
-        <a href="/oraculo.html" class="btn-oraculo">+ Nueva cápsula</a>
+        <a href="/panel.html" class="active" title="Mi panel">📋 Mi panel</a>
+        <a href="/oraculo.html" title="Ir al Oráculo">🔮 Oráculo</a>
+        <a href="/oraculo.html" class="btn-oraculo">✦ Nueva cápsula</a>
     </div>
 </nav>
 
@@ -396,9 +400,9 @@
 // CONFIG — reemplaza con tus credenciales reales
 // =============================================
 const SUPABASE_URL = 'https://oygwnmfwfxbxdogaqwmi.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publisable_jGmhizP_WDOVeOEDrmFivA_SUJVeZfg';
+const SUPABASE_ANON_KEY = 'sb_publishable_jGmhizP_WDOVeOEDrmFivA_SUJVeZfg';
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
 // =============================================
 // STATE
