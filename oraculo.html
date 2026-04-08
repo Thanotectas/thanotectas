@@ -63,7 +63,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   </a>
   <div class="bar-right">
     <a href="planes.html" class="bar-link">Planes</a>
-    <a href="/panel.html" class="bar-link-panel" id="nav-panel-btn" style="display:none">📋 Mi Panel</a>
+    <a href="#" onclick="goTo('/panel.html');return false" class="bar-link-panel" id="nav-panel-btn" style="display:none">📋 Mi Panel</a>
     <div class="lang-btns">
       <button class="lang-btn active" onclick="setLang('es')">ES</button><button class="lang-btn" onclick="setLang('en')">EN</button><button class="lang-btn" onclick="setLang('pt')">PT</button><button class="lang-btn" onclick="setLang('fr')">FR</button>
       <button class="lang-btn lang-btn-ext" onclick="setLang('de')" style="display:none">DE</button><button class="lang-btn lang-btn-ext" onclick="setLang('it')" style="display:none">IT</button><button class="lang-btn lang-btn-ext" onclick="setLang('ja')" style="display:none">JA</button><button class="lang-btn lang-btn-ext" onclick="setLang('ar')" style="display:none">AR</button>
@@ -73,7 +73,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
       <div><div class="user-name" id="user-display-name"></div><div class="user-credits" id="user-credits-badge"></div></div>
       <div class="user-dropdown" id="user-dropdown">
         <div class="ud-plan" id="ud-plan"></div>
-        <div class="ud-item" onclick="event.stopPropagation();window.location.href='/panel.html'">📋 Mi Panel</div>
+        <div class="ud-item" onclick="event.stopPropagation();goTo('/panel.html')">📋 Mi Panel</div>
         <div class="ud-item" onclick="event.stopPropagation();go('history')">📜 Mis cápsulas</div>
         <div class="ud-item" onclick="event.stopPropagation();window.open('planes.html')">🌿 Mejorar plan</div>
         <div class="ud-divider"></div>
@@ -222,6 +222,7 @@ function shareX(){window.open('https://twitter.com/intent/tweet?text='+encodeURI
 function copyShare(){navigator.clipboard.writeText(document.getElementById('share-txt').textContent);var b=document.getElementById('copy-btn');b.textContent='✓';setTimeout(function(){b.textContent='Copiar';},2200);}
 function resetAll(){document.getElementById('subj').value='';document.getElementById('desc').value='';document.getElementById('capsule-box').style.backgroundImage='';go('input');}
 function setLang(lang){activeLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});}
+async function goTo(url){try{var s=await sb.auth.getSession();if(s.data&&s.data.session){var t=s.data.session.access_token;var r=s.data.session.refresh_token;window.location.href=url+'#access_token='+t+'&refresh_token='+r+'&token_type=bearer&type=recovery';return;}}catch(e){console.error('goTo:',e);}window.location.href=url;}
 sb.auth.onAuthStateChange(async function(event,session){if(event==='SIGNED_IN'&&session){await loadUserProfile(session.user);if(currentUser){actualizarTiposIdiomas();updateUsesBar();var ph=document.querySelector('.phase.active');if(ph&&ph.id==='ph-login')go('hook');}}if(event==='SIGNED_OUT'){currentUser=null;document.getElementById('user-pill').style.display='none';document.getElementById('nav-login-btn').style.display='inline-flex';document.getElementById('nav-panel-btn').style.display='none';}});
 (async function(){var s=await sb.auth.getSession();if(s.data.session&&s.data.session.user){await loadUserProfile(s.data.session.user);actualizarTiposIdiomas();updateUsesBar();}var p=new URLSearchParams(window.location.search);if(p.get('status')==='ok'&&p.get('plan')){localStorage.setItem('thano_pending_plan',p.get('plan'));history.replaceState({},'','oraculo.html');if(currentUser)confirmPayment();else go('login');}})();
 </script>
