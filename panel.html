@@ -449,28 +449,31 @@ async function init() {
     }
     currentUser = session.user;
     await loadProfile();
+    if (!userProfile) {
+        console.error('No se encontró perfil de guardián');
+        document.getElementById('loading-view').style.display = 'none';
+        document.getElementById('auth-view').style.display = '';
+        return;
+    }
     await loadCapsulas();
     render();
 }
 
 async function loadProfile() {
-    const { data, error } = await sb
-        .from('guardianes')
-        .select('*')
-        .eq('id', currentUser.id)
-        .single();
-    if (error) { console.error('Error loading profile:', error); return; }
-    userProfile = data;
+    var r = await sb.from('guardianes').select('*').eq('auth_id', currentUser.id).single();
+    if (!r.data) {
+        await new Promise(function(ok){ setTimeout(ok, 2000); });
+        r = await sb.from('guardianes').select('*').eq('auth_id', currentUser.id).single();
+    }
+    if (r.error || !r.data) { console.error('Error loading profile:', r.error); return; }
+    userProfile = r.data;
 }
 
 async function loadCapsulas() {
-    const { data, error } = await sb
-        .from('capsulas')
-        .select('*')
-        .eq('guardian_id', currentUser.id)
-        .order('created_at', { ascending: false });
-    if (error) { console.error('Error loading capsulas:', error); return; }
-    capsulas = data || [];
+    if (!userProfile) return;
+    var r = await sb.from('capsulas').select('*').eq('guardian_id', userProfile.id).order('created_at', { ascending: false });
+    if (r.error) { console.error('Error loading capsulas:', r.error); return; }
+    capsulas = r.data || [];
 }
 
 // =============================================
