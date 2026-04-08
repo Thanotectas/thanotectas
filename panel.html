@@ -320,8 +320,8 @@
     <a href="/" class="navbar-brand">Thanotectas <span>Guardianes del Umbral</span></a>
     <div class="navbar-links">
         <a href="/panel.html" class="active" title="Mi panel">📋 Mi panel</a>
-        <a href="/oraculo.html" title="Ir al Oráculo">🔮 Oráculo</a>
-        <a href="/oraculo.html" class="btn-oraculo">✦ Nueva cápsula</a>
+        <a href="#" onclick="goTo('/oraculo.html');return false" title="Ir al Oráculo">🔮 Oráculo</a>
+        <a href="#" onclick="goTo('/oraculo.html');return false" class="btn-oraculo">✦ Nueva cápsula</a>
     </div>
 </nav>
 
@@ -366,11 +366,11 @@
     <!-- ACTIONS -->
     <div class="section-header"><div class="section-title">Acciones</div></div>
     <div class="actions-grid">
-        <a href="/oraculo.html" class="action-card">
+        <div class="action-card" onclick="goTo('/oraculo.html')" style="cursor:pointer">
             <div class="action-icon">✦</div>
             <div class="action-label">Nueva cápsula</div>
             <div class="action-sub">Inscribir una memoria ecológica</div>
-        </a>
+        </div>
         <div class="action-card" onclick="showUpgrade()">
             <div class="action-icon">💎</div>
             <div class="action-label">Mejorar plan</div>
@@ -573,7 +573,7 @@ function renderCapsulas() {
                 <div class="icon">🌍</div>
                 <h3>${capsulas.length === 0 ? 'Aún no tienes cápsulas' : 'Sin cápsulas de este tipo'}</h3>
                 <p>${capsulas.length === 0 ? 'Visita el Oráculo del Umbral para inscribir tu primera memoria ecológica.' : 'Prueba otro filtro o crea una nueva cápsula.'}</p>
-                <a href="/oraculo.html" class="btn-oraculo">Ir al Oráculo</a>
+                <a href="#" onclick="goTo('/oraculo.html');return false" class="btn-oraculo">Ir al Oráculo</a>
             </div>
         `;
         return;
@@ -744,6 +744,22 @@ function showToast(msg) {
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// =============================================
+// SESSION-PRESERVING NAVIGATION
+// =============================================
+async function goTo(url) {
+    try {
+        var s = await sb.auth.getSession();
+        if (s.data && s.data.session) {
+            var t = s.data.session.access_token;
+            var r = s.data.session.refresh_token;
+            window.location.href = url + '#access_token=' + t + '&refresh_token=' + r + '&token_type=bearer&type=recovery';
+            return;
+        }
+    } catch(e) { console.error('goTo error:', e); }
+    window.location.href = url;
 }
 
 // =============================================
