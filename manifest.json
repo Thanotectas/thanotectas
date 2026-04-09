@@ -1,0 +1,93 @@
+{
+  "name": "Thanotectas — Guardianes del Umbral",
+  "short_name": "Thanotectas",
+  "description": "Plataforma de duelo ecológico. Inscribe la memoria de lo que la Tierra está perdiendo.",
+  "start_url": "/oraculo.html",
+  "display": "standalone",
+  "background_color": "#1a1611",
+  "theme_color": "#1a1611",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "categories": ["environment", "education", "social"],
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Oráculo del Umbral — Inscribe memorias ecológicas"
+    },
+    {
+      "src": "/icons/screenshot-mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Oráculo del Umbral en móvil"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Inscribir memoria",
+      "short_name": "Inscribir",
+      "url": "/oraculo.html",
+      "icons": [{"src": "/icons/icon-96.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Mi Panel",
+      "short_name": "Panel",
+      "url": "/panel.html",
+      "icons": [{"src": "/icons/icon-96.png", "sizes": "96x96"}]
+    }
+  ]
+}
