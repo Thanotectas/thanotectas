@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1611">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>Mi Cuenta — Thanotectas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -201,7 +204,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
         <div class="field">
             <label>Email actual</label>
             <input type="email" id="inp-email" disabled>
-            <div class="field-hint">Para cambiar tu correo, contacta info@thanotectas.com</div>
+            <div class="field-hint">Para cambiar tu correo, contacta <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a0c9cec6cfe0d4c8c1cecfd4c5c3d4c1d38ec3cfcd">[email&#160;protected]</a></div>
         </div>
     </div>
 
@@ -217,7 +220,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
@@ -396,5 +399,6 @@ function toast(m){var t=document.getElementById('toast');t.textContent=m;t.class
 
 init();
 </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
 </html>

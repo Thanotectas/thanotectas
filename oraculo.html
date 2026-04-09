@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1611">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>Oráculo del Umbral — Thanotectas</title>
 <meta name="description" content="Nombra algo que la Tierra está perdiendo. El Oráculo inscribirá su memoria para el futuro.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
@@ -227,5 +230,6 @@ async function goTo(url){try{var s=await sb.auth.getSession();if(s.data&&s.data.
 sb.auth.onAuthStateChange(async function(event,session){if(event==='SIGNED_IN'&&session){await loadUserProfile(session.user);if(currentUser){actualizarTiposIdiomas();updateUsesBar();var ph=document.querySelector('.phase.active');if(ph&&ph.id==='ph-login')go('hook');}}if(event==='SIGNED_OUT'){currentUser=null;document.getElementById('user-pill').style.display='none';document.getElementById('nav-login-btn').style.display='inline-flex';document.getElementById('nav-panel-btn').style.display='none';}});
 (async function(){var s=await sb.auth.getSession();if(s.data.session&&s.data.session.user){await loadUserProfile(s.data.session.user);actualizarTiposIdiomas();updateUsesBar();}var p=new URLSearchParams(window.location.search);if(p.get('status')==='ok'&&p.get('plan')){localStorage.setItem('thano_pending_plan',p.get('plan'));history.replaceState({},'','oraculo.html');if(currentUser)confirmPayment();else go('login');}})();
 </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
 </html>
