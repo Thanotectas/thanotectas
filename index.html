@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1611">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>Thanotectas — Guardianes del Umbral</title>
 <meta name="description" content="Deposita tu legado al futuro. Una carta, una idea, un recuerdo sellado en el tiempo que viajará décadas para ser abierto cuando más se necesite.">
 <meta property="og:title" content="Thanotectas — Guardianes del Umbral">
@@ -520,5 +523,6 @@ function sendChat(){
   setTimeout(()=>addMsg(BOT[k],'bot'),800);
 }
 </script>
+  <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
 </html>
