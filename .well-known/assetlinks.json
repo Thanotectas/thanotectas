@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.thanotectas.twa",
+    "sha256_cert_fingerprints": [
+      "7D:20:EC:D0:34:C9:6E:03:51:BA:C1:6F:EB:56:41:F5:D9:39:90:02:EE:11:4A:1E:5B:89:6F:4C:6F:C6:1D:8A"
+    ]
+  }
+}]
