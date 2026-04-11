@@ -3,3 +3,8 @@
 
 [functions]
   directory = "netlify/functions"
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
