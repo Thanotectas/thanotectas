@@ -1,0 +1,135 @@
+/* ============================================================
+   GOOGLE AUTH STYLES - THANOTECTAS
+   Estilos para el botón de Login con Google
+   
+   Agregar a tu CSS principal o incluir como:
+   <link rel="stylesheet" href="google-auth-styles.css">
+   ============================================================ */
+
+/* --- Botón principal de Google --- */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+  margin: 12px auto;
+  padding: 12px 24px;
+  background: #ffffff;
+  color: #3c4043;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-google:hover {
+  background: #f7f8f8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border-color: #c6c6c6;
+}
+
+.btn-google:active {
+  background: #eef0f1;
+  box-shadow: none;
+}
+
+.btn-google:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-google:focus-visible {
+  outline: 2px solid #4285F4;
+  outline-offset: 2px;
+}
+
+/* --- Ícono SVG de Google --- */
+.google-icon {
+  flex-shrink: 0;
+}
+
+/* --- Spinner de carga --- */
+.spinner-google {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #dadce0;
+  border-top-color: #4285F4;
+  border-radius: 50%;
+  animation: spin-google 0.7s linear infinite;
+  margin-right: 4px;
+}
+
+@keyframes spin-google {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Mensaje de error --- */
+.google-auth-error {
+  display: none;
+  max-width: 320px;
+  margin: 8px auto;
+  padding: 10px 16px;
+  background: #fce8e6;
+  color: #c5221f;
+  font-size: 13px;
+  border-radius: 6px;
+  text-align: center;
+  animation: fadeIn-google 0.3s ease;
+}
+
+@keyframes fadeIn-google {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Separador "o" entre métodos de login --- */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 320px;
+  margin: 16px auto;
+  color: #9aa0a6;
+  font-size: 13px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #dadce0;
+}
+
+/* --- Modo oscuro (si tu plataforma lo usa) --- */
+@media (prefers-color-scheme: dark) {
+  .btn-google {
+    background: #303134;
+    color: #e8eaed;
+    border-color: #5f6368;
+  }
+  .btn-google:hover {
+    background: #3c4043;
+    border-color: #8e918f;
+  }
+  .google-auth-error {
+    background: #442726;
+    color: #f28b82;
+  }
+  .auth-divider {
+    color: #9aa0a6;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    background: #5f6368;
+  }
+}
