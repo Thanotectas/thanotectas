@@ -263,7 +263,7 @@ function sEmail(i){var c=caps[i];window.open('mailto:?subject='+encodeURICompone
 
 function exportAll(){if(caps.length===0){toast('No hay cápsulas');return;}var t='═══════════════════════════════════════\n  THANOTECTAS — Guardianes del Umbral\n═══════════════════════════════════════\n\n';caps.forEach(function(c,i){var f=new Date(c.created_at).toLocaleDateString('es-CO');t+='── Cápsula '+(i+1)+' ──────────────────\n'+(c.numero_certificado?'Nº archivo: '+c.numero_certificado+'\n':'')+'Tipo: '+((TM[c.tipo]||{}).lb||c.tipo)+'\nSujeto: '+c.sujeto+'\nIdioma: '+(c.idioma||'es').toUpperCase()+'\nFecha: '+f+'\n\n'+(c.contenido||'')+'\n\n';});t+='═══════════════════════════════════════\nthanotectas.com\n';var b=new Blob([t],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='thanotectas-capsulas-'+new Date().toISOString().slice(0,10)+'.txt';a.click();toast('Cápsulas exportadas ✓');}
 
-async function goTo(url){try{var s=await sb.auth.getSession();if(s.data&&s.data.session){var t=s.data.session.access_token;var r=s.data.session.refresh_token;window.location.href=url+'#access_token='+t+'&refresh_token='+r+'&token_type=bearer&type=recovery';return;}}catch(e){}window.location.href=url;}
+function goTo(url){window.location.href=url;}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 init();

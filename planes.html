@@ -3,316 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a1611">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>Planes · Thanotectas — Guardianes del Umbral</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Conviértete en Guardián del Umbral. Inscribe memorias sin límite. Dos formas de honrar la Tierra.">
+<meta property="og:title" content="Planes · Thanotectas">
+<meta property="og:description" content="Conviértete en Guardián del Umbral. Inscribe memorias sin límite.">
+<meta property="og:image" content="https://thanotectas.com/icons/icon-512.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+:root{--tierra:#1a1611;--tierra2:#2a2319;--musgo:#2d4a2e;--musgo-c:#3d6a3e;--musgo-g:#4a8a4b;--ocre:#c4973b;--ocre-c:#d4a74b;--marfil:#f0e6d3;--marfil-t:rgba(240,230,211,.6);--cristal:rgba(240,230,211,.06)}
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0d0b08;--bg2:#1a1611;--bg3:#141009;
-  --gold:#c4973b;--gold-dim:rgba(196,151,59,0.25);--gold-glow:rgba(196,151,59,0.08);
-  --green:#4a8a4b;--green-dim:rgba(74,138,75,0.2);
-  --text:#f0e6d3;--text-dim:rgba(240,230,211,0.5);--text-faint:rgba(240,230,211,0.3);
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'Jost','Segoe UI',Arial,sans-serif;
-}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh;overflow-x:hidden}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.top-bar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:.85rem 1.8rem;background:rgba(26,22,17,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(196,151,59,.12)}
+.bar-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.bar-logo svg{width:26px;height:26px}
+.bar-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ocre);letter-spacing:.08em}
+.bar-right{display:flex;gap:1rem;align-items:center}
+.bar-right a{font-size:.72rem;color:var(--marfil-t);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .3s}
+.bar-right a:hover{color:var(--ocre)}
+.bar-right a.cta{background:linear-gradient(135deg,var(--ocre),var(--ocre-c));color:var(--tierra);padding:.45rem 1rem;border-radius:6px;font-weight:600;letter-spacing:.05em}
 
-/* ── NAV ─────────────────────────── */
-nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(13,11,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gold-dim);padding:14px 30px;display:flex;justify-content:space-between;align-items:center}
-.nav-logo{font-family:var(--sans);font-size:11px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);text-decoration:none}
-.nav-links{display:flex;gap:22px}
-.nav-links a{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}
-.nav-links a:hover{color:var(--gold)}
+main{position:relative;z-index:1;padding:4rem 1.5rem 5rem}
+.hero{text-align:center;max-width:680px;margin:0 auto 4rem}
+.hero-eyebrow{font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ocre);margin-bottom:1.2rem}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:400;line-height:1.15;margin-bottom:1.2rem;color:var(--marfil)}
+.hero-title em{color:var(--ocre);font-style:italic}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--marfil-t);line-height:1.7;max-width:520px;margin:0 auto}
 
-/* ── HERO ────────────────────────── */
-.hero{padding:140px 30px 80px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 0%,var(--gold-glow) 0%,transparent 60%);pointer-events:none}
-.hero-icon{font-size:42px;margin-bottom:20px;opacity:0.7}
-.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(28px,5vw,46px);color:var(--text);letter-spacing:0.04em;margin-bottom:16px}
-.hero h1 em{color:var(--gold);font-style:italic}
-.hero p{font-size:15px;color:var(--text-dim);max-width:560px;margin:0 auto;line-height:1.8;letter-spacing:0.02em}
+.divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:2rem auto;max-width:200px}
+.divider-line{flex:1;height:1px;background:var(--ocre);opacity:.5}
+.divider-dot{width:5px;height:5px;background:var(--ocre);transform:rotate(45deg)}
 
-/* ── PLANS GRID ──────────────────── */
-.plans-section{padding:20px 30px 100px;max-width:960px;margin:0 auto}
-.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-@media(max-width:700px){.plans-grid{grid-template-columns:1fr;gap:20px}}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:1100px;margin:0 auto 4rem}
 
-/* ── PLAN CARD ───────────────────── */
-.plan-card{background:var(--bg2);border:1px solid var(--gold-dim);border-radius:14px;padding:44px 32px 36px;position:relative;transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s;display:flex;flex-direction:column}
-.plan-card:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.plan{background:var(--cristal);border:1px solid rgba(196,151,59,.18);border-radius:18px;padding:2.4rem 2rem;display:flex;flex-direction:column;position:relative;transition:all .3s}
+.plan:hover{border-color:rgba(196,151,59,.4);transform:translateY(-4px)}
+.plan.featured{background:linear-gradient(160deg,rgba(196,151,59,.12),rgba(196,151,59,.04));border-color:var(--ocre);box-shadow:0 0 60px rgba(196,151,59,.1)}
+.plan.eternal{background:linear-gradient(160deg,rgba(45,74,46,.18),rgba(196,151,59,.06));border-color:rgba(196,151,59,.35)}
 
-/* Guardian highlight */
-.plan-card.featured{border-color:var(--gold);background:linear-gradient(175deg,var(--bg2) 0%,rgba(196,151,59,0.06) 100%)}
-.plan-card.featured::before{content:'★ RECOMENDADO';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:10px;font-weight:500;letter-spacing:0.18em;padding:5px 18px;border-radius:20px;white-space:nowrap}
+.plan-badge{position:absolute;top:-.7rem;left:50%;transform:translateX(-50%);background:var(--ocre);color:var(--tierra);font-size:.55rem;font-weight:700;letter-spacing:.2em;padding:.3rem .9rem;border-radius:10px;white-space:nowrap;text-transform:uppercase}
+.plan-badge.eternal{background:linear-gradient(135deg,var(--ocre),var(--ocre-c))}
 
-.plan-tier{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
-.plan-name{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--text);margin-bottom:4px}
-.plan-tagline{font-size:13px;color:var(--text-dim);margin-bottom:28px;font-style:italic}
+.plan-tier{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--musgo-g);margin-bottom:.6rem}
+.plan-name{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:500;color:var(--marfil);line-height:1.1;margin-bottom:.3rem}
+.plan-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.9rem;color:var(--marfil-t);margin-bottom:1.4rem}
 
-.plan-price{margin-bottom:28px}
-.plan-price .amount{font-family:var(--serif);font-size:44px;font-weight:600;color:var(--gold)}
-.plan-price .currency{font-size:16px;color:var(--gold);opacity:0.7;margin-left:4px}
-.plan-price .period{display:block;font-size:12px;color:var(--text-faint);margin-top:4px;letter-spacing:0.05em}
+.plan-price-row{display:flex;align-items:baseline;gap:.4rem;margin-bottom:.35rem}
+.plan-price{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ocre);line-height:1}
+.plan-currency{font-size:.9rem;color:var(--marfil-t);letter-spacing:.05em}
+.plan-period{font-size:.75rem;color:var(--marfil-t);margin-bottom:1.5rem;letter-spacing:.05em}
 
-.plan-features{list-style:none;flex:1;margin-bottom:32px}
-.plan-features li{font-size:13.5px;color:var(--text-dim);padding:9px 0;border-bottom:1px solid rgba(240,230,211,0.06);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
-.plan-features li::before{content:'✦';color:var(--gold);font-size:10px;margin-top:3px;flex-shrink:0}
-.plan-card.featured .plan-features li::before{content:'◆'}
+.plan-features{list-style:none;padding:0;margin:0 0 2rem;flex:1}
+.plan-features li{font-size:.82rem;color:var(--marfil);line-height:1.5;padding:.55rem 0;border-bottom:1px dashed rgba(196,151,59,.1);display:flex;align-items:flex-start;gap:.6rem}
+.plan-features li:last-child{border-bottom:none}
+.plan-features li::before{content:'✦';color:var(--ocre);flex-shrink:0;font-size:.8rem;margin-top:1px}
+.plan-features li.bold{color:var(--ocre);font-weight:500}
+.plan-features li.muted{color:var(--marfil-t)}
 
-.plan-btn{display:block;width:100%;padding:16px;text-align:center;border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:all 0.3s;text-decoration:none}
+.btn-cta{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;width:100%;padding:.95rem 1.2rem;font-family:'Jost',sans-serif;font-size:.86rem;font-weight:600;letter-spacing:.06em;border:none;border-radius:8px;cursor:pointer;transition:all .3s;text-decoration:none;text-align:center}
+.btn-cta-ghost{background:transparent;border:1px solid rgba(196,151,59,.4);color:var(--ocre)}
+.btn-cta-ghost:hover{background:rgba(196,151,59,.1);border-color:var(--ocre)}
+.btn-cta-gold{background:linear-gradient(135deg,var(--ocre),var(--ocre-c));color:var(--tierra)}
+.btn-cta-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,151,59,.35)}
+.btn-cta-eternal{background:linear-gradient(135deg,var(--musgo-c),var(--ocre));color:var(--marfil)}
+.btn-cta-eternal:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(45,74,46,.4)}
 
-/* Explorador button */
-.plan-btn.outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
-.plan-btn.outline:hover{background:var(--gold);color:var(--bg)}
+.faq{max-width:700px;margin:5rem auto 0;padding:0 1rem}
+.faq-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;text-align:center;margin-bottom:.5rem;color:var(--marfil)}
+.faq-title em{color:var(--ocre);font-style:italic}
+.faq-sub{text-align:center;font-size:.82rem;color:var(--marfil-t);margin-bottom:2.5rem;letter-spacing:.04em}
+.faq-item{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:10px;margin-bottom:.7rem;overflow:hidden}
+.faq-q{padding:1.1rem 1.4rem;font-size:.92rem;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--marfil);transition:all .2s}
+.faq-q:hover{background:rgba(196,151,59,.04)}
+.faq-q::after{content:'+';color:var(--ocre);font-size:1.3rem;font-weight:300;transition:transform .3s;flex-shrink:0;margin-left:.8rem}
+.faq-item.open .faq-q::after{content:'−'}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 1.4rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;line-height:1.7;color:var(--marfil-t)}
+.faq-item.open .faq-a{max-height:400px;padding:0 1.4rem 1.2rem}
+.faq-a em{color:var(--ocre);font-style:italic}
 
-/* Guardian button */
-.plan-btn.solid{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
-.plan-btn.solid:hover{background:#d4a73f;box-shadow:0 6px 30px rgba(196,151,59,0.3)}
+.bottom-cta{max-width:680px;margin:5rem auto 0;text-align:center;padding:2.5rem 2rem;border:1px solid rgba(196,151,59,.2);border-radius:16px;background:rgba(45,74,46,.06)}
+.bottom-cta h3{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:400;color:var(--marfil);margin-bottom:.6rem}
+.bottom-cta h3 em{color:var(--ocre);font-style:italic}
+.bottom-cta p{font-size:.88rem;color:var(--marfil-t);line-height:1.7;margin-bottom:1.6rem;max-width:460px;margin-left:auto;margin-right:auto}
 
-/* ── COMPARISON TABLE ────────────── */
-.compare-section{padding:0 30px 100px;max-width:800px;margin:0 auto}
-.compare-title{text-align:center;font-family:var(--serif);font-size:24px;font-weight:300;margin-bottom:40px;color:var(--text-dim)}
-.compare-table{width:100%;border-collapse:collapse}
-.compare-table th,.compare-table td{padding:14px 16px;text-align:center;font-size:13px;border-bottom:1px solid rgba(240,230,211,0.07)}
-.compare-table th{color:var(--gold);font-weight:400;letter-spacing:0.15em;text-transform:uppercase;font-size:11px}
-.compare-table th:first-child,.compare-table td:first-child{text-align:left;color:var(--text-dim)}
-.compare-table td:nth-child(2),.compare-table td:nth-child(3){color:var(--text)}
-.check{color:var(--green)}
-.cross{color:rgba(240,230,211,0.2)}
+footer.foot{position:relative;z-index:1;text-align:center;padding:2.5rem;border-top:1px solid rgba(196,151,59,.08);margin-top:4rem;font-size:.68rem;color:var(--marfil-t);letter-spacing:.1em}
+footer.foot em{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.85rem;color:var(--ocre);letter-spacing:.03em;text-transform:none;display:block;margin-bottom:.4rem}
+footer.foot a{color:var(--ocre);text-decoration:none}
 
-/* ── FAQ ─────────────────────────── */
-.faq-section{padding:0 30px 100px;max-width:700px;margin:0 auto}
-.faq-title{text-align:center;font-family:var(--serif);font-size:24px;font-weight:300;margin-bottom:40px;color:var(--text-dim)}
-.faq-item{border-bottom:1px solid rgba(240,230,211,0.07);padding:20px 0}
-.faq-q{font-size:14px;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.faq-q::after{content:'+';color:var(--gold);font-size:18px;transition:transform 0.3s}
-.faq-item.open .faq-q::after{transform:rotate(45deg)}
-.faq-a{font-size:13px;color:var(--text-dim);line-height:1.8;max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s}
-.faq-item.open .faq-a{max-height:300px;padding-top:14px}
-
-/* ── FOOTER ──────────────────────── */
-footer{text-align:center;padding:40px 30px;border-top:1px solid var(--gold-dim)}
-footer a{color:var(--gold);text-decoration:none;font-size:12px;letter-spacing:0.15em}
-footer p{color:var(--text-faint);font-size:11px;margin-top:10px}
-
-/* ── ANIMATIONS ──────────────────── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.hero,.plan-card,.compare-section,.faq-section{animation:fadeUp 0.7s ease-out both}
-.plan-card:nth-child(2){animation-delay:0.12s}
-.compare-section{animation-delay:0.2s}
+@media(max-width:900px){
+  .plans{grid-template-columns:1fr;max-width:420px}
+}
+@media(max-width:580px){
+  main{padding:2.5rem 1rem 4rem}
+  .top-bar{padding:.7rem 1rem}
+  .bar-right a:not(.cta){display:none}
+  .plan{padding:2rem 1.6rem}
+  .hero{margin-bottom:2.5rem}
+}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">Thanotectas</a>
-  <div class="nav-links">
-    <a href="oraculo.html">Oráculo</a>
-    <a href="planes.html">Planes</a>
-    <a href="guardianes.html">Guardianes</a>
+<canvas id="stars"></canvas>
+<header class="top-bar">
+  <a href="/" class="bar-logo">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="tg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="rg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs><line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/><path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#rg)" stroke-width="2" stroke-linecap="round"/><path d="M108 148 Q94 158 80 168" stroke="url(#rg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M112 148 Q126 158 140 168" stroke="url(#rg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><path d="M108 132 Q109 110 110 72" stroke="url(#tg)" stroke-width="2.8" stroke-linecap="round"/><path d="M110 90 Q92 76 70 66" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/><path d="M110 90 Q128 76 150 66" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/><circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/></svg>
+    <span class="bar-name">THANOTECTAS</span>
+  </a>
+  <div class="bar-right">
+    <a href="/oraculo.html">Oráculo</a>
+    <a href="/panel.html">Mi Panel</a>
+    <a href="/oraculo.html" class="cta">✦ Inscribir</a>
   </div>
-</nav>
+</header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-icon">🌿</div>
-  <h1>Elige cómo <em>guardar la memoria</em></h1>
-  <p>Cada inscripción en el Oráculo tiene un costo real: energía, tiempo, y la promesa de que esta memoria no se perderá. Elige el plan que resuene contigo.</p>
-</section>
+<main>
+  <section class="hero">
+    <div class="hero-eyebrow">Planes · Guardianes del Umbral</div>
+    <h1 class="hero-title">Elige cómo <em>habitar el Archivo</em></h1>
+    <p class="hero-sub">Cada inscripción en el Oráculo tiene un costo real: energía, tiempo, y la promesa de que esa memoria no se perderá. Tu aporte sostiene el Archivo para quienes vengan después.</p>
+    <div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
+  </section>
 
-<!-- PLANS -->
-<section class="plans-section">
-  <div class="plans-grid">
+  <section class="plans">
 
-    <!-- PLAN EXPLORADOR -->
-    <div class="plan-card">
-      <div class="plan-tier">Plan Explorador</div>
-      <div class="plan-name">El Primer Paso</div>
-      <div class="plan-tagline">Para quienes despiertan al umbral</div>
-      <div class="plan-price">
-        <span class="amount">$0.70</span><span class="currency">USD</span>
-        <span class="period">Menos que un café — pago único</span>
+    <!-- VISITANTE -->
+    <div class="plan">
+      <div class="plan-tier">Gratuito</div>
+      <div class="plan-name">Visitante</div>
+      <div class="plan-tagline">Para conocer el Umbral</div>
+      <div class="plan-price-row">
+        <span class="plan-price">$0</span>
       </div>
+      <div class="plan-period">sin costo · para empezar</div>
       <ul class="plan-features">
-        <li>5 inscripciones en el Oráculo</li>
-        <li>2 tipos de salida: Cápsula Poética y Dato Científico</li>
-        <li>4 idiomas disponibles (ES, EN, PT, FR)</li>
-        <li>Cápsula enviada a tu correo</li>
-        <li>Comparte en redes con un clic</li>
+        <li>3 inscripciones iniciales</li>
+        <li>Cápsulas poéticas</li>
+        <li>4 idiomas (ES, EN, PT, FR)</li>
+        <li>Cápsula por correo</li>
+        <li class="muted">Sin certificado</li>
+        <li class="muted">Sin perfil público</li>
       </ul>
-      <!-- 
-        ═══════════════════════════════════════════
-        INSTRUCCIONES BOLD.CO — PLAN EXPLORADOR
-        ═══════════════════════════════════════════
-        1. Ve a bold.co → Crear link de pago
-        2. Nombre: "Plan Explorador Thanotectas"
-        3. Precio: $3,000 COP (≈ $0.70 USD)
-        4. URL de redirección exitosa: 
-           https://thanotectas.com/oraculo.html?plan=explorador&status=ok
-        5. Copia el link generado y reemplaza el href de abajo
-      -->
-      <a href="https://checkout.bold.co/payment/LNK_UVSP2A0O0U" 
-         class="plan-btn outline"
-         id="btn-explorador"
-         onclick="prepararPago('explorador')">
-        🌱 Comenzar por $0.70
-      </a>
+      <a href="/oraculo.html" class="btn-cta btn-cta-ghost">Comenzar</a>
     </div>
 
-    <!-- PLAN GUARDIÁN -->
-    <div class="plan-card featured">
-      <div class="plan-tier">Plan Guardián</div>
-      <div class="plan-name">Guardián del Umbral</div>
-      <div class="plan-tagline">Para quienes eligen no olvidar</div>
-      <div class="plan-price">
-        <span class="amount">$5</span><span class="currency">USD</span>
-        <span class="period">100 inscripciones — pago único</span>
+    <!-- GUARDIÁN -->
+    <div class="plan featured">
+      <div class="plan-badge">★ Recomendado</div>
+      <div class="plan-tier">Membresía anual</div>
+      <div class="plan-name">Guardián</div>
+      <div class="plan-tagline">Para quienes no olvidan</div>
+      <div class="plan-price-row">
+        <span class="plan-price">$45.000</span>
+        <span class="plan-currency">COP</span>
       </div>
+      <div class="plan-period">por un año · renovable</div>
       <ul class="plan-features">
-        <li>100 inscripciones en el Oráculo</li>
-        <li>Los 6 tipos de salida: Poema, Dato, Carta, Obituario, Alerta y Oración</li>
-        <li>8 idiomas (ES, EN, PT, FR, DE, IT, JA, AR)</li>
-        <li>Contenido extendido y más profundo</li>
-        <li>Certificado PDF elegante por correo</li>
-        <li>Tu nombre en la página de Guardianes</li>
-        <li>Comparte en redes con un clic</li>
+        <li class="bold">Inscripciones ilimitadas</li>
+        <li>Los 6 tipos de cápsula (poema, dato, carta, obituario, alerta, ritual)</li>
+        <li>8 idiomas (incluye DE, IT, JA, AR)</li>
+        <li>Certificado PDF por cada cápsula</li>
+        <li>Perfil público <code style="font-family:'JetBrains Mono',monospace;font-size:.78em;color:var(--ocre);background:rgba(196,151,59,.08);padding:1px 5px;border-radius:3px">/g/tu-nombre</code></li>
+        <li>Archivo permanente</li>
       </ul>
-      <!--
-        ═══════════════════════════════════════════
-        INSTRUCCIONES BOLD.CO — PLAN GUARDIÁN
-        ═══════════════════════════════════════════
-        1. Ve a bold.co → Crear link de pago
-        2. Nombre: "Plan Guardián Thanotectas"
-        3. Precio: $21,000 COP (≈ $5.00 USD)
-        4. URL de redirección exitosa: 
-           https://thanotectas.com/oraculo.html?plan=guardian&status=ok
-        5. Copia el link generado y reemplaza el href de abajo
-      -->
-      <a href="https://checkout.bold.co/payment/LNK_X1LLSJCK4P" 
-         class="plan-btn solid"
-         id="btn-guardian"
-         onclick="prepararPago('guardian')">
-        🌿 Ser Guardián por $5
-      </a>
+      <a href="https://checkout.bold.co/payment/LNK_CIP1O28TBB" class="btn-cta btn-cta-gold" onclick="markPending('guardian')">Hacerse Guardián</a>
     </div>
 
-  </div>
-</section>
+    <!-- ETERNO -->
+    <div class="plan eternal">
+      <div class="plan-badge eternal">Para siempre</div>
+      <div class="plan-tier">Membresía vitalicia</div>
+      <div class="plan-name">Guardián Eterno</div>
+      <div class="plan-tagline">Para quienes dejan legado</div>
+      <div class="plan-price-row">
+        <span class="plan-price">$250.000</span>
+        <span class="plan-currency">COP</span>
+      </div>
+      <div class="plan-period">pago único · sin renovación</div>
+      <ul class="plan-features">
+        <li>Todo lo del plan Guardián</li>
+        <li class="bold">Sin fecha de vencimiento</li>
+        <li>Certificado impreso enviado por correo</li>
+        <li>Nombre en la página de fundadores del Archivo</li>
+        <li>Acceso prioritario a nuevos rituales</li>
+        <li>Reconocimiento en cada cápsula pública</li>
+      </ul>
+      <a href="https://checkout.bold.co/payment/LNK_GGLU1OJQU3" class="btn-cta btn-cta-eternal" onclick="markPending('eterno')">Guardián Eterno</a>
+    </div>
 
-<!-- COMPARISON TABLE -->
-<section class="compare-section">
-  <h2 class="compare-title">Comparación detallada</h2>
-  <table class="compare-table">
-    <thead>
-      <tr>
-        <th>Característica</th>
-        <th>Gratis</th>
-        <th>Explorador</th>
-        <th>Guardián</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Inscripciones</td><td>2</td><td>5</td><td>100</td></tr>
-      <tr><td>Cápsula Poética</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-      <tr><td>Dato Científico</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td></tr>
-      <tr><td>Carta al Futuro</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Obituario Ecológico</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Mensaje de Alerta</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Oración del Umbral</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Idiomas</td><td>4</td><td>4</td><td>8</td></tr>
-      <tr><td>Contenido extendido</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Envío por correo</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-      <tr><td>Certificado PDF</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-      <tr><td>Nombre en Guardianes</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
-    </tbody>
-  </table>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section class="faq-section">
-  <h2 class="faq-title">Preguntas frecuentes</h2>
+  <section class="faq">
+    <h2 class="faq-title">Preguntas <em>frecuentes</em></h2>
+    <p class="faq-sub">Todo lo que conviene saber antes de habitar el Archivo</p>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Qué es una inscripción?</div>
-    <div class="faq-a">Cada vez que el Oráculo genera una cápsula para un sujeto (especie, ecosistema, río, etc.) cuenta como una inscripción. Cambiar de idioma post-generación también cuenta como una inscripción adicional.</div>
-  </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Qué pasa con mi cuenta gratuita al hacerme Guardián?</div>
+      <div class="faq-a">Todas las cápsulas que hayas inscrito hasta el momento se conservan. Al hacerte Guardián desbloqueas los 6 tipos de cápsula, los 8 idiomas, el certificado PDF por cápsula, y tu perfil público en <em>thanotectas.com/g/tu-nombre</em>.</div>
+    </div>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Cómo funciona el pago?</div>
-    <div class="faq-a">El pago se procesa de forma segura a través de Bold.co. Puedes pagar con tarjeta de crédito, débito, PSE o Nequi. Al confirmar el pago, se te redirige al Oráculo con tus inscripciones ya activadas.</div>
-  </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Cómo se renueva la membresía anual?</div>
+      <div class="faq-a">La membresía Guardián dura un año desde el día del pago. Cuando se acerque el vencimiento recibirás un correo con el link para renovar. Si no la renuevas, tu cuenta pasa a modo lectura: tus cápsulas siguen accesibles pero no podrás inscribir nuevas.</div>
+    </div>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Las inscripciones expiran?</div>
-    <div class="faq-a">No. Tus inscripciones no tienen fecha de vencimiento. Puedes usarlas cuando quieras, al ritmo que prefieras.</div>
-  </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿El plan Eterno realmente dura para siempre?</div>
+      <div class="faq-a">Sí. Un único pago y acceso de por vida a todas las funciones actuales y futuras de Guardián. Además recibes un certificado impreso en papel especial con el sello de la Fundación, enviado por correo postal a tu dirección.</div>
+    </div>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Qué incluye el certificado PDF?</div>
-    <div class="faq-a">Es un documento elegante con diseño Thanotectas que incluye la cápsula generada, la fecha de inscripción, un código único, y un QR que lleva al Oráculo. Se envía automáticamente a tu correo.</div>
-  </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Mis cápsulas quedan automáticamente públicas?</div>
+      <div class="faq-a">No. Cada cápsula empieza siendo privada, solo visible en tu panel. Tú decides una por una cuáles quieres inscribir en el Archivo colectivo y mostrar en tu perfil público. Puedes hacerlas privadas de nuevo cuando quieras.</div>
+    </div>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Cómo aparece mi nombre en Guardianes?</div>
-    <div class="faq-a">Al adquirir el Plan Guardián, puedes elegir que tu nombre aparezca junto al sujeto que inscribiste en la página pública de Guardianes del Umbral. Es tu legado digital permanente.</div>
-  </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Qué pasa con mi dinero? ¿A dónde va?</div>
+      <div class="faq-a">Thanotectas se está constituyendo como <em>Fundación sin ánimo de lucro</em> en Colombia. Tu aporte sostiene la infraestructura técnica (servidores, IA, base de datos) y el trabajo de curaduría del Archivo. Una vez registrada la fundación, podremos emitir certificados de donación deducibles de impuestos.</div>
+    </div>
 
-  <div class="faq-item">
-    <div class="faq-q">¿Puedo obtener inscripciones gratis?</div>
-    <div class="faq-a">Sí. Cada usuario recibe 2 inscripciones gratuitas. Además, al compartir una cápsula en X (Twitter) o Instagram, puedes desbloquear 1 inscripción adicional gratis.</div>
-  </div>
-</section>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Acepta Bold otros medios de pago?</div>
+      <div class="faq-a">Bold procesa tarjetas de crédito y débito, PSE (transferencia bancaria), Nequi, Daviplata y efectivo en puntos autorizados. Puedes elegir el método que prefieras al hacer clic en el botón del plan.</div>
+    </div>
 
-<!-- FOOTER -->
-<footer>
-  <a href="index.html">THANOTECTAS</a>
-  <p>Guardianes del Umbral · 2026</p>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Puedo cancelar o pedir reembolso?</div>
+      <div class="faq-a">Sí. Dentro de los primeros 14 días hábiles desde tu pago, puedes escribir a <em>info@thanotectas.com</em> solicitando reembolso completo, sin preguntas. Después de ese periodo, la membresía ya está activa y no hay reembolso.</div>
+    </div>
+  </section>
+
+  <section class="bottom-cta">
+    <h3>¿Aún no decides? <em>Empieza gratis</em></h3>
+    <p>Inscribe tu primera memoria sin costo. Cuando sientas que este espacio te pertenece, siempre puedes volver a hacerte Guardián.</p>
+    <a href="/oraculo.html" class="btn-cta btn-cta-ghost" style="display:inline-flex;width:auto;padding:.85rem 2rem">🌿 Ir al Oráculo</a>
+  </section>
+</main>
+
+<footer class="foot">
+  <em>"Todo lo que desaparece merece ser recordado."</em>
+  © 2026 <a href="/">Thanotectas</a> · Guardianes del Umbral · Colombia
 </footer>
 
 <script>
-// ── FAQ TOGGLE ──────────────────────────────────────
-document.querySelectorAll('.faq-q').forEach(function(q) {
-  q.addEventListener('click', function() {
-    this.parentElement.classList.toggle('open');
-  });
-});
+(function(){var cv=document.getElementById('stars'),cx=cv.getContext('2d'),st=[];function init(){cv.width=innerWidth;cv.height=innerHeight;st=[];for(var i=0;i<Math.floor(cv.width*cv.height/9000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.8+.2,a:Math.random()*.4+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}function draw(){cx.clearRect(0,0,cv.width,cv.height);var t=Date.now();st.forEach(function(s){var a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle='rgba(240,230,211,'+a+')';cx.fill();});requestAnimationFrame(draw);}init();draw();window.addEventListener('resize',init);})();
 
-// ── PAYMENT FLOW ────────────────────────────────────
-// Antes de redirigir a Bold.co, guardamos el email (si lo tiene)
-function prepararPago(plan) {
-  localStorage.setItem('thano_pending_plan', plan);
+// Al hacer click en un plan: guardar el plan pendiente en localStorage 
+// para que al volver a oraculo.html se active automáticamente
+function markPending(plan){
+  try{localStorage.setItem('thano_pending_plan',plan);}catch(e){}
 }
-
-// Al cargar oraculo.html, verificar si viene de un pago exitoso
-// (este código va en oraculo.html, no aquí — referencia)
-//
-// var params = new URLSearchParams(window.location.search);
-// if (params.get('status') === 'ok') {
-//   var plan = params.get('plan');
-//   var creditos = plan === 'guardian' ? 100 : 5;
-//   var actuales = parseInt(localStorage.getItem('thano_creditos') || '0');
-//   localStorage.setItem('thano_creditos', actuales + creditos);
-//   localStorage.setItem('thano_plan', plan);
-//   // Limpiar URL
-//   history.replaceState({}, '', 'oraculo.html');
-// }
-
-// ── CHECK EXISTING PLAN ─────────────────────────────
-(function() {
-  var plan = localStorage.getItem('thano_plan');
-  var creditos = parseInt(localStorage.getItem('thano_creditos') || '0');
-  if (plan && creditos > 0) {
-    var label = plan === 'guardian' ? 'Guardián' : 'Explorador';
-    var banner = document.createElement('div');
-    banner.style.cssText = 'text-align:center;padding:12px;background:rgba(74,138,75,0.15);color:#4a8a4b;font-size:13px;letter-spacing:0.05em;position:fixed;top:48px;width:100%;z-index:99';
-    banner.textContent = '✦ Plan ' + label + ' activo — ' + creditos + ' inscripciones restantes';
-    document.body.appendChild(banner);
-  }
-})();
 </script>
-
 </body>
 </html>
