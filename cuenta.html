@@ -10,7 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0f0d;--card:#111916;--card-h:#16201c;--surf:#1a2520;--brd:rgba(95,180,140,.12);--brd-h:rgba(95,180,140,.25);--txt:#e8f0eb;--txt2:#8fa89a;--txt3:#5c7a6a;--acc:#3db87a;--acc-s:rgba(61,184,122,.12);--gold:#c9a84c;--gold-s:rgba(201,168,76,.12);--purple:#8b7ec8;--purple-s:rgba(139,126,200,.12);--blue:#5a9ec8;--blue-s:rgba(90,158,200,.12);--red:#c04030;--r:12px;--rs:8px;--fd:'Cormorant Garamond',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif}
+:root{--bg:#0a0f0d;--card:#111916;--card-h:#16201c;--surf:#1a2520;--brd:rgba(95,180,140,.12);--brd-h:rgba(95,180,140,.25);--txt:#e8f0eb;--txt2:#8fa89a;--txt3:#5c7a6a;--acc:#3db87a;--acc-s:rgba(61,184,122,.12);--gold:#c9a84c;--gold-s:rgba(201,168,76,.12);--gold-bright:#d4b55a;--purple:#8b7ec8;--purple-s:rgba(139,126,200,.12);--blue:#5a9ec8;--blue-s:rgba(90,158,200,.12);--red:#c04030;--r:12px;--rs:8px;--fd:'Cormorant Garamond',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.6}
 
@@ -32,18 +32,17 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 
 .page-title{font-family:var(--fd);font-size:28px;font-weight:600;margin-bottom:28px;color:var(--txt)}
 
-/* SECTIONS */
 .section{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:24px 28px;margin-bottom:20px}
 .section-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .section-title span{font-size:18px}
 
-/* AVATAR */
 .avatar-area{display:flex;align-items:center;gap:20px;margin-bottom:20px}
 .avatar-big{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;border:2px solid var(--brd);cursor:pointer;transition:all .2s;position:relative}
 .avatar-big:hover{border-color:var(--acc)}
 .avatar-big.gratis{background:var(--acc-s)}
 .avatar-big.explorador{background:var(--blue-s)}
 .avatar-big.guardian{background:var(--gold-s)}
+.avatar-big.eterno{background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(212,181,90,.1));border-color:rgba(201,168,76,.4)}
 .avatar-big.admin{background:var(--purple-s)}
 .avatar-hint{font-size:12px;color:var(--txt3);margin-top:4px}
 .avatar-picker{display:none;flex-wrap:wrap;gap:8px;margin-top:12px;padding:12px;background:var(--surf);border-radius:var(--rs);border:1px solid var(--brd)}
@@ -52,7 +51,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 .avatar-opt:hover{border-color:var(--brd-h)}
 .avatar-opt.sel{border-color:var(--acc);background:var(--acc-s)}
 
-/* FORM */
 .field{margin-bottom:16px}
 .field label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin-bottom:6px}
 .field input{width:100%;background:var(--surf);border:1px solid var(--brd);color:var(--txt);padding:12px 14px;border-radius:var(--rs);font-size:14px;font-family:var(--fb);transition:border-color .2s}
@@ -60,6 +58,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 .field input::placeholder{color:var(--txt3)}
 .field input:disabled{opacity:.5;cursor:not-allowed}
 .field-hint{font-size:12px;color:var(--txt3);margin-top:4px}
+.field-hint a{color:var(--acc);text-decoration:none}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 .btn-save{background:var(--acc);color:var(--bg);border:none;padding:10px 24px;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .2s}
@@ -73,7 +72,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 .msg{font-size:13px;margin-top:8px;min-height:20px}
 .msg.ok{color:var(--acc)}.msg.err{color:var(--red)}
 
-/* PLAN CARDS */
 .current-plan{display:flex;align-items:center;gap:16px;padding:16px;background:var(--surf);border-radius:var(--rs);margin-bottom:16px}
 .plan-emoji{font-size:32px}
 .plan-info h3{font-size:16px;font-weight:600}
@@ -82,23 +80,35 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 .plan-badge.gratis{background:var(--acc-s);color:var(--acc)}
 .plan-badge.explorador{background:var(--blue-s);color:var(--blue)}
 .plan-badge.guardian{background:var(--gold-s);color:var(--gold)}
+.plan-badge.eterno{background:linear-gradient(135deg,var(--gold-s),rgba(212,181,90,.18));color:var(--gold-bright);border:1px solid rgba(201,168,76,.3)}
 .plan-badge.admin{background:var(--purple-s);color:var(--purple)}
 
+.profile-link-box{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rs);padding:14px 16px;margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.profile-link-box-info{flex:1;min-width:180px}
+.profile-link-box-label{font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.profile-link-box-url{font-family:monospace;font-size:13px;color:var(--txt);word-break:break-all}
+.profile-link-btn{background:var(--gold-s);color:var(--gold);border:1px solid rgba(201,168,76,.3);padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--fb);text-decoration:none;white-space:nowrap}
+.profile-link-btn:hover{background:rgba(201,168,76,.2)}
+
 .plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.plan-card{border:1px solid var(--brd);border-radius:var(--rs);padding:20px;text-align:center;transition:all .2s}
+.plan-card{border:1px solid var(--brd);border-radius:var(--rs);padding:20px;text-align:center;transition:all .2s;display:flex;flex-direction:column}
 .plan-card:hover{border-color:var(--brd-h)}
 .plan-card.recommended{border-color:var(--gold);background:rgba(201,168,76,.05)}
+.plan-card.eternal{border-color:rgba(201,168,76,.35);background:linear-gradient(160deg,rgba(45,74,46,.15),rgba(201,168,76,.05))}
 .plan-card h4{font-size:14px;color:var(--acc);margin-bottom:4px}
-.plan-card .price{font-family:var(--fd);font-size:28px;font-weight:600;color:var(--gold)}
-.plan-card .period{font-size:12px;color:var(--txt3);margin-bottom:10px}
-.plan-card .features{font-size:12px;color:var(--txt2);line-height:1.8;text-align:left;margin-bottom:14px}
-.plan-card .btn-plan{width:100%;padding:10px;border-radius:var(--rs);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .2s}
-.plan-card .btn-plan.gold{background:linear-gradient(135deg,var(--gold),#d4a74b);color:var(--bg)}
+.plan-card .tag{font-size:10px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
+.plan-card .price{font-family:var(--fd);font-size:26px;font-weight:600;color:var(--gold)}
+.plan-card .period{font-size:12px;color:var(--txt3);margin-bottom:12px}
+.plan-card .features{font-size:12px;color:var(--txt2);line-height:1.8;text-align:left;margin-bottom:14px;flex:1}
+.plan-card .features strong{color:var(--gold)}
+.plan-card .btn-plan{width:100%;padding:10px;border-radius:var(--rs);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .2s;text-decoration:none;text-align:center;display:block}
+.plan-card .btn-plan.gold{background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--bg)}
 .plan-card .btn-plan.gold:hover{filter:brightness(1.1)}
-.plan-card .btn-plan.green{background:var(--acc);color:var(--bg)}
-.plan-card .btn-plan.green:hover{filter:brightness(1.1)}
+.plan-card .btn-plan.eternal{background:linear-gradient(135deg,#3db87a,var(--gold));color:var(--bg)}
+.plan-card .btn-plan.eternal:hover{filter:brightness(1.1)}
+.plan-card.current-mark{opacity:.7}
+.plan-card.current-mark .btn-plan{background:transparent;border:1px solid var(--brd);color:var(--txt3);cursor:default}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--acc);color:var(--bg);padding:12px 24px;border-radius:var(--rs);font-size:14px;font-weight:500;opacity:0;transition:all .3s ease;z-index:200;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -120,8 +130,8 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 <nav class="navbar">
     <a href="/" class="navbar-brand">Thanotectas <span>Guardianes del Umbral</span></a>
     <div class="nav-links">
-        <a href="#" onclick="goTo('/panel.html');return false">📋 Mi panel</a>
-        <a href="#" onclick="goTo('/oraculo.html');return false">🔮 Oráculo</a>
+        <a href="/panel.html">📋 Mi panel</a>
+        <a href="/oraculo.html">🔮 Oráculo</a>
         <a class="active">⚙️ Cuenta</a>
     </div>
 </nav>
@@ -134,14 +144,13 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
     <div class="loading">
         <h2 style="font-family:var(--fd);font-size:28px;color:var(--acc);margin-bottom:12px">Inicia sesión</h2>
         <p style="color:var(--txt2);margin-bottom:24px">Necesitas una cuenta para ver esta página.</p>
-        <a href="#" onclick="goTo('/oraculo.html');return false" class="btn-main" style="display:inline-block;padding:12px 32px">Ir al Oráculo</a>
+        <a href="/oraculo.html" class="btn-main" style="display:inline-block;padding:12px 32px">Ir al Oráculo</a>
     </div>
 </div>
 
 <div class="container" id="v-main" style="display:none">
     <h1 class="page-title">⚙️ Mi Cuenta</h1>
 
-    <!-- AVATAR & NAME -->
     <div class="section">
         <div class="section-title"><span>👤</span> Perfil</div>
         <div class="avatar-area">
@@ -171,9 +180,10 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
             <button class="btn-save" id="btn-save-profile" onclick="saveProfile()">Guardar cambios</button>
         </div>
         <div class="msg" id="msg-profile"></div>
+
+        <div class="profile-link-box" id="public-profile-box" style="display:none"></div>
     </div>
 
-    <!-- PASSWORD -->
     <div class="section">
         <div class="section-title"><span>🔐</span> Contraseña</div>
         <p style="font-size:13px;color:var(--txt2);margin-bottom:14px" id="pass-info"></p>
@@ -191,24 +201,21 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
         <div class="msg" id="msg-pass"></div>
     </div>
 
-    <!-- PLAN -->
     <div class="section">
         <div class="section-title"><span>💎</span> Mi Plan</div>
         <div class="current-plan" id="current-plan"></div>
         <div class="plans-grid" id="plans-grid"></div>
     </div>
 
-    <!-- EMAIL -->
     <div class="section">
         <div class="section-title"><span>📧</span> Correo electrónico</div>
         <div class="field">
             <label>Email actual</label>
             <input type="email" id="inp-email" disabled>
-            <div class="field-hint">Para cambiar tu correo, contacta <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a0c9cec6cfe0d4c8c1cecfd4c5c3d4c1d38ec3cfcd">[email&#160;protected]</a></div>
+            <div class="field-hint">Para cambiar tu correo, contacta <a href="mailto:info@thanotectas.com">info@thanotectas.com</a></div>
         </div>
     </div>
 
-    <!-- DANGER -->
     <div class="section" style="border-color:rgba(192,64,48,.2)">
         <div class="section-title" style="color:var(--red)"><span>⚠️</span> Zona de peligro</div>
         <p style="font-size:13px;color:var(--txt2);margin-bottom:14px">Estas acciones no se pueden deshacer.</p>
@@ -220,22 +227,29 @@ body{font-family:var(--fb);background:var(--bg);color:var(--txt);min-height:100v
 
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
 var sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
+// === LINKS BOLD ===
+var BOLD_LINKS = {
+  guardian: 'https://checkout.bold.co/payment/LNK_CIP1O28TBB',  // $45.000 COP/año
+  eterno:   'https://checkout.bold.co/payment/LNK_GGLU1OJQU3'   // $250.000 COP vitalicio
+};
+
 var authUser=null, profile=null;
 var selectedAvatar=null;
 
-var AVATARS=['🌱','🌿','🌳','🍃','🌍','🌊','🦋','🐸','🦜','🌺','🌻','🍄','🪻','🐢','🐋','🌙','🔥','⚡','🛡️','💎','🪷','🌵','🦉','🐝'];
+var AVATARS=['🌱','🌿','🌳','🍃','🌍','🌊','🦋','🐸','🦜','🌺','🌻','🍄','🪻','🐢','🐋','🌙','🔥','⚡','🛡️','💎','🪷','🌵','🦉','🐝','✦','🕯️'];
 
 var PLANS={
-    gratis:{emoji:'🌱',label:'Gratis',max:3},
-    explorador:{emoji:'🌿',label:'Explorador',max:10},
-    guardian:{emoji:'🛡️',label:'Guardián',max:20},
-    admin:{emoji:'⚡',label:'Admin',max:999999}
+    gratis:{emoji:'🌱',label:'Gratis'},
+    explorador:{emoji:'🌿',label:'Explorador'},
+    guardian:{emoji:'🛡️',label:'Guardián'},
+    eterno:{emoji:'✦',label:'Guardián Eterno'},
+    admin:{emoji:'⚡',label:'Admin'}
 };
 
 async function init(){
@@ -259,6 +273,20 @@ async function init(){
     }
 }
 
+function planStatusText(){
+    if(profile.es_admin||profile.plan==='admin') return 'Inscripciones ilimitadas (Administrador)';
+    if(profile.plan==='eterno') return '✦ Membresía vitalicia — sin fecha de vencimiento';
+    if(profile.plan==='guardian'){
+        if(profile.plan_vence_en){
+            var dias=Math.max(0,Math.ceil((new Date(profile.plan_vence_en)-new Date())/86400000));
+            return 'Membresía activa · '+dias+' días restantes';
+        }
+        return 'Membresía Guardián activa';
+    }
+    if(profile.plan==='explorador') return profile.consultas_disponibles+' inscripciones restantes';
+    return profile.consultas_disponibles+' inscripciones gratis restantes';
+}
+
 function render(){
     document.getElementById('v-load').style.display='none';
     document.getElementById('v-main').style.display='';
@@ -272,7 +300,6 @@ function render(){
     document.getElementById('avatar-display').className='avatar-big '+plan;
     selectedAvatar=av;
 
-    // Avatar picker
     var ph='';
     AVATARS.forEach(function(a){
         ph+='<div class="avatar-opt'+(a===av?' sel':'')+'" onclick="pickAvatar(this,\''+a+'\')">'+a+'</div>';
@@ -287,40 +314,102 @@ function render(){
     document.getElementById('inp-bio').value=profile.bio||'';
     document.getElementById('inp-email').value=authUser.email;
 
-    // Password info
-    var hasPass=authUser.app_metadata&&authUser.app_metadata.provider==='email';
-    document.getElementById('pass-info').textContent=hasPass
-        ?'Puedes actualizar tu contraseña aquí.'
-        :'Aún no tienes contraseña. Si entraste con enlace mágico, puedes crear una aquí para iniciar sesión más rápido.';
+    // Public profile link (solo si tiene slug y es Guardián/Eterno/Admin)
+    var esGuardian=(plan==='guardian'||plan==='eterno'||plan==='admin'||profile.es_admin);
+    if(profile.slug && profile.perfil_publico && esGuardian){
+        var url='https://thanotectas.com/g/'+profile.slug;
+        document.getElementById('public-profile-box').style.display='flex';
+        document.getElementById('public-profile-box').innerHTML=
+            '<div class="profile-link-box-info">'+
+              '<div class="profile-link-box-label">🌐 Tu perfil público</div>'+
+              '<div class="profile-link-box-url">'+url+'</div>'+
+            '</div>'+
+            '<a class="profile-link-btn" href="/g/'+profile.slug+'" target="_blank">Ver →</a>'+
+            '<button class="profile-link-btn" onclick="copyPublic(\''+url+'\')">Copiar</button>';
+    }
+
+    // Password info (detecta si el usuario viene de Google OAuth)
+    var providers=(authUser.app_metadata&&authUser.app_metadata.providers)||[authUser.app_metadata&&authUser.app_metadata.provider||'email'];
+    var hasEmail=providers.indexOf('email')!==-1;
+    var hasGoogle=providers.indexOf('google')!==-1;
+    var passInfo;
+    if(hasGoogle&&!hasEmail){
+        passInfo='Iniciaste sesión con Google. Puedes crear una contraseña aquí para entrar también con tu correo.';
+    } else if(hasEmail){
+        passInfo='Puedes actualizar tu contraseña aquí.';
+    } else {
+        passInfo='Aún no tienes contraseña. Si entraste con enlace mágico, puedes crear una aquí para iniciar sesión más rápido.';
+    }
+    document.getElementById('pass-info').textContent=passInfo;
 
     // Current plan
     document.getElementById('current-plan').innerHTML=
         '<div class="plan-emoji">'+pc.emoji+'</div>'+
         '<div class="plan-info"><h3>Plan '+pc.label+'</h3>'+
-        '<p>'+(plan==='admin'?'Inscripciones ilimitadas':profile.consultas_disponibles+' / '+pc.max+' consultas disponibles')+'</p>'+
-        '<span class="plan-badge '+plan+'">'+plan.toUpperCase()+'</span></div>';
+        '<p>'+planStatusText()+'</p>'+
+        '<span class="plan-badge '+plan+'">'+pc.label.toUpperCase()+'</span></div>';
 
     // Plans grid
-    if(plan==='admin'||plan==='guardian'){
-        document.getElementById('plans-grid').innerHTML='<p style="font-size:13px;color:var(--txt2)">Ya tienes el plan más alto disponible.</p>';
-    }else{
-        var html='';
-        if(plan!=='explorador'){
-            html+='<div class="plan-card">'+
-                '<h4>Plan Explorador</h4>'+
-                '<div class="price">$0.70</div>'+
-                '<div class="period">USD · pago único</div>'+
-                '<div class="features">✦ 5 inscripciones<br>✦ Poema + Dato<br>✦ 4 idiomas<br>✦ Cápsula por correo</div>'+
-                '<button class="btn-plan green" onclick="openPay(\'explorador\')">🌱 Obtener</button></div>';
-        }
-        html+='<div class="plan-card recommended">'+
-            '<h4>Plan Guardián ★</h4>'+
-            '<div class="price">$5</div>'+
-            '<div class="period">USD · pago único</div>'+
-            '<div class="features">✦ 100 inscripciones<br>✦ Los 6 tipos<br>✦ 8 idiomas<br>✦ Contenido extendido<br>✦ Certificado PDF</div>'+
-            '<button class="btn-plan gold" onclick="openPay(\'guardian\')">🌿 Obtener</button></div>';
-        document.getElementById('plans-grid').innerHTML=html;
+    renderPlansGrid(plan);
+}
+
+function renderPlansGrid(currentPlan){
+    var grid=document.getElementById('plans-grid');
+
+    // Si ya es Eterno o Admin, no hay nada que ofrecer
+    if(currentPlan==='eterno'||currentPlan==='admin'||profile.es_admin){
+        grid.innerHTML='<p style="font-size:13px;color:var(--txt2);grid-column:1/-1">✦ Ya tienes acceso ilimitado y vitalicio al Archivo. Gracias por sostener el Umbral.</p>';
+        return;
     }
+
+    var html='';
+
+    // Tarjeta Guardián (anual)
+    var isCurrentGuardian=(currentPlan==='guardian');
+    html+='<div class="plan-card recommended'+(isCurrentGuardian?' current-mark':'')+'">'+
+        '<div class="tag">Membresía anual</div>'+
+        '<h4>Guardián ★</h4>'+
+        '<div class="price">$45.000</div>'+
+        '<div class="period">COP · por un año</div>'+
+        '<div class="features">'+
+            '✦ Inscripciones <strong>ilimitadas</strong><br>'+
+            '✦ Los 6 tipos de cápsula<br>'+
+            '✦ 8 idiomas<br>'+
+            '✦ Certificado PDF por cápsula<br>'+
+            '✦ Perfil público /g/nombre'+
+        '</div>'+
+        (isCurrentGuardian
+            ?'<button class="btn-plan" disabled>✓ Plan actual</button>'
+            :'<a class="btn-plan gold" href="'+BOLD_LINKS.guardian+'" onclick="markPending(\'guardian\')">Hacerse Guardián</a>'
+        )+
+        '</div>';
+
+    // Tarjeta Eterno (vitalicio)
+    html+='<div class="plan-card eternal">'+
+        '<div class="tag">Vitalicio</div>'+
+        '<h4>Guardián Eterno ✦</h4>'+
+        '<div class="price">$250.000</div>'+
+        '<div class="period">COP · pago único</div>'+
+        '<div class="features">'+
+            '✦ Todo lo del plan Guardián<br>'+
+            '✦ <strong>Sin fecha de vencimiento</strong><br>'+
+            '✦ Certificado impreso por correo<br>'+
+            '✦ Nombre en fundadores del Archivo<br>'+
+            '✦ Acceso prioritario a nuevos rituales'+
+        '</div>'+
+        '<a class="btn-plan eternal" href="'+BOLD_LINKS.eterno+'" onclick="markPending(\'eterno\')">Guardián Eterno</a>'+
+        '</div>';
+
+    grid.innerHTML=html;
+}
+
+function markPending(plan){
+    try{localStorage.setItem('thano_pending_plan',plan);}catch(e){}
+    toast('Completa el pago en Bold y luego regresa al Oráculo');
+}
+
+function copyPublic(url){
+    navigator.clipboard.writeText(url).then(function(){toast('🔗 Link copiado');});
 }
 
 function pickAvatar(el,emoji){
@@ -341,9 +430,7 @@ async function saveProfile(){
 
     btn.disabled=true;msg.textContent='Guardando...';msg.className='msg';
 
-    var update={nombre:name,avatar:selectedAvatar};
-    if(loc)update.ubicacion=loc;
-    if(bio)update.bio=bio;
+    var update={nombre:name,avatar:selectedAvatar,ubicacion:loc||null,bio:bio||null};
 
     var r=await sb.from('guardianes').update(update).eq('id',profile.id);
     if(r.error){
@@ -379,20 +466,9 @@ async function changePassword(){
     }
 }
 
-function openPay(plan){
-    var links={explorador:'https://checkout.bold.co/payment/LNK_UVSP2A0O0U',guardian:'https://checkout.bold.co/payment/LNK_X1LLSJCK4P'};
-    window.open(links[plan],'_blank');
-    toast('Completa el pago en Bold.co y vuelve aquí');
-}
-
 async function doLogout(){
     await sb.auth.signOut();
     window.location.href='/';
-}
-
-async function goTo(url){
-    try{var s=await sb.auth.getSession();if(s.data&&s.data.session){var t=s.data.session.access_token;var r=s.data.session.refresh_token;window.location.href=url+'#access_token='+t+'&refresh_token='+r+'&token_type=bearer&type=recovery';return;}}catch(e){}
-    window.location.href=url;
 }
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
