@@ -1,10 +1,12 @@
-[build]
-  publish = "."
+# Configuración de Netlify para Thanotectas
+# Reescrituras de URL limpias para perfiles y cápsulas públicas
 
-[functions]
-  directory = "netlify/functions"
-[[headers]]
-  for = "/.well-known/assetlinks.json"
-  [headers.values]
-    Content-Type = "application/json"
-    Access-Control-Allow-Origin = "*"
+[[redirects]]
+  from = "/g/*"
+  to = "/guardian.html?slug=:splat"
+  status = 200
+
+[[redirects]]
+  from = "/c/*"
+  to = "/certificado.html?n=:splat"
+  status = 200
