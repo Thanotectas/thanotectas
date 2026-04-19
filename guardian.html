@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Guardián · Thanotectas</title>
+<meta name="description" id="pageDesc" content="Perfil público de un Guardián del Umbral en Thanotectas.">
+<meta property="og:title" id="ogTitle" content="Guardián del Umbral · Thanotectas">
+<meta property="og:description" id="ogDesc" content="Un archivo de memorias de lo que la Tierra está perdiendo.">
+<meta property="og:image" content="https://thanotectas.com/icons/icon-512.png">
+<meta property="og:type" content="profile">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--tierra:#1a1611;--tierra2:#2a2319;--musgo:#2d4a2e;--musgo-g:#4a8a4b;--ocre:#c4973b;--ocre-c:#d4a74b;--marfil:#f0e6d3;--marfil-t:rgba(240,230,211,.6);--cristal:rgba(240,230,211,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(1px 1px at 20% 30%, rgba(232,228,208,0.18) 50%, transparent 51%),radial-gradient(1px 1px at 75% 60%, rgba(232,228,208,0.15) 50%, transparent 51%),radial-gradient(1px 1px at 40% 80%, rgba(200,146,42,0.18) 50%, transparent 51%),radial-gradient(1px 1px at 85% 20%, rgba(232,228,208,0.12) 50%, transparent 51%);background-size:200px 200px,280px 280px,240px 240px,320px 320px;pointer-events:none;z-index:0;opacity:.6}
+.nav{position:sticky;top:0;z-index:100;background:rgba(26,22,17,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(196,151,59,.12);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--ocre);text-decoration:none;letter-spacing:.08em}
+.nav a{font-size:.7rem;color:var(--marfil-t);text-decoration:none;letter-spacing:.05em;text-transform:uppercase}
+.nav a:hover{color:var(--ocre)}
+.nav-cta{background:linear-gradient(135deg,var(--ocre),var(--ocre-c));color:var(--tierra)!important;padding:.5rem 1.1rem;border-radius:6px;font-weight:600;font-size:.68rem!important;letter-spacing:.08em}
+.wrap{max-width:860px;margin:0 auto;padding:3rem 1.5rem 5rem;position:relative;z-index:1}
+.state{text-align:center;padding:6rem 1.5rem;color:var(--marfil-t);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
+.hero{text-align:center;margin-bottom:3rem}
+.hero-avatar{width:100px;height:100px;border-radius:50%;background:rgba(196,151,59,.1);border:1px solid rgba(196,151,59,.3);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 1.2rem}
+.hero-name{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:500;color:var(--marfil);letter-spacing:.02em;margin-bottom:.4rem;line-height:1.1}
+.hero-role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;color:var(--ocre);letter-spacing:.15em;margin-bottom:1rem}
+.hero-meta{display:inline-flex;align-items:center;gap:14px;font-size:.72rem;color:var(--marfil-t);letter-spacing:.05em}
+.hero-meta .sep{width:3px;height:3px;background:var(--marfil-t);border-radius:50%}
+.hero-bio{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--marfil-t);line-height:1.7;max-width:500px;margin:1.2rem auto 0}
+.stats-strip{display:flex;justify-content:center;gap:0;margin:2rem auto 3rem;max-width:500px;border-top:1px solid rgba(196,151,59,.2);border-bottom:1px solid rgba(196,151,59,.2);padding:1.2rem 0}
+.stat-s{flex:1;text-align:center;border-right:1px solid rgba(196,151,59,.15)}
+.stat-s:last-child{border-right:none}
+.stat-s-n{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ocre);line-height:1}
+.stat-s-l{font-size:.58rem;color:var(--marfil-t);margin-top:.3rem;letter-spacing:.14em;text-transform:uppercase}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:1.3rem;text-align:center;color:var(--marfil)}
+.sec-title em{color:var(--ocre);font-style:italic}
+.caps-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:3rem}
+.cap-public{background:var(--cristal);border:1px solid rgba(196,151,59,.15);border-radius:12px;padding:1.4rem 1.6rem;transition:all .25s;text-decoration:none;color:inherit;display:block}
+.cap-public:hover{border-color:rgba(196,151,59,.4);transform:translateY(-2px)}
+.cap-head{display:flex;justify-content:space-between;align-items:center;gap:.8rem;margin-bottom:.6rem;flex-wrap:wrap}
+.cap-num{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ocre);letter-spacing:.1em;background:rgba(196,151,59,.08);padding:.2rem .6rem;border-radius:3px;border:1px solid rgba(196,151,59,.2)}
+.cap-date-p{font-size:.68rem;color:var(--marfil-t);font-family:'Cormorant Garamond',serif;font-style:italic}
+.cap-subj-p{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:var(--marfil);line-height:1.2;margin-bottom:.6rem}
+.cap-meta-p{display:flex;gap:.8rem;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--musgo-g);margin-bottom:.9rem}
+.cap-content-p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--marfil-t);line-height:1.7;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.cap-cta{margin-top:.8rem;font-size:.7rem;color:var(--ocre);letter-spacing:.1em}
+.empty-p{text-align:center;padding:3rem 1.5rem;background:var(--cristal);border:1px dashed rgba(196,151,59,.15);border-radius:12px;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--marfil-t)}
+.cta-block{background:linear-gradient(135deg,rgba(196,151,59,.12),rgba(45,74,46,.06));border:1px solid rgba(196,151,59,.2);border-radius:14px;padding:2.5rem 2rem;text-align:center;margin-top:3rem}
+.cta-block h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--marfil);margin-bottom:.8rem}
+.cta-block h3 em{color:var(--ocre);font-style:italic}
+.cta-block p{font-size:.88rem;color:var(--marfil-t);line-height:1.7;margin-bottom:1.4rem;max-width:420px;margin-left:auto;margin-right:auto}
+.btn-gold{display:inline-block;padding:.88rem 2.2rem;background:linear-gradient(135deg,var(--ocre),var(--ocre-c));color:var(--tierra);border-radius:8px;text-decoration:none;font-weight:600;letter-spacing:.06em;font-size:.88rem}
+.foot{text-align:center;padding:2rem;margin-top:3rem;color:var(--marfil-t);font-size:.7rem;letter-spacing:.12em}
+.foot em{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.85rem;color:var(--ocre);letter-spacing:.03em;text-transform:none;display:block;margin-bottom:.4rem}
+@media(max-width:600px){.hero-name{font-size:1.8rem}.wrap{padding:2rem 1rem 4rem}.nav{padding:.7rem 1rem}.stats-strip{max-width:100%}.stat-s-n{font-size:1.6rem}.cap-subj-p{font-size:1.25rem}.cta-block{padding:1.8rem 1.4rem}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">THANOTECTAS</a>
+  <div><a href="/oraculo.html" class="nav-cta">✦ Inscribir memoria</a></div>
+</nav>
+<div class="wrap" id="wrap">
+  <div class="state" id="loading">Recuperando el perfil del Guardián…</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
+var sb=window.supabase.createClient(SB_URL,SB_KEY);
+function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+function getSlug(){
+  var p=new URLSearchParams(window.location.search);
+  var s=p.get('slug');
+  if(s)return s;
+  var m=window.location.pathname.match(/\/g\/([^\/]+)/);
+  if(m)return decodeURIComponent(m[1]);
+  return null;
+}
+
+function renderNotFound(){
+  document.getElementById('wrap').innerHTML='<div class="state"><p style="font-size:1.3rem;color:var(--ocre);margin-bottom:.5rem;font-style:normal">Perfil no encontrado</p><p>Este Guardián no existe o su perfil es privado.</p><br/><a href="/oraculo.html" style="color:var(--ocre)">← Ir al Oráculo</a></div>';
+}
+
+async function init(){
+  var slug=getSlug();
+  if(!slug){renderNotFound();return;}
+  var pRes=await sb.rpc('obtener_perfil_publico',{slug_param:slug});
+  if(pRes.error||!pRes.data||pRes.data.length===0){renderNotFound();return;}
+  var perfil=pRes.data[0];
+  var cRes=await sb.rpc('obtener_capsulas_publicas',{slug_param:slug});
+  var capsulas=cRes.data||[];
+
+  var nombre=perfil.nombre||'Guardián Anónimo';
+  document.getElementById('pageTitle').textContent=nombre+' · Thanotectas';
+  document.getElementById('pageDesc').content=nombre+' ha inscrito '+capsulas.length+' memorias en el Oráculo del Umbral.';
+  document.getElementById('ogTitle').content=nombre+' · Guardián del Umbral';
+  document.getElementById('ogDesc').content=nombre+' ha inscrito '+capsulas.length+' memorias de lo que la Tierra está perdiendo.';
+
+  var desde=new Date(perfil.created_at).toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+  var avatar=perfil.avatar||'🌿';
+  var planLabel=perfil.plan==='eterno'?'Guardián Eterno':(perfil.plan==='guardian'?'Guardián del Umbral':(perfil.plan==='admin'?'Fundador':'Visitante'));
+  var TL={poema:'Poema',dato:'Dato',carta:'Carta',obituario:'Obituario',alerta:'Alerta',ritual:'Ritual'};
+
+  var html='<div class="hero">'
+    +'<div class="hero-avatar">'+esc(avatar)+'</div>'
+    +'<h1 class="hero-name">'+esc(nombre)+'</h1>'
+    +'<div class="hero-role">· '+esc(planLabel)+' ·</div>'
+    +'<div class="hero-meta">'
+      +(perfil.ubicacion?'<span>📍 '+esc(perfil.ubicacion)+'</span><span class="sep"></span>':'')
+      +'<span>Desde '+desde+'</span>'
+    +'</div>'
+    +(perfil.bio?'<div class="hero-bio">"'+esc(perfil.bio)+'"</div>':'')
+    +'</div>';
+
+  html+='<div class="stats-strip">'
+    +'<div class="stat-s"><div class="stat-s-n">'+capsulas.length+'</div><div class="stat-s-l">Memorias</div></div>'
+    +'<div class="stat-s"><div class="stat-s-n">'+(new Set(capsulas.map(function(c){return c.categoria;})).size||0)+'</div><div class="stat-s-l">Categorías</div></div>'
+    +'<div class="stat-s"><div class="stat-s-n">'+(new Set(capsulas.map(function(c){return c.idioma;})).size||0)+'</div><div class="stat-s-l">Idiomas</div></div>'
+    +'</div>';
+
+  html+='<h2 class="sec-title">Memorias <em>inscritas al Archivo</em></h2>';
+
+  if(capsulas.length===0){
+    html+='<div class="empty-p">Este Guardián aún no ha publicado cápsulas en el Archivo colectivo.</div>';
+  } else {
+    html+='<div class="caps-grid">'+capsulas.map(function(c){
+      var fecha=new Date(c.created_at).toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+      var preview=(c.contenido||'').split('\n').filter(function(l){return l.trim();}).slice(0,6).join('\n');
+      return '<a class="cap-public" href="/certificado.html?n='+encodeURIComponent(c.numero_certificado)+'">'
+        +'<div class="cap-head">'
+          +'<span class="cap-num">'+esc(c.numero_certificado||'')+'</span>'
+          +'<span class="cap-date-p">'+fecha+'</span>'
+        +'</div>'
+        +'<h3 class="cap-subj-p">'+esc(c.sujeto||'—')+'</h3>'
+        +'<div class="cap-meta-p">'
+          +'<span>'+esc((c.categoria||'').replace(/^./,function(x){return x.toUpperCase();}))+'</span>'
+          +'<span>· '+esc(TL[c.tipo]||c.tipo)+' ·</span>'
+          +'<span>'+esc((c.idioma||'').toUpperCase())+'</span>'
+        +'</div>'
+        +'<div class="cap-content-p">'+esc(preview)+'</div>'
+        +'<div class="cap-cta">Ver certificado completo →</div>'
+      +'</a>';
+    }).join('')+'</div>';
+  }
+
+  html+='<div class="cta-block">'
+    +'<h3>Tú también puedes <em>inscribir una memoria</em></h3>'
+    +'<p>El Archivo del Umbral crece con cada Guardián. Honra lo que la Tierra está perdiendo con tu propia cápsula.</p>'
+    +'<a href="/oraculo.html" class="btn-gold">🌿 Ir al Oráculo</a>'
+    +'</div>';
+
+  html+='<div class="foot"><em>"Todo lo que desaparece merece ser recordado."</em>thanotectas.com · Archivo Permanente</div>';
+
+  document.getElementById('wrap').innerHTML=html;
+}
+
+init().catch(function(e){console.error(e);renderNotFound();});
+</script>
+</body>
+</html>

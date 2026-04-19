@@ -46,16 +46,42 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .ring{width:52px;height:52px;border:1px solid rgba(196,151,59,.2);border-top-color:var(--ocre);border-radius:50%;animation:spin 2.5s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .capsule{border:1px solid rgba(196,151,59,.25);border-radius:16px;padding:2.2rem;width:100%;position:relative;overflow:hidden;background:rgba(13,11,8,.45)}.capsule-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(160deg,rgba(13,11,8,.85) 0%,rgba(26,22,17,.75) 100%);z-index:0}.capsule-seal{position:absolute;top:-.6rem;left:50%;transform:translateX(-50%);background:var(--tierra);padding:0 .6rem;color:var(--ocre);font-size:.75rem;z-index:2}.capsule-content{position:relative;z-index:1;display:flex;flex-direction:column;gap:.9rem}
 .cap-tipo{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--musgo-glow);text-align:center}.cap-subject{font-size:.63rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ocre);text-align:center}.cap-text{font-family:'Cormorant Garamond',serif;font-size:1.05rem;line-height:1.95;color:var(--marfil);text-align:center;font-style:italic;white-space:pre-line}.cap-date{font-size:.62rem;color:var(--marfil-tenu);text-align:center;letter-spacing:.12em}
+.cap-cert-num{text-align:center;margin-top:.5rem}.cap-cert-num code{font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.15em;color:var(--ocre);background:rgba(196,151,59,.08);padding:.3rem .8rem;border-radius:4px;border:1px solid rgba(196,151,59,.2)}
 .witness-box{width:100%;background:rgba(45,74,46,.08);border:1px solid rgba(45,74,46,.2);border-radius:10px;padding:.85rem 1.2rem;text-align:center}.witness-text{font-size:.8rem;color:var(--musgo-glow);line-height:1.5}
+.archive-block{width:100%;background:linear-gradient(135deg,rgba(196,151,59,.12),rgba(196,151,59,.04));border:1px solid rgba(196,151,59,.28);border-radius:12px;padding:1.2rem 1.3rem;display:flex;flex-direction:column;gap:.8rem}
+.archive-head{display:flex;align-items:center;gap:.6rem}
+.archive-icon{font-size:1.3rem}
+.archive-title{font-family:'Cormorant Garamond',serif;font-size:1.08rem;font-weight:500;color:var(--ocre)}
+.archive-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.archive-btn{flex:1;min-width:140px;padding:.72rem 1rem;border-radius:8px;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .25s;text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid}
+.archive-btn-cert{background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra);border-color:var(--ocre)}
+.archive-btn-cert:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(196,151,59,.3)}
+.archive-btn-pub{background:rgba(74,138,75,.1);color:var(--musgo-glow);border-color:rgba(74,138,75,.3)}
+.archive-btn-pub:hover{background:rgba(74,138,75,.2)}
+.archive-btn-pub.active{background:rgba(74,138,75,.25);border-color:var(--musgo-glow)}
+.archive-btn-pub.locked{opacity:.55;cursor:not-allowed;background:rgba(240,230,211,.04);color:var(--marfil-tenu);border-color:rgba(240,230,211,.1)}
+.archive-hint{font-size:.7rem;color:var(--marfil-tenu);line-height:1.5;font-style:italic}
 .email-capture{width:100%;background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:12px;padding:1.1rem 1.3rem;display:flex;flex-direction:column;gap:.7rem}.email-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ocre)}.email-row{display:flex;gap:.6rem}.email-input{flex:1;background:rgba(13,11,8,.6);border:1px solid rgba(196,151,59,.15);border-radius:6px;padding:.6rem .9rem;font-family:'Jost',sans-serif;font-size:.85rem;color:var(--marfil);outline:none}.email-input::placeholder{color:rgba(240,230,211,.3)}.email-send-btn{padding:.6rem 1.1rem;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));color:var(--marfil);border:none;border-radius:6px;font-family:'Jost',sans-serif;font-size:.78rem;cursor:pointer;white-space:nowrap}.email-send-btn:disabled{opacity:.4;cursor:not-allowed}.email-status{font-size:.75rem;min-height:1rem}
 .share-block{width:100%;background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:12px;padding:1.1rem 1.3rem;display:flex;flex-direction:column;gap:.65rem}.share-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ocre)}.share-preview{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--marfil-tenu);line-height:1.55;font-style:italic}.share-btns{display:flex;gap:.55rem;flex-wrap:wrap}
 .final-cta{text-align:center;padding:1.4rem 1.8rem;border:1px solid rgba(196,151,59,.15);border-radius:14px;background:rgba(45,74,46,.06);width:100%}.final-cta p{font-size:.84rem;font-weight:300;color:var(--marfil-tenu);margin-bottom:1rem;line-height:1.6}
-.pw-plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%}.pw-plan-card{border:1px solid rgba(196,151,59,.25);border-radius:14px;padding:1.4rem;text-align:center;background:rgba(196,151,59,.04)}.pw-plan-card.featured{border-color:var(--ocre);background:rgba(196,151,59,.08);position:relative}.pw-plan-badge{position:absolute;top:-.6rem;left:50%;transform:translateX(-50%);background:var(--ocre);color:var(--tierra);font-size:.52rem;font-weight:600;letter-spacing:.15em;padding:.2rem .7rem;border-radius:10px;white-space:nowrap}.pw-plan-tier{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--musgo-glow);margin-bottom:.3rem}.pw-plan-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--ocre);line-height:1}.pw-plan-period{font-size:.7rem;color:var(--marfil-tenu);margin:.3rem 0 .8rem}.pw-plan-features{font-size:.72rem;color:var(--marfil-tenu);line-height:1.7;margin-bottom:1rem;text-align:left}
+.pw-hero{text-align:center;max-width:500px;margin:0 auto}
+.pw-hero-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:400;color:var(--marfil);margin-bottom:.8rem;line-height:1.3}
+.pw-hero-title em{color:var(--ocre);font-style:italic}
+.pw-hero-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--marfil-tenu);line-height:1.7}
+.pw-plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;margin-top:.5rem}
+.pw-plan-card{border:1px solid rgba(196,151,59,.25);border-radius:14px;padding:1.6rem 1.4rem;text-align:center;background:rgba(196,151,59,.04);position:relative;display:flex;flex-direction:column;gap:.5rem}
+.pw-plan-card.featured{border-color:var(--ocre);background:linear-gradient(160deg,rgba(196,151,59,.12),rgba(196,151,59,.04));box-shadow:0 0 40px rgba(196,151,59,.08)}
+.pw-plan-badge{position:absolute;top:-.6rem;left:50%;transform:translateX(-50%);background:var(--ocre);color:var(--tierra);font-size:.52rem;font-weight:600;letter-spacing:.18em;padding:.25rem .8rem;border-radius:10px;white-space:nowrap}
+.pw-plan-tier{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--musgo-glow)}
+.pw-plan-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500;color:var(--marfil);line-height:1.1}
+.pw-plan-price{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--ocre);line-height:1;margin-top:.3rem}
+.pw-plan-currency{font-size:.9rem;color:var(--marfil-tenu);margin-left:.15rem;letter-spacing:.05em}
+.pw-plan-period{font-size:.7rem;color:var(--marfil-tenu);letter-spacing:.08em}
+.pw-plan-features{font-size:.74rem;color:var(--marfil-tenu);line-height:1.8;text-align:left;margin:.7rem 0;padding:.7rem 0;border-top:1px solid rgba(196,151,59,.12);border-bottom:1px solid rgba(196,151,59,.12)}
+.pw-plan-features span{display:block}
 .paywall-confirm{display:none;background:rgba(196,151,59,.06);border:1px solid rgba(196,151,59,.2);border-radius:10px;padding:1rem 1.2rem;text-align:center;width:100%}.paywall-confirm p{font-size:.8rem;color:var(--marfil-tenu);margin-bottom:.7rem}
 .history-grid{width:100%;display:flex;flex-direction:column;gap:.8rem;max-height:400px;overflow-y:auto}.history-card{background:var(--cristal);border:1px solid rgba(196,151,59,.12);border-radius:10px;padding:1rem;cursor:pointer;transition:all .3s}.history-card:hover{border-color:var(--ocre)}.hc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}.hc-tipo{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--musgo-glow)}.hc-date{font-size:.55rem;color:var(--marfil-tenu)}.hc-subj{font-size:.82rem;color:var(--ocre);margin-bottom:.3rem}.hc-preview{font-family:'Cormorant Garamond',serif;font-size:.82rem;color:var(--marfil-tenu);font-style:italic;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .foot{position:relative;z-index:1;text-align:center;padding:2rem;border-top:1px solid rgba(196,151,59,.08);margin-top:2rem}.foot p{font-size:.63rem;color:var(--marfil-tenu);letter-spacing:.08em}.foot a{color:var(--ocre);text-decoration:none}
-
-/* === GOOGLE AUTH STYLES === */
 .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:.78rem 1.2rem;background:#ffffff;color:#3c4043;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;border:1px solid #dadce0;border-radius:8px;cursor:pointer;transition:background .2s,box-shadow .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
 .btn-google:hover{background:#f7f8f8;box-shadow:0 1px 3px rgba(0,0,0,.12);border-color:#c6c6c6}
 .btn-google:active{background:#eef0f1;box-shadow:none}
@@ -65,8 +91,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 .google-auth-error{display:none;margin-top:.5rem;padding:.6rem 1rem;background:rgba(180,80,60,.08);border:1px solid rgba(180,80,60,.25);color:#c47050;font-size:.75rem;border-radius:6px;text-align:center}
 .auth-divider{display:flex;align-items:center;gap:12px;width:100%;color:rgba(240,230,211,.35);font-size:.72rem}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(196,151,59,.15)}
-
-@media(max-width:580px){.hook-counter{font-size:3.5rem}.hook-q{font-size:1.4rem}.top-bar{padding:.8rem 1rem}.bar-link{display:none}.bar-link-panel{font-size:.62rem;padding:.28rem .6rem}.mini-grid{grid-template-columns:1fr}.cat-grid,.type-grid{grid-template-columns:repeat(2,1fr)}.pw-plans-grid{grid-template-columns:1fr}.user-name{display:none}}
+@media(max-width:580px){.hook-counter{font-size:3.5rem}.hook-q{font-size:1.4rem}.top-bar{padding:.8rem 1rem}.bar-link{display:none}.bar-link-panel{font-size:.62rem;padding:.28rem .6rem}.mini-grid{grid-template-columns:1fr}.cat-grid,.type-grid{grid-template-columns:repeat(2,1fr)}.pw-plans-grid{grid-template-columns:1fr}.user-name{display:none}.pw-hero-title{font-size:1.5rem}.archive-actions{flex-direction:column}.archive-btn{min-width:0}}
 </style>
 </head>
 <body>
@@ -91,7 +116,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
         <div class="ud-item" onclick="event.stopPropagation();goTo('/panel.html')">📋 Mi Panel</div>
         <div class="ud-item" onclick="event.stopPropagation();goTo('/cuenta.html')">⚙️ Mi Cuenta</div>
         <div class="ud-item" onclick="event.stopPropagation();go('history')">📜 Mis cápsulas</div>
-        <div class="ud-item" onclick="event.stopPropagation();window.open('planes.html')">🌿 Mejorar plan</div>
+        <div class="ud-item" onclick="event.stopPropagation();go('paywall')">🌿 Hacerse Guardián</div>
         <div class="ud-divider"></div>
         <div class="ud-item" onclick="event.stopPropagation();logout()">🚪 Cerrar sesión</div>
       </div>
@@ -100,26 +125,18 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   </div>
 </header>
 <main>
-<!-- LOGIN -->
 <div class="phase" id="ph-login">
   <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Oráculo del Umbral</div></div>
   <div class="orb" style="width:70px;height:70px;cursor:default"></div>
   <h2 class="heading" id="login-heading">Inicia sesión</h2>
   <p class="subtext">Tus cápsulas se guardarán en tu cuenta y podrás acceder desde cualquier dispositivo.</p>
   <div class="login-box">
-    <!-- GOOGLE LOGIN BUTTON -->
     <button class="btn-google" id="btn-google-login" onclick="loginConGoogle()">
-      <svg viewBox="0 0 24 24" width="20" height="20">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-      </svg>
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
       Continuar con Google
     </button>
     <div class="google-auth-error" id="google-auth-error"></div>
     <div class="auth-divider">o</div>
-    <!-- EMAIL/PASSWORD LOGIN -->
     <div class="login-field"><label>Correo electrónico</label><input type="email" id="login-email" placeholder="tu@correo.com" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()"/></div>
     <div class="login-field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doPasswordAuth()"/></div>
     <button class="btn-main" onclick="doPasswordAuth()" id="login-btn" style="width:100%">🔑 Entrar</button>
@@ -129,7 +146,6 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   </div>
   <button class="btn-ghost" onclick="go('hook')" style="margin-top:.5rem">← Explorar sin cuenta</button>
 </div>
-<!-- HOOK -->
 <div class="phase active" id="ph-hook">
   <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Oráculo del Umbral</div></div>
   <div style="text-align:center"><div class="hook-counter" id="hook-n">0</div><div style="font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--marfil-tenu);margin-top:.2rem">especies perdidas desde que abriste esta página</div></div>
@@ -143,7 +159,6 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   <div class="orb" onclick="startInscription()"></div>
   <button class="btn-main" onclick="startInscription()">🌿 Inscribir una memoria ecológica</button>
 </div>
-<!-- INPUT -->
 <div class="phase" id="ph-input">
   <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Oráculo del Umbral</div></div>
   <h2 class="heading">¿Qué deseas honrar?</h2>
@@ -172,30 +187,73 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
   <button class="btn-main" id="btn-invocar" onclick="invoke()">Que el Oráculo inscriba</button>
   <button class="btn-ghost" onclick="go('hook')">← Volver</button>
 </div>
-<!-- LOADING -->
 <div class="phase" id="ph-loading"><div class="ring"></div><h2 class="heading">El Oráculo consulta las sombras…</h2><p class="subtext">Inscribiendo la memoria en el tejido del tiempo</p></div>
-<!-- RESULT -->
 <div class="phase" id="ph-result">
   <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Cápsula Inscrita</div></div>
   <div class="witness-box"><div class="witness-text" id="witness-text"></div></div>
-  <div class="capsule" id="capsule-box"><div class="capsule-overlay"></div><span class="capsule-seal">✦</span><div class="capsule-content"><div class="cap-tipo" id="r-tipo"></div><div class="cap-subject" id="r-subj"></div><div class="cap-text" id="r-text"></div><div class="cap-date" id="r-date"></div></div></div>
+  <div class="capsule" id="capsule-box">
+    <div class="capsule-overlay"></div><span class="capsule-seal">✦</span>
+    <div class="capsule-content">
+      <div class="cap-tipo" id="r-tipo"></div>
+      <div class="cap-subject" id="r-subj"></div>
+      <div class="cap-text" id="r-text"></div>
+      <div class="cap-date" id="r-date"></div>
+      <div class="cap-cert-num" id="r-cert-num" style="display:none"></div>
+    </div>
+  </div>
+  <div class="archive-block" id="archive-block" style="display:none">
+    <div class="archive-head"><span class="archive-icon">📜</span><span class="archive-title">Tu cápsula está en el Archivo del Umbral</span></div>
+    <div class="archive-actions">
+      <a class="archive-btn archive-btn-cert" id="btn-cert-download" href="#" target="_blank">Descargar Certificado PDF</a>
+      <button class="archive-btn archive-btn-pub" id="btn-toggle-publica" onclick="togglePublicaResult()">🔒 Hacer pública</button>
+    </div>
+    <div class="archive-hint" id="archive-hint"></div>
+  </div>
   <div class="email-capture"><div class="email-label">📧 Recibir esta cápsula en tu correo</div><div class="email-row"><input class="email-input" type="email" id="user-email" placeholder="tu@correo.com"/><button class="email-send-btn" id="send-email-btn" onclick="sendEmail()">Enviar</button></div><div class="email-status" id="email-status"></div></div>
   <div class="share-block"><div class="share-label">📲 Comparte esta cápsula</div><div class="share-preview" id="share-txt"></div><div class="share-btns"><button class="share-btn" onclick="shareX()">Compartir en X</button><button class="share-btn" id="copy-btn" onclick="copyShare()">Copiar</button><button class="share-btn" onclick="invoke()">🔄 Nueva versión</button><button class="btn-ghost" onclick="resetAll()">Inscribir otra</button></div></div>
-  <div class="final-cta"><p>¿Quieres preservar esta cápsula <strong>permanentemente</strong>?<br>En Thanotectas puedes sellarla para que se abra en 2050, 2075 o 2100.</p><a href="depositar.html" class="btn-gold">🌿 Depositar mi legado</a></div>
+  <div class="final-cta" id="final-cta"><p>¿Quieres que tu nombre y tus memorias tengan un lugar <strong>permanente</strong> en el Archivo?<br>Conviértete en <strong>Guardián del Umbral</strong>.</p><a href="#" onclick="go('paywall');return false" class="btn-gold">🌿 Ser Guardián</a></div>
 </div>
-<!-- PAYWALL -->
 <div class="phase" id="ph-paywall">
-  <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Oráculo del Umbral</div></div>
-  <div style="text-align:center"><div style="font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--rojo);line-height:1">0</div><div style="font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--marfil-tenu);margin-top:.2rem">inscripciones disponibles</div></div>
-  <h2 class="heading">El Oráculo ha guardado silencio</h2><p class="subtext">Elige un plan para continuar inscribiendo memorias.</p>
-  <div class="pw-plans-grid">
-    <div class="pw-plan-card"><div class="pw-plan-tier">Plan Explorador</div><div class="pw-plan-price">$0.70</div><div class="pw-plan-period">USD · pago único</div><div class="pw-plan-features">✦ 5 inscripciones<br>✦ Poema + Dato<br>✦ 4 idiomas<br>✦ Cápsula por correo</div><button class="btn-gold" onclick="openPayment('explorador')" style="width:100%;font-size:.78rem;padding:.7rem">🌱 $0.70</button></div>
-    <div class="pw-plan-card featured"><div class="pw-plan-badge">★ RECOMENDADO</div><div class="pw-plan-tier" style="margin-top:.3rem">Plan Guardián</div><div class="pw-plan-price">$5</div><div class="pw-plan-period">USD · pago único</div><div class="pw-plan-features">✦ 100 inscripciones<br>✦ Los 6 tipos<br>✦ 8 idiomas<br>✦ Contenido extendido<br>✦ Certificado PDF<br>✦ Nombre en Guardianes</div><button class="btn-gold" onclick="openPayment('guardian')" style="width:100%;font-size:.78rem;padding:.7rem">🌿 $5</button></div>
+  <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">El Umbral te reconoce</div></div>
+  <div class="pw-hero">
+    <h2 class="pw-hero-title">Has honrado memorias que <em>nadie más estaba nombrando</em>.</h2>
+    <p class="pw-hero-quote">"Todo lo que desaparece merece ser recordado."<br>Conviértete en <strong style="color:var(--ocre)">Guardián del Umbral</strong> e inscribe sin límite.</p>
   </div>
-  <div class="paywall-confirm" id="pw-confirm"><p>Después de completar el pago, haz clic aquí:</p><button class="btn-main" onclick="confirmPayment()">Ya pagué → Continuar</button></div>
+  <div class="pw-plans-grid">
+    <div class="pw-plan-card">
+      <div class="pw-plan-tier">Membresía anual</div>
+      <div class="pw-plan-name">Guardián</div>
+      <div class="pw-plan-price">$45.000<span class="pw-plan-currency">COP</span></div>
+      <div class="pw-plan-period">por un año · renovable</div>
+      <div class="pw-plan-features">
+        <span>✦ Inscripciones ilimitadas</span>
+        <span>✦ Los 6 tipos de cápsula</span>
+        <span>✦ 8 idiomas disponibles</span>
+        <span>✦ Certificado PDF por cápsula</span>
+        <span>✦ Perfil público /g/tu-nombre</span>
+        <span>✦ Archivo permanente</span>
+      </div>
+      <button class="btn-gold" onclick="openPayment('guardian')" style="width:100%;font-size:.82rem">Hacerse Guardián</button>
+    </div>
+    <div class="pw-plan-card featured">
+      <div class="pw-plan-badge">★ PARA SIEMPRE</div>
+      <div class="pw-plan-tier">Membresía vitalicia</div>
+      <div class="pw-plan-name">Guardián Eterno</div>
+      <div class="pw-plan-price">$250.000<span class="pw-plan-currency">COP</span></div>
+      <div class="pw-plan-period">pago único · sin renovación</div>
+      <div class="pw-plan-features">
+        <span>✦ Todo lo del plan Guardián</span>
+        <span>✦ <strong style="color:var(--ocre)">Sin fecha de vencimiento</strong></span>
+        <span>✦ Certificado impreso por correo</span>
+        <span>✦ Nombre en fundadores del Archivo</span>
+        <span>✦ Acceso prioritario a nuevos rituales</span>
+      </div>
+      <button class="btn-gold" onclick="openPayment('eterno')" style="width:100%;font-size:.82rem">Guardián Eterno</button>
+    </div>
+  </div>
+  <div class="paywall-confirm" id="pw-confirm"><p>Después de completar el pago en Bold, regresa aquí:</p><button class="btn-main" onclick="confirmPayment()">Ya pagué → Activar membresía</button></div>
   <button class="btn-ghost" onclick="go('input')" style="margin-top:.8rem">← Volver</button>
 </div>
-<!-- HISTORY -->
 <div class="phase" id="ph-history">
   <div class="brand"><div class="brand-name">Thanotectas</div><div class="brand-sub">Mis Cápsulas</div></div>
   <h2 class="heading">Tu Archivo del Umbral</h2>
@@ -208,88 +266,194 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
 var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
+// === BOLD LINKS ===
+// TODO: crear 2 nuevos links en Bold.co y reemplazar estos valores:
+//   guardian  = pago de $45.000 COP (membresía anual)
+//   eterno    = pago de $250.000 COP (vitalicio)
+// Mientras tanto, ambos apuntan al link actual de Bold para no romper el flujo.
+var BOLD_LINKS = {
+  guardian: 'https://checkout.bold.co/payment/LNK_X1LLSJCK4P',
+  eterno:   'https://checkout.bold.co/payment/LNK_X1LLSJCK4P'
+};
+
 (function(){var cv=document.getElementById('stars'),cx=cv.getContext('2d'),st=[];function init(){cv.width=innerWidth;cv.height=innerHeight;st=[];for(var i=0;i<Math.floor(cv.width*cv.height/7000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}function draw(){cx.clearRect(0,0,cv.width,cv.height);var t=Date.now();st.forEach(function(s){var a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle='rgba(240,230,211,'+a+')';cx.fill();});requestAnimationFrame(draw);}init();draw();window.addEventListener('resize',init);})();
 var hookN=0;setInterval(function(){hookN++;document.getElementById('hook-n').textContent=hookN;},9600);
 var activeLang='es',activeCat='especies',activeType='poema',currentPoema='',currentSujeto='',currentUser=null;
+var currentCapsulaId=null, currentNumeroCert=null, currentEsPublica=false;
 var loginIsRegister=false;
+
 function go(id){document.querySelectorAll('.phase').forEach(function(p){p.classList.remove('active');});document.getElementById('ph-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='history')loadHistory();}
 function startInscription(){if(!currentUser){go('login');return;}refreshUserData().then(function(){actualizarTiposIdiomas();updateUsesBar();go('input');});}
 function toggleLoginMode(){loginIsRegister=!loginIsRegister;document.getElementById('login-heading').textContent=loginIsRegister?'Crear cuenta':'Inicia sesión';document.getElementById('login-btn').innerHTML=loginIsRegister?'🌿 Crear cuenta':'🔑 Entrar';document.getElementById('login-mode-toggle').textContent=loginIsRegister?'¿Ya tienes cuenta? Iniciar sesión':'¿No tienes cuenta? Crear una';document.getElementById('login-msg').textContent='';}
 
-/* ============================
-   GOOGLE AUTH
-   ============================ */
-async function loginConGoogle(){
-  var btn=document.getElementById('btn-google-login');
-  try{
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner-google"></span> Conectando con Google...';
-    var r=await sb.auth.signInWithOAuth({
-      provider:'google',
-      options:{
-        redirectTo:window.location.origin+'/oraculo.html',
-        queryParams:{access_type:'offline',prompt:'consent'}
-      }
-    });
-    if(r.error){
-      console.error('Google OAuth error:',r.error.message);
-      mostrarErrorGoogle('No se pudo conectar con Google. Intenta de nuevo.');
-      restaurarBotonGoogle(btn);
-    }
-  }catch(e){
-    console.error('Google OAuth exception:',e);
-    mostrarErrorGoogle('Error inesperado. Intenta de nuevo.');
-    restaurarBotonGoogle(btn);
-  }
-}
-function mostrarErrorGoogle(msg){
-  var el=document.getElementById('google-auth-error');
-  el.textContent=msg;el.style.display='block';
-  setTimeout(function(){el.style.display='none';},5000);
-}
-function restaurarBotonGoogle(btn){
-  btn.disabled=false;
-  btn.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continuar con Google';
-}
-/* ============================ */
+async function loginConGoogle(){var btn=document.getElementById('btn-google-login');try{btn.disabled=true;btn.innerHTML='<span class="spinner-google"></span> Conectando con Google...';var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/oraculo.html',queryParams:{access_type:'offline',prompt:'consent'}}});if(r.error){console.error('Google OAuth error:',r.error.message);mostrarErrorGoogle('No se pudo conectar con Google. Intenta de nuevo.');restaurarBotonGoogle(btn);}}catch(e){console.error('Google OAuth exception:',e);mostrarErrorGoogle('Error inesperado. Intenta de nuevo.');restaurarBotonGoogle(btn);}}
+function mostrarErrorGoogle(msg){var el=document.getElementById('google-auth-error');el.textContent=msg;el.style.display='block';setTimeout(function(){el.style.display='none';},5000);}
+function restaurarBotonGoogle(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continuar con Google';}
 
-async function doPasswordAuth(){var email=document.getElementById('login-email').value.trim();var pass=document.getElementById('login-pass').value;var msg=document.getElementById('login-msg');var btn=document.getElementById('login-btn');if(!email||!email.includes('@')){msg.textContent='Ingresa un correo válido';msg.style.color='#c47050';return;}if(!pass||pass.length<6){msg.textContent='La contraseña debe tener mínimo 6 caracteres';msg.style.color='#c47050';return;}btn.disabled=true;msg.textContent=loginIsRegister?'Creando cuenta…':'Iniciando sesión…';msg.style.color='var(--marfil-tenu)';try{var r;var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('Tiempo agotado. Intenta de nuevo.'));},15000);});if(loginIsRegister){r=await Promise.race([sb.auth.signUp({email:email,password:pass,options:{emailRedirectTo:window.location.origin+'/oraculo.html'}}),timeout]);if(r.error)throw r.error;msg.textContent=r.data.session?'✓ Cuenta creada':'✓ Revisa tu correo para confirmar';msg.style.color='var(--musgo-glow)';}else{r=await Promise.race([sb.auth.signInWithPassword({email:email,password:pass}),timeout]);console.log('[Login] result:',JSON.stringify(r.error||'OK'));if(r.error)throw r.error;msg.textContent='✓ Sesión iniciada';msg.style.color='var(--musgo-glow)';}}catch(e){console.error('[Login] error:',e);var m=e.message||'Error desconocido';if(m.includes('Invalid login'))m='Correo o contraseña incorrectos. Si entraste con enlace mágico, primero establece tu contraseña en Mi Cuenta.';else if(m.includes('already registered'))m='Este correo ya tiene cuenta. Inicia sesión.';else if(m.includes('Email not confirmed'))m='Confirma tu correo primero (revisa tu bandeja).';msg.textContent=m;msg.style.color='#c47050';}finally{btn.disabled=false;}}
+async function doPasswordAuth(){var email=document.getElementById('login-email').value.trim();var pass=document.getElementById('login-pass').value;var msg=document.getElementById('login-msg');var btn=document.getElementById('login-btn');if(!email||!email.includes('@')){msg.textContent='Ingresa un correo válido';msg.style.color='#c47050';return;}if(!pass||pass.length<6){msg.textContent='La contraseña debe tener mínimo 6 caracteres';msg.style.color='#c47050';return;}btn.disabled=true;msg.textContent=loginIsRegister?'Creando cuenta…':'Iniciando sesión…';msg.style.color='var(--marfil-tenu)';try{var r;var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('Tiempo agotado. Intenta de nuevo.'));},15000);});if(loginIsRegister){r=await Promise.race([sb.auth.signUp({email:email,password:pass,options:{emailRedirectTo:window.location.origin+'/oraculo.html'}}),timeout]);if(r.error)throw r.error;msg.textContent=r.data.session?'✓ Cuenta creada':'✓ Revisa tu correo para confirmar';msg.style.color='var(--musgo-glow)';}else{r=await Promise.race([sb.auth.signInWithPassword({email:email,password:pass}),timeout]);if(r.error)throw r.error;msg.textContent='✓ Sesión iniciada';msg.style.color='var(--musgo-glow)';}}catch(e){console.error('[Login] error:',e);var m=e.message||'Error desconocido';if(m.includes('Invalid login'))m='Correo o contraseña incorrectos.';else if(m.includes('already registered'))m='Este correo ya tiene cuenta. Inicia sesión.';else if(m.includes('Email not confirmed'))m='Confirma tu correo primero (revisa tu bandeja).';msg.textContent=m;msg.style.color='#c47050';}finally{btn.disabled=false;}}
 async function sendMagicLink(){var email=document.getElementById('login-email').value.trim();var msg=document.getElementById('login-msg');if(!email||!email.includes('@')){msg.textContent='Ingresa un correo válido';msg.style.color='#c47050';return;}msg.textContent='Enviando enlace…';msg.style.color='var(--marfil-tenu)';var r=await sb.auth.signInWithOtp({email:email,options:{emailRedirectTo:window.location.origin+'/oraculo.html'}});if(r.error){msg.textContent='Error: '+r.error.message;msg.style.color='#c47050';}else{msg.textContent='✓ Revisa tu correo — haz clic en el enlace para entrar.';msg.style.color='var(--musgo-glow)';}}
 async function logout(){await sb.auth.signOut();currentUser=null;document.getElementById('user-pill').style.display='none';document.getElementById('nav-login-btn').style.display='inline-flex';document.getElementById('nav-panel-btn').style.display='none';document.getElementById('user-dropdown').classList.remove('open');go('hook');}
 function toggleDropdown(){document.getElementById('user-dropdown').classList.toggle('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.user-pill'))document.getElementById('user-dropdown').classList.remove('open');});
+
 async function loadUserProfile(authUser){var r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();if(!r.data){await new Promise(function(ok){setTimeout(ok,2000);});r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();}if(!r.data)return null;currentUser=r.data;updateUserUI();return r.data;}
 async function refreshUserData(){if(!currentUser)return;var r=await sb.from('guardianes').select('*').eq('id',currentUser.id).single();if(r.data){currentUser=r.data;updateUserUI();}}
-function updateUserUI(){if(!currentUser)return;document.getElementById('user-pill').style.display='flex';document.getElementById('nav-login-btn').style.display='none';document.getElementById('nav-panel-btn').style.display='inline-flex';document.getElementById('user-display-name').textContent=currentUser.nombre||currentUser.email.split('@')[0];document.getElementById('user-credits-badge').textContent=currentUser.es_admin?'∞ Admin':currentUser.consultas_disponibles+' créditos';var pl=currentUser.es_admin?'ADMIN':currentUser.plan==='guardian'?'PLAN GUARDIÁN':currentUser.plan==='explorador'?'PLAN EXPLORADOR':'PLAN GRATUITO';document.getElementById('ud-plan').textContent='✦ '+pl;document.getElementById('user-avatar').textContent=currentUser.es_admin?'⚡':currentUser.plan==='guardian'?'🌿':'🌱';document.getElementById('user-email').value=currentUser.email;}
-function updateUsesBar(){var el=document.getElementById('uses-text');if(!currentUser){el.textContent='Inicia sesión para inscribir';return;}if(currentUser.es_admin){el.textContent='✦ Admin — inscripciones ilimitadas';el.style.color='var(--musgo-glow)';return;}var lbl=currentUser.plan==='guardian'?'Guardián':currentUser.plan==='explorador'?'Explorador':'Gratuito';el.textContent='Plan '+lbl+' · '+currentUser.consultas_disponibles+' inscripciones restantes';el.style.color=currentUser.consultas_disponibles>0?'var(--musgo-glow)':'var(--rojo)';}
-function actualizarTiposIdiomas(){if(!currentUser)return;var p=currentUser.plan;var ok;if(p==='admin'||p==='guardian')ok=['poema','dato','carta','obituario','alerta','ritual'];else if(p==='explorador')ok=['poema','dato'];else ok=['poema'];document.querySelectorAll('.type-btn').forEach(function(b){var t=b.getAttribute('data-tipo');if(t)b.classList.toggle('locked',ok.indexOf(t)===-1);});var ext=(p==='guardian'||p==='admin');document.querySelectorAll('.lang-btn-ext').forEach(function(b){b.style.display=ext?'inline-block':'none';});}
+
+function updateUserUI(){
+if(!currentUser)return;
+document.getElementById('user-pill').style.display='flex';
+document.getElementById('nav-login-btn').style.display='none';
+document.getElementById('nav-panel-btn').style.display='inline-flex';
+document.getElementById('user-display-name').textContent=currentUser.nombre||currentUser.email.split('@')[0];
+var badgeTxt, planLabel, avatarIcon;
+if(currentUser.es_admin){badgeTxt='∞ Admin';planLabel='ADMIN';avatarIcon='⚡';}
+else if(currentUser.plan==='eterno'){badgeTxt='✦ Eterno';planLabel='GUARDIÁN ETERNO';avatarIcon='✦';}
+else if(currentUser.plan==='guardian'){badgeTxt='Guardián activo';planLabel='PLAN GUARDIÁN';avatarIcon='🌿';}
+else if(currentUser.plan==='explorador'){badgeTxt=currentUser.consultas_disponibles+' créditos';planLabel='PLAN EXPLORADOR';avatarIcon='🌱';}
+else{badgeTxt=currentUser.consultas_disponibles+' gratuitas';planLabel='PLAN GRATUITO';avatarIcon='🌱';}
+document.getElementById('user-credits-badge').textContent=badgeTxt;
+document.getElementById('ud-plan').textContent='✦ '+planLabel;
+document.getElementById('user-avatar').textContent=avatarIcon;
+var emailInput=document.getElementById('user-email');if(emailInput)emailInput.value=currentUser.email;
+}
+
+function updateUsesBar(){
+var el=document.getElementById('uses-text');
+if(!currentUser){el.textContent='Inicia sesión para inscribir';return;}
+if(currentUser.es_admin){el.textContent='✦ Admin — inscripciones ilimitadas';el.style.color='var(--musgo-glow)';return;}
+if(currentUser.plan==='eterno'){el.textContent='✦ Guardián Eterno — inscripciones ilimitadas';el.style.color='var(--ocre)';return;}
+if(currentUser.plan==='guardian'){
+  if(currentUser.plan_vence_en){
+    var d=Math.max(0,Math.ceil((new Date(currentUser.plan_vence_en)-new Date())/86400000));
+    el.textContent='🌿 Guardián · membresía activa ('+d+' días restantes)';
+  } else {
+    el.textContent='🌿 Guardián · membresía activa';
+  }
+  el.style.color='var(--musgo-glow)';return;
+}
+var lbl=currentUser.plan==='explorador'?'Explorador':'Gratuito';
+el.textContent='Plan '+lbl+' · '+currentUser.consultas_disponibles+' inscripciones restantes';
+el.style.color=currentUser.consultas_disponibles>0?'var(--musgo-glow)':'var(--rojo)';
+}
+
+function actualizarTiposIdiomas(){
+if(!currentUser)return;
+var p=currentUser.plan;var ok;
+if(currentUser.es_admin||p==='guardian'||p==='eterno') ok=['poema','dato','carta','obituario','alerta','ritual'];
+else if(p==='explorador') ok=['poema','dato'];
+else ok=['poema'];
+document.querySelectorAll('.type-btn').forEach(function(b){var t=b.getAttribute('data-tipo');if(t)b.classList.toggle('locked',ok.indexOf(t)===-1);});
+var ext=(p==='guardian'||p==='eterno'||currentUser.es_admin);
+document.querySelectorAll('.lang-btn-ext').forEach(function(b){b.style.display=ext?'inline-block':'none';});
+}
+
 function selectCat(el,cat){document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeCat=cat;}
 function selectType(el,tp){if(el.classList.contains('locked'))return;document.querySelectorAll('.type-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeType=tp;}
+
 async function invoke(){var subj=document.getElementById('subj').value.trim();var desc=document.getElementById('desc').value.trim();var errEl=document.getElementById('inp-err');var btn=document.getElementById('btn-invocar');if(!subj){errEl.textContent='Debes nombrar aquello que deseas honrar.';errEl.style.display='block';return;}errEl.style.display='none';if(!currentUser){go('login');return;}
-var qr=await sb.rpc('usar_consulta',{p_auth_id:currentUser.auth_id});if(qr.error||!qr.data||!qr.data.ok){if(qr.data&&qr.data.error==='Sin consultas disponibles'){go('paywall');return;}errEl.textContent='⚠️ '+(qr.data?qr.data.error:'Error verificando créditos');errEl.style.display='block';return;}
+var qr=await sb.rpc('usar_consulta',{p_auth_id:currentUser.auth_id});
+if(qr.error||!qr.data||!qr.data.ok){
+  if(qr.data&&qr.data.error==='Sin consultas disponibles'){go('paywall');return;}
+  errEl.textContent='⚠️ '+(qr.data?qr.data.error:'Error verificando créditos');errEl.style.display='block';return;
+}
 currentUser.consultas_disponibles=qr.data.restantes;currentUser.plan=qr.data.plan||currentUser.plan;updateUserUI();btn.disabled=true;go('loading');
-try{var res=await fetch('/.netlify/functions/oraculo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sujeto:subj,testimonio:desc,categoria:activeCat,tipo:activeType,idioma:activeLang,plan:currentUser.es_admin?'guardian':currentUser.plan})});if(!res.ok)throw new Error('HTTP '+res.status);var data=await res.json();if(!data.poema)throw new Error('Respuesta vacía');
-currentPoema=data.poema;currentSujeto=subj;
-await sb.from('capsulas').insert({guardian_id:currentUser.id,sujeto:subj,testimonio:desc||null,categoria:activeCat,tipo:activeType,idioma:activeLang,contenido:data.poema,imagen_url:data.imagen||null,plan_usado:currentUser.plan});
-var tl={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};
-document.getElementById('r-tipo').textContent=tl[activeType]||activeType;document.getElementById('r-subj').textContent='— '+subj.toUpperCase()+' —';document.getElementById('r-text').textContent=data.poema;document.getElementById('r-date').textContent='Inscrita el '+new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
-if(data.imagen){var box=document.getElementById('capsule-box');box.style.backgroundImage='linear-gradient(160deg,rgba(13,11,8,.85),rgba(26,22,17,.75)),url('+data.imagen+')';box.style.backgroundSize='cover';box.style.backgroundPosition='center';}
-var pr=data.poema.split('\n').filter(function(l){return l.trim();})[0]||data.poema.slice(0,80);document.getElementById('share-txt').textContent='Acabo de inscribir a "'+subj+'" en el Oráculo del Umbral de @thanotectas 🌿\n"'+pr+'"\nthanotectas.com/oraculo #DueloEcológico';
-document.getElementById('witness-text').innerHTML='<span style="font-family:Cormorant Garamond,serif;font-size:1rem;font-style:italic;color:var(--marfil)">Cápsula inscrita y guardada en tu archivo personal.</span>';
-updateUsesBar();go('result');
-}catch(e){console.error('[Oraculo]',e.message);go('input');errEl.textContent='⚠️ '+e.message;errEl.style.display='block';await sb.from('guardianes').update({consultas_disponibles:currentUser.consultas_disponibles+1}).eq('id',currentUser.id);currentUser.consultas_disponibles++;updateUserUI();}finally{btn.disabled=false;}}
+try{
+  var res=await fetch('/.netlify/functions/oraculo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sujeto:subj,testimonio:desc,categoria:activeCat,tipo:activeType,idioma:activeLang,plan:currentUser.es_admin?'guardian':currentUser.plan})});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  var data=await res.json();if(!data.poema)throw new Error('Respuesta vacía');
+  currentPoema=data.poema;currentSujeto=subj;
+  var ins=await sb.from('capsulas').insert({guardian_id:currentUser.id,sujeto:subj,testimonio:desc||null,categoria:activeCat,tipo:activeType,idioma:activeLang,contenido:data.poema,imagen_url:data.imagen||null,plan_usado:currentUser.plan}).select('id,numero_certificado,es_publica').single();
+  if(ins.data){
+    currentCapsulaId=ins.data.id;
+    currentNumeroCert=ins.data.numero_certificado;
+    currentEsPublica=!!ins.data.es_publica;
+  }
+  var tl={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};
+  document.getElementById('r-tipo').textContent=tl[activeType]||activeType;
+  document.getElementById('r-subj').textContent='— '+subj.toUpperCase()+' —';
+  document.getElementById('r-text').textContent=data.poema;
+  document.getElementById('r-date').textContent='Inscrita el '+new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  var certEl=document.getElementById('r-cert-num');
+  if(currentNumeroCert){certEl.style.display='block';certEl.innerHTML='<code>'+esc(currentNumeroCert)+'</code>';}
+  if(data.imagen){var box=document.getElementById('capsule-box');box.style.backgroundImage='linear-gradient(160deg,rgba(13,11,8,.85),rgba(26,22,17,.75)),url('+data.imagen+')';box.style.backgroundSize='cover';box.style.backgroundPosition='center';}
+  var pr=data.poema.split('\n').filter(function(l){return l.trim();})[0]||data.poema.slice(0,80);
+  document.getElementById('share-txt').textContent='Acabo de inscribir a "'+subj+'" en el Oráculo del Umbral de @thanotectas 🌿\n"'+pr+'"\nthanotectas.com/oraculo #DueloEcológico';
+  document.getElementById('witness-text').innerHTML='<span style="font-family:Cormorant Garamond,serif;font-size:1rem;font-style:italic;color:var(--marfil)">Cápsula inscrita y sellada en el Archivo del Umbral.</span>';
+  renderArchiveBlock();
+  updateUsesBar();go('result');
+}catch(e){console.error('[Oraculo]',e.message);go('input');errEl.textContent='⚠️ '+e.message;errEl.style.display='block';await sb.from('guardianes').update({consultas_disponibles:currentUser.consultas_disponibles+1}).eq('id',currentUser.id);currentUser.consultas_disponibles++;updateUserUI();}finally{btn.disabled=false;}
+}
+
+function renderArchiveBlock(){
+  var ab=document.getElementById('archive-block');
+  var fc=document.getElementById('final-cta');
+  if(!currentCapsulaId){ab.style.display='none';return;}
+  ab.style.display='flex';
+  document.getElementById('btn-cert-download').href='/certificado.html?id='+currentCapsulaId;
+  var btnPub=document.getElementById('btn-toggle-publica');
+  var hint=document.getElementById('archive-hint');
+  var esGuardian=(currentUser&&(currentUser.plan==='guardian'||currentUser.plan==='eterno'||currentUser.es_admin));
+  if(!esGuardian){
+    btnPub.className='archive-btn archive-btn-pub locked';
+    btnPub.innerHTML='🔒 Publicar (requiere Guardián)';
+    hint.innerHTML='✦ Solo los <strong style="color:var(--ocre)">Guardianes</strong> pueden publicar sus cápsulas en el Archivo colectivo y en su perfil público.';
+    fc.style.display='block';
+  } else {
+    if(currentEsPublica){
+      btnPub.className='archive-btn archive-btn-pub active';
+      btnPub.innerHTML='✓ Pública en el Archivo';
+      hint.innerHTML='Tu cápsula aparece en tu perfil público y en el Archivo colectivo.';
+    } else {
+      btnPub.className='archive-btn archive-btn-pub';
+      btnPub.innerHTML='🌐 Hacer pública';
+      hint.innerHTML='Si la haces pública, aparecerá en tu perfil /g/'+(currentUser.slug||'')+' y en el feed del Archivo.';
+    }
+    fc.style.display='none';
+  }
+}
+
+async function togglePublicaResult(){
+  if(!currentCapsulaId)return;
+  if(!(currentUser&&(currentUser.plan==='guardian'||currentUser.plan==='eterno'||currentUser.es_admin))){
+    go('paywall');return;
+  }
+  var nuevo=!currentEsPublica;
+  var r=await sb.from('capsulas').update({es_publica:nuevo}).eq('id',currentCapsulaId).select('es_publica').single();
+  if(r.error){alert('Error: '+r.error.message);return;}
+  currentEsPublica=!!r.data.es_publica;
+  renderArchiveBlock();
+}
+
 async function sendEmail(){var email=document.getElementById('user-email').value.trim();var status=document.getElementById('email-status');var btn=document.getElementById('send-email-btn');if(!email||!email.includes('@')){status.textContent='Correo inválido';status.style.color='#c47050';return;}btn.disabled=true;status.textContent='Enviando…';try{var res=await fetch('/.netlify/functions/enviar-capsula',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,poema:currentPoema,sujeto:currentSujeto,tipo:activeType,idioma:activeLang,categoria:activeCat})});if(res.ok){status.textContent='✓ Enviada a '+email;status.style.color='var(--musgo-glow)';}else throw new Error('fail');}catch(e){status.textContent='Error. Intenta de nuevo.';status.style.color='#c47050';btn.disabled=false;}}
-function openPayment(plan){var links={explorador:'https://checkout.bold.co/payment/LNK_UVSP2A0O0U',guardian:'https://checkout.bold.co/payment/LNK_X1LLSJCK4P'};window.open(links[plan],'_blank');localStorage.setItem('thano_pending_plan',plan);setTimeout(function(){document.getElementById('pw-confirm').style.display='block';},3000);}
-async function confirmPayment(){var plan=localStorage.getItem('thano_pending_plan')||'explorador';if(!currentUser){go('login');return;}var r=await sb.rpc('activar_plan',{p_auth_id:currentUser.auth_id,p_plan:plan,p_referencia:'bold_'+Date.now()});if(r.error||!r.data||!r.data.ok){alert('Error activando plan. Contacta info@thanotectas.com');return;}localStorage.removeItem('thano_pending_plan');await refreshUserData();actualizarTiposIdiomas();document.getElementById('pw-confirm').style.display='none';go('input');}
+
+function openPayment(plan){
+  var url=BOLD_LINKS[plan]||BOLD_LINKS.guardian;
+  window.open(url,'_blank');
+  localStorage.setItem('thano_pending_plan',plan);
+  setTimeout(function(){document.getElementById('pw-confirm').style.display='block';},3000);
+}
+async function confirmPayment(){
+  var plan=localStorage.getItem('thano_pending_plan')||'guardian';
+  if(!currentUser){go('login');return;}
+  var r=await sb.rpc('activar_plan',{p_auth_id:currentUser.auth_id,p_plan:plan,p_referencia:'bold_'+Date.now()});
+  if(r.error||!r.data||!r.data.ok){alert('Error activando plan. Contacta info@thanotectas.com');return;}
+  localStorage.removeItem('thano_pending_plan');
+  await refreshUserData();actualizarTiposIdiomas();updateUsesBar();
+  document.getElementById('pw-confirm').style.display='none';
+  go('input');
+}
+
 async function loadHistory(){var grid=document.getElementById('history-grid');if(!currentUser){grid.innerHTML='<p class="subtext">Inicia sesión para ver tus cápsulas.</p>';return;}grid.innerHTML='<p class="subtext">Cargando…</p>';var r=await sb.from('capsulas').select('*').eq('guardian_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(r.error||!r.data||r.data.length===0){grid.innerHTML='<p class="subtext">Aún no tienes cápsulas. ¡Inscribe tu primera memoria!</p>';return;}
 var tl={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};
-grid.innerHTML=r.data.map(function(c){var d=new Date(c.created_at).toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});var pv=c.contenido.split('\n').filter(function(l){return l.trim();})[0]||c.contenido.slice(0,100);return '<div class="history-card" onclick="viewCapsule(\''+c.id+'\')"><div class="hc-top"><span class="hc-tipo">'+(tl[c.tipo]||c.tipo)+'</span><span class="hc-date">'+d+'</span></div><div class="hc-subj">'+c.sujeto+'</div><div class="hc-preview">'+pv+'</div></div>';}).join('');}
-async function viewCapsule(id){var r=await sb.from('capsulas').select('*').eq('id',id).single();if(!r.data)return;currentPoema=r.data.contenido;currentSujeto=r.data.sujeto;var tl={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};document.getElementById('r-tipo').textContent=tl[r.data.tipo]||r.data.tipo;document.getElementById('r-subj').textContent='— '+r.data.sujeto.toUpperCase()+' —';document.getElementById('r-text').textContent=r.data.contenido;document.getElementById('r-date').textContent='Inscrita el '+new Date(r.data.created_at).toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});document.getElementById('witness-text').textContent='';var pr=r.data.contenido.split('\n').filter(function(l){return l.trim();})[0]||r.data.contenido.slice(0,80);document.getElementById('share-txt').textContent='Inscribí "'+r.data.sujeto+'" en @thanotectas 🌿\n"'+pr+'"\nthanotectas.com/oraculo';go('result');}
+grid.innerHTML=r.data.map(function(c){var d=new Date(c.created_at).toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});var pv=c.contenido.split('\n').filter(function(l){return l.trim();})[0]||c.contenido.slice(0,100);return '<div class="history-card" onclick="viewCapsule(\''+c.id+'\')"><div class="hc-top"><span class="hc-tipo">'+(tl[c.tipo]||c.tipo)+(c.numero_certificado?' · '+c.numero_certificado:'')+'</span><span class="hc-date">'+d+'</span></div><div class="hc-subj">'+c.sujeto+'</div><div class="hc-preview">'+pv+'</div></div>';}).join('');}
+async function viewCapsule(id){var r=await sb.from('capsulas').select('*').eq('id',id).single();if(!r.data)return;currentPoema=r.data.contenido;currentSujeto=r.data.sujeto;currentCapsulaId=r.data.id;currentNumeroCert=r.data.numero_certificado;currentEsPublica=!!r.data.es_publica;var tl={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};document.getElementById('r-tipo').textContent=tl[r.data.tipo]||r.data.tipo;document.getElementById('r-subj').textContent='— '+r.data.sujeto.toUpperCase()+' —';document.getElementById('r-text').textContent=r.data.contenido;document.getElementById('r-date').textContent='Inscrita el '+new Date(r.data.created_at).toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});var certEl=document.getElementById('r-cert-num');if(currentNumeroCert){certEl.style.display='block';certEl.innerHTML='<code>'+esc(currentNumeroCert)+'</code>';}else{certEl.style.display='none';}document.getElementById('witness-text').textContent='';var pr=r.data.contenido.split('\n').filter(function(l){return l.trim();})[0]||r.data.contenido.slice(0,80);document.getElementById('share-txt').textContent='Inscribí "'+r.data.sujeto+'" en @thanotectas 🌿\n"'+pr+'"\nthanotectas.com/oraculo';renderArchiveBlock();go('result');}
 function shareX(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('share-txt').textContent),'_blank');}
 function copyShare(){navigator.clipboard.writeText(document.getElementById('share-txt').textContent);var b=document.getElementById('copy-btn');b.textContent='✓';setTimeout(function(){b.textContent='Copiar';},2200);}
-function resetAll(){document.getElementById('subj').value='';document.getElementById('desc').value='';document.getElementById('capsule-box').style.backgroundImage='';go('input');}
+function resetAll(){document.getElementById('subj').value='';document.getElementById('desc').value='';document.getElementById('capsule-box').style.backgroundImage='';currentCapsulaId=null;currentNumeroCert=null;currentEsPublica=false;go('input');}
 function setLang(lang){activeLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});}
-async function goTo(url){try{var s=await sb.auth.getSession();if(s.data&&s.data.session){var t=s.data.session.access_token;var r=s.data.session.refresh_token;window.location.href=url+'#access_token='+t+'&refresh_token='+r+'&token_type=bearer&type=recovery';return;}}catch(e){console.error('goTo:',e);}window.location.href=url;}
+async function goTo(url){try{var s=await sb.auth.getSession();if(s.data&&s.data.session){var t=s.data.session.access_token;var r=s.data.session.refresh_token;window.location.href=url+'#access_token='+t+'&refresh_token='+r+'&token_type=bearer&type=recovery';return;}}catch(e){}window.location.href=url;}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 sb.auth.onAuthStateChange(async function(event,session){if(event==='SIGNED_IN'&&session){await loadUserProfile(session.user);if(currentUser){actualizarTiposIdiomas();updateUsesBar();var ph=document.querySelector('.phase.active');if(ph&&ph.id==='ph-login')go('hook');}}if(event==='SIGNED_OUT'){currentUser=null;document.getElementById('user-pill').style.display='none';document.getElementById('nav-login-btn').style.display='inline-flex';document.getElementById('nav-panel-btn').style.display='none';}});
 (async function(){var s=await sb.auth.getSession();if(s.data.session&&s.data.session.user){await loadUserProfile(s.data.session.user);actualizarTiposIdiomas();updateUsesBar();}var p=new URLSearchParams(window.location.search);if(p.get('status')==='ok'&&p.get('plan')){localStorage.setItem('thano_pending_plan',p.get('plan'));history.replaceState({},'','oraculo.html');if(currentUser)confirmPayment();else go('login');}})();
 </script>
