@@ -121,7 +121,7 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
         <div class="ud-item" onclick="event.stopPropagation();logout()">🚪 Cerrar sesión</div>
       </div>
     </div>
-    <button class="btn-ghost" id="nav-login-btn" onclick="go('login')" style="font-size:.65rem;padding:.3rem .8rem">Iniciar sesión</button>
+    <button class="btn-ghost" id="nav-login-btn" onclick="go('login')" style="font-size:.65rem;padding:.3rem .8rem;display:none">Iniciar sesión</button>
   </div>
 </header>
 <main>
@@ -265,6 +265,42 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
+
+// === Detección síncrona de sesión ===
+// Antes que Supabase se inicialice (async), leemos localStorage para saber si
+// probablemente hay sesión y evitamos el "flash" de "Iniciar sesión".
+(function(){
+  try{
+    var keys=Object.keys(localStorage);
+    var tokenKey=keys.find(function(k){return k.indexOf('sb-')===0 && k.indexOf('-auth-token')!==-1;});
+    var raw=tokenKey?localStorage.getItem(tokenKey):null;
+    if(raw && raw.length>50){
+      // Probablemente hay sesión — intentar extraer email para mostrar pill de inmediato
+      try{
+        var parsed=JSON.parse(raw);
+        var email=parsed.user?parsed.user.email:(parsed.currentSession&&parsed.currentSession.user?parsed.currentSession.user.email:null);
+        if(email){
+          // Mostrar pill lo antes posible (al cargar DOM)
+          document.addEventListener('DOMContentLoaded',function(){
+            var pill=document.getElementById('user-pill');
+            var loginBtn=document.getElementById('nav-login-btn');
+            var panelBtn=document.getElementById('nav-panel-btn');
+            var nameEl=document.getElementById('user-display-name');
+            var avEl=document.getElementById('user-avatar');
+            var badgeEl=document.getElementById('user-credits-badge');
+            if(pill)pill.style.display='flex';
+            if(loginBtn)loginBtn.style.display='none';
+            if(panelBtn)panelBtn.style.display='inline-flex';
+            if(nameEl)nameEl.textContent=email.split('@')[0];
+            if(avEl)avEl.textContent='🌿';
+            if(badgeEl)badgeEl.textContent='...';
+          });
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+})();
+
 // Lock noop: evita errores "Lock was stolen" cuando hay múltiples pestañas o clientes Supabase
 var noopLock=function(_name,_timeout,fn){return fn();};
 // detectSessionInUrl solo cuando realmente viene token de OAuth en el hash
@@ -337,20 +373,56 @@ async function logout(){await sb.auth.signOut();currentUser=null;document.getEle
 function toggleDropdown(){document.getElementById('user-dropdown').classList.toggle('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.user-pill'))document.getElementById('user-dropdown').classList.remove('open');});
 
+var _loadingProfile=false;
 async function loadUserProfile(authUser){
   if(!authUser||!authUser.id){console.warn('[loadUserProfile] authUser inválido');return null;}
-  console.log('[loadUserProfile] Buscando perfil para', authUser.email, authUser.id);
-  var r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();
-  console.log('[loadUserProfile] Primera query:', r.data?'ENCONTRADO':'NO ENCONTRADO', r.error||'');
-  if(!r.data){
-    await new Promise(function(ok){setTimeout(ok,2000);});
-    r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();
-    console.log('[loadUserProfile] Segunda query (retry):', r.data?'ENCONTRADO':'NO ENCONTRADO');
+  if(_loadingProfile){console.log('[loadUserProfile] Ya hay una carga en progreso, esperando...');while(_loadingProfile){await new Promise(function(ok){setTimeout(ok,100);});}return currentUser;}
+  _loadingProfile=true;
+
+  // Helper: query con timeout de 5 segundos
+  function queryConTimeout(){
+    return Promise.race([
+      sb.from('guardianes').select('*').eq('auth_id',authUser.id).single(),
+      new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},5000);})
+    ]);
   }
-  if(!r.data){console.error('[loadUserProfile] Perfil no encontrado después de 2 intentos');return null;}
-  currentUser=r.data;
-  updateUserUI();
-  return r.data;
+
+  try{
+    console.log('[loadUserProfile] Buscando perfil para', authUser.email, authUser.id);
+    try{
+      var r=await queryConTimeout();
+      console.log('[loadUserProfile] Primera query:', r.data?'ENCONTRADO ('+r.data.nombre+')':'NO ENCONTRADO', r.error||'');
+      if(!r.data){
+        await new Promise(function(ok){setTimeout(ok,1500);});
+        r=await queryConTimeout();
+        console.log('[loadUserProfile] Segunda query:', r.data?'ENCONTRADO':'NO ENCONTRADO');
+      }
+      if(!r.data){console.error('[loadUserProfile] Perfil no encontrado después de 2 intentos');return null;}
+      currentUser=r.data;
+      updateUserUI();
+      return r.data;
+    }catch(e){
+      console.error('[loadUserProfile] Query colgada o error:', e.message);
+      if(e.message==='TIMEOUT'){
+        console.log('[loadUserProfile] Intentando recovery: refreshSession + reintento...');
+        try{
+          await sb.auth.refreshSession();
+          var r3=await queryConTimeout();
+          if(r3.data){
+            console.log('[loadUserProfile] ✓ Recuperado tras refresh:', r3.data.nombre);
+            currentUser=r3.data;
+            updateUserUI();
+            return r3.data;
+          }
+        }catch(e2){
+          console.error('[loadUserProfile] Recovery también falló:', e2.message);
+        }
+      }
+      return null;
+    }
+  } finally {
+    _loadingProfile=false;
+  }
 }
 async function refreshUserData(){if(!currentUser)return;var r=await sb.from('guardianes').select('*').eq('id',currentUser.id).single();if(r.data){currentUser=r.data;updateUserUI();}}
 
