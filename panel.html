@@ -155,7 +155,7 @@ body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
-var sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'sb-thanotectas-auth'}});
+var sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 var CU=null,UP=null,caps=[],filt='todas';
 var TM={poema:{icon:'✍️',css:'t-poema',lb:'Poema'},dato:{icon:'📊',css:'t-dato',lb:'Dato'},carta:{icon:'✉️',css:'t-carta',lb:'Carta'},obituario:{icon:'🕯️',css:'t-obituario',lb:'Obituario'},alerta:{icon:'⚠️',css:'t-alerta',lb:'Alerta'},ritual:{icon:'🪻',css:'t-ritual',lb:'Ritual'}};
 var PM={gratis:{e:'🌱',lb:'Gratis',mx:3},explorador:{e:'🌿',lb:'Explorador',mx:10},guardian:{e:'🛡️',lb:'Guardián',mx:20},eterno:{e:'✦',lb:'Eterno',mx:999999},admin:{e:'⚡',lb:'Admin',mx:999999}};
