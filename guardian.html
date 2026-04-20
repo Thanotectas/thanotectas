@@ -71,7 +71,7 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(1px 1p
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
-var sb=window.supabase.createClient(SB_URL,SB_KEY);
+var sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 
 function getSlug(){

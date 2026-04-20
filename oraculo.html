@@ -265,7 +265,9 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
-var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+// Detectar URL de OAuth solo si realmente hay tokens en el hash (evita ruido en cargas normales)
+var hasOAuthHash = window.location.hash && window.location.hash.indexOf('access_token')!==-1;
+var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:hasOAuthHash,storageKey:'sb-thanotectas-auth',flowType:'pkce'}});
 
 // === BOLD LINKS ===
 // guardian  = $45.000 COP (membresía anual)
