@@ -374,49 +374,70 @@ function toggleDropdown(){document.getElementById('user-dropdown').classList.tog
 document.addEventListener('click',function(e){if(!e.target.closest('.user-pill'))document.getElementById('user-dropdown').classList.remove('open');});
 
 var _loadingProfile=false;
+var _lastSignedInUserId=null;
+var _lastSignedInAt=0;
 async function loadUserProfile(authUser){
   if(!authUser||!authUser.id){console.warn('[loadUserProfile] authUser inválido');return null;}
   if(_loadingProfile){console.log('[loadUserProfile] Ya hay una carga en progreso, esperando...');while(_loadingProfile){await new Promise(function(ok){setTimeout(ok,100);});}return currentUser;}
   _loadingProfile=true;
 
-  // Usamos RPC (más directo y rápido que SELECT con RLS)
-  function rpcConTimeout(){
-    return Promise.race([
-      sb.rpc('obtener_mi_perfil'),
-      new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},5000);})
-    ]);
+  // IMPORTANTE: usamos fetch() nativo en vez del cliente Supabase.
+  // Esto evita que los múltiples SIGNED_IN events en loop saturen el canal del cliente.
+  async function fetchPerfil(){
+    var sess=await sb.auth.getSession();
+    var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
+    if(!token){console.warn('[fetchPerfil] Sin access_token disponible');return null;}
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},4500);
+    try{
+      var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_mi_perfil',{
+        method:'POST',
+        headers:{
+          'apikey':SB_ANON,
+          'Authorization':'Bearer '+token,
+          'Content-Type':'application/json',
+          'Accept':'application/json'
+        },
+        body:'{}',
+        signal:ctrl.signal
+      });
+      clearTimeout(tid);
+      if(!res.ok){console.warn('[fetchPerfil] HTTP',res.status);return null;}
+      var data=await res.json();
+      return (data&&data.length>0)?data[0]:null;
+    }catch(e){
+      clearTimeout(tid);
+      if(e.name==='AbortError')throw new Error('TIMEOUT');
+      throw e;
+    }
   }
 
   try{
-    console.log('[loadUserProfile] Buscando perfil vía RPC para', authUser.email);
+    console.log('[loadUserProfile] Buscando perfil con fetch nativo para', authUser.email);
     try{
-      var r=await rpcConTimeout();
-      var perfil=(r.data&&r.data.length>0)?r.data[0]:null;
-      console.log('[loadUserProfile] RPC respondió:', perfil?'ENCONTRADO ('+perfil.nombre+')':'VACÍO', r.error||'');
+      var perfil=await fetchPerfil();
+      console.log('[loadUserProfile] fetch respondió:', perfil?'ENCONTRADO ('+perfil.nombre+')':'VACÍO');
 
       if(!perfil){
         await new Promise(function(ok){setTimeout(ok,1500);});
-        r=await rpcConTimeout();
-        perfil=(r.data&&r.data.length>0)?r.data[0]:null;
-        console.log('[loadUserProfile] RPC segunda vez:', perfil?'ENCONTRADO':'VACÍO');
+        perfil=await fetchPerfil();
+        console.log('[loadUserProfile] fetch segunda vez:', perfil?'ENCONTRADO':'VACÍO');
       }
 
       if(!perfil){console.error('[loadUserProfile] Perfil no encontrado tras 2 intentos');return null;}
 
-      // Agregar email desde authUser si no viene de la RPC
       if(!perfil.email&&authUser.email) perfil.email=authUser.email;
 
       currentUser=perfil;
       updateUserUI();
       return perfil;
     }catch(e){
-      console.error('[loadUserProfile] RPC colgó o falló:', e.message);
+      console.error('[loadUserProfile] fetch colgó o falló:', e.message);
       if(e.message==='TIMEOUT'){
-        console.log('[loadUserProfile] Timeout → intentando refreshSession + reintento...');
+        console.log('[loadUserProfile] Timeout → refreshSession + reintento fetch...');
         try{
           await sb.auth.refreshSession();
-          var r3=await rpcConTimeout();
-          var p3=(r3.data&&r3.data.length>0)?r3.data[0]:null;
+          var p3=await fetchPerfil();
           if(p3){
             console.log('[loadUserProfile] ✓ Recuperado tras refresh:', p3.nombre);
             if(!p3.email&&authUser.email) p3.email=authUser.email;
@@ -425,7 +446,7 @@ async function loadUserProfile(authUser){
             return p3;
           }
         }catch(e2){
-          console.error('[loadUserProfile] Recovery también falló:', e2.message);
+          console.error('[loadUserProfile] Recovery falló:', e2.message);
         }
       }
       return null;
@@ -433,6 +454,7 @@ async function loadUserProfile(authUser){
   } finally {
     _loadingProfile=false;
   }
+}
 }
 async function refreshUserData(){
   if(!currentUser)return;
@@ -655,7 +677,22 @@ function esc(s){var d=document.createElement('div');d.textContent=s;return d.inn
 sb.auth.onAuthStateChange(async function(event,session){
   console.log('[auth] Evento:', event, 'Session:', session?'present':'null');
   if(event==='SIGNED_IN'&&session){
-    await loadUserProfile(session.user);
+    // Dedupe: si recibimos SIGNED_IN para el mismo user en los últimos 3 segundos, ignorar
+    var now=Date.now();
+    if(_lastSignedInUserId===session.user.id && (now-_lastSignedInAt)<3000){
+      console.log('[auth] SIGNED_IN duplicado (mismo user en <3s), ignorando');
+      return;
+    }
+    _lastSignedInUserId=session.user.id;
+    _lastSignedInAt=now;
+
+    // Mostrar UI parcial inmediato (antes de cargar perfil)
+    showPartialUserUI(session.user);
+
+    // Cargar perfil completo (solo si no está ya cargado)
+    if(!currentUser||currentUser.auth_id!==session.user.id){
+      await loadUserProfile(session.user);
+    }
     if(currentUser){
       actualizarTiposIdiomas();updateUsesBar();
       var ph=document.querySelector('.phase.active');
@@ -665,6 +702,7 @@ sb.auth.onAuthStateChange(async function(event,session){
   // Solo limpiamos UI en signOut EXPLÍCITO del usuario, no en eventos transitorios
   if(event==='SIGNED_OUT'){
     console.log('[auth] SIGNED_OUT detectado. currentUser era:', currentUser?currentUser.nombre:'null');
+    _lastSignedInUserId=null;
     currentUser=null;
     document.getElementById('user-pill').style.display='none';
     document.getElementById('nav-login-btn').style.display='inline-flex';

@@ -167,24 +167,41 @@ async function init(){
     if(!r.data.session){sh('v-auth');return;}
     CU=r.data.session.user;
 
-    // Usar RPC en vez de SELECT directo (más rápido, evita cuelgues)
-    function rpcPerfilTimeout(){
-      return Promise.race([
-        sb.rpc('obtener_mi_perfil'),
-        new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},5000);})
-      ]);
+    // Usar fetch nativo directo a la API REST para evitar cuelgues del cliente Supabase
+    async function fetchPerfil(){
+      var sess=await sb.auth.getSession();
+      var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
+      if(!token)return null;
+      var ctrl=new AbortController();
+      var tid=setTimeout(function(){ctrl.abort();},4500);
+      try{
+        var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_mi_perfil',{
+          method:'POST',
+          headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+          body:'{}',
+          signal:ctrl.signal
+        });
+        clearTimeout(tid);
+        if(!res.ok){console.warn('[panel fetch] HTTP',res.status);return null;}
+        var data=await res.json();
+        return (data&&data.length>0)?data[0]:null;
+      }catch(e){
+        clearTimeout(tid);
+        if(e.name==='AbortError')throw new Error('TIMEOUT');
+        throw e;
+      }
     }
 
-    var p;
+    var perfil;
     try{
-      p=await rpcPerfilTimeout();
+      perfil=await fetchPerfil();
     }catch(e){
-      console.warn('[panel] Primer intento timeout, refresh + retry...');
-      try{await sb.auth.refreshSession();p=await rpcPerfilTimeout();}catch(e2){console.error('[panel] Falló recovery:',e2);sh('v-auth');return;}
+      console.warn('[panel] Primer fetch timeout, refresh + retry...');
+      try{await sb.auth.refreshSession();perfil=await fetchPerfil();}
+      catch(e2){console.error('[panel] Recovery falló:',e2);sh('v-auth');return;}
     }
 
-    var perfil=(p.data&&p.data.length>0)?p.data[0]:null;
-    if(!perfil){await wt(2000);try{p=await rpcPerfilTimeout();perfil=(p.data&&p.data.length>0)?p.data[0]:null;}catch(e){}}
+    if(!perfil){await wt(1500);try{perfil=await fetchPerfil();}catch(e){}}
     if(!perfil){sh('v-auth');return;}
     if(!perfil.email&&CU.email) perfil.email=CU.email;
     UP=perfil;
