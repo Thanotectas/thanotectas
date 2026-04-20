@@ -161,7 +161,39 @@ var CU=null,UP=null,caps=[],filt='todas';
 var TM={poema:{icon:'✍️',css:'t-poema',lb:'Poema'},dato:{icon:'📊',css:'t-dato',lb:'Dato'},carta:{icon:'✉️',css:'t-carta',lb:'Carta'},obituario:{icon:'🕯️',css:'t-obituario',lb:'Obituario'},alerta:{icon:'⚠️',css:'t-alerta',lb:'Alerta'},ritual:{icon:'🪻',css:'t-ritual',lb:'Ritual'}};
 var PM={gratis:{e:'🌱',lb:'Gratis',mx:3},explorador:{e:'🌿',lb:'Explorador',mx:10},guardian:{e:'🛡️',lb:'Guardián',mx:20},eterno:{e:'✦',lb:'Eterno',mx:999999},admin:{e:'⚡',lb:'Admin',mx:999999}};
 
-async function init(){try{var r=await sb.auth.getSession();if(!r.data.session){sh('v-auth');return;}CU=r.data.session.user;var p=await sb.from('guardianes').select('*').eq('auth_id',CU.id).single();if(!p.data){await wt(2000);p=await sb.from('guardianes').select('*').eq('auth_id',CU.id).single();}if(!p.data){sh('v-auth');return;}UP=p.data;var c=await sb.from('capsulas').select('*').eq('guardian_id',UP.id).order('created_at',{ascending:false});caps=c.data||[];render();}catch(e){console.error(e);sh('v-auth');}}
+async function init(){
+  try{
+    var r=await sb.auth.getSession();
+    if(!r.data.session){sh('v-auth');return;}
+    CU=r.data.session.user;
+
+    // Usar RPC en vez de SELECT directo (más rápido, evita cuelgues)
+    function rpcPerfilTimeout(){
+      return Promise.race([
+        sb.rpc('obtener_mi_perfil'),
+        new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},5000);})
+      ]);
+    }
+
+    var p;
+    try{
+      p=await rpcPerfilTimeout();
+    }catch(e){
+      console.warn('[panel] Primer intento timeout, refresh + retry...');
+      try{await sb.auth.refreshSession();p=await rpcPerfilTimeout();}catch(e2){console.error('[panel] Falló recovery:',e2);sh('v-auth');return;}
+    }
+
+    var perfil=(p.data&&p.data.length>0)?p.data[0]:null;
+    if(!perfil){await wt(2000);try{p=await rpcPerfilTimeout();perfil=(p.data&&p.data.length>0)?p.data[0]:null;}catch(e){}}
+    if(!perfil){sh('v-auth');return;}
+    if(!perfil.email&&CU.email) perfil.email=CU.email;
+    UP=perfil;
+
+    var c=await sb.from('capsulas').select('*').eq('guardian_id',UP.id).order('created_at',{ascending:false});
+    caps=c.data||[];
+    render();
+  }catch(e){console.error(e);sh('v-auth');}
+}
 function sh(id){document.getElementById('v-load').style.display='none';document.getElementById('v-auth').style.display=id==='v-auth'?'':'none';document.getElementById('v-panel').style.display=id==='v-panel'?'':'none';}
 function wt(ms){return new Promise(function(ok){setTimeout(ok,ms)});}
 

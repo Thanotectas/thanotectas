@@ -262,10 +262,28 @@ async function init(){
             return;
         }
         authUser=r.data.session.user;
-        var p=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();
-        if(!p.data){await new Promise(function(ok){setTimeout(ok,2000);});p=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();}
-        if(!p.data){document.getElementById('v-load').style.display='none';document.getElementById('v-auth').style.display='';return;}
-        profile=p.data;
+
+        // RPC con timeout (evita cuelgues)
+        function rpcPerfil(){
+          return Promise.race([
+            sb.rpc('obtener_mi_perfil'),
+            new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},5000);})
+          ]);
+        }
+
+        var p;
+        try{p=await rpcPerfil();}
+        catch(e){
+          console.warn('[cuenta] Timeout, reintentando con refresh...');
+          try{await sb.auth.refreshSession();p=await rpcPerfil();}
+          catch(e2){console.error('[cuenta] Recovery falló:',e2);document.getElementById('v-load').style.display='none';document.getElementById('v-auth').style.display='';return;}
+        }
+
+        var perfil=(p.data&&p.data.length>0)?p.data[0]:null;
+        if(!perfil){await new Promise(function(ok){setTimeout(ok,1500);});try{p=await rpcPerfil();perfil=(p.data&&p.data.length>0)?p.data[0]:null;}catch(e){}}
+        if(!perfil){document.getElementById('v-load').style.display='none';document.getElementById('v-auth').style.display='';return;}
+        if(!perfil.email&&authUser.email) perfil.email=authUser.email;
+        profile=perfil;
         render();
     }catch(e){
         console.error(e);
