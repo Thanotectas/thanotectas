@@ -287,14 +287,42 @@ var loginIsRegister=false;
 
 function go(id){document.querySelectorAll('.phase').forEach(function(p){p.classList.remove('active');});document.getElementById('ph-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='history')loadHistory();}
 async function startInscription(){
-  var sess=await sb.auth.getSession();
-  if(!sess.data||!sess.data.session){go('login');return;}
-  if(!currentUser){
-    await loadUserProfile(sess.data.session.user);
+  console.log('[startInscription] Verificando sesión...');
+
+  // Reintentos para dar tiempo a que la sesión se cargue
+  var sess=null;
+  for(var attempt=0; attempt<5; attempt++){
+    var r=await sb.auth.getSession();
+    if(r && r.data && r.data.session){
+      sess=r.data.session;
+      break;
+    }
+    console.log('[startInscription] Intento '+(attempt+1)+': sin sesión, esperando...');
+    await new Promise(function(ok){setTimeout(ok,400);});
   }
-  if(!currentUser){go('login');return;}
+
+  if(!sess){
+    console.warn('[startInscription] Sin sesión después de 5 intentos');
+    go('login');
+    return;
+  }
+
+  console.log('[startInscription] Sesión OK. currentUser:', currentUser?currentUser.nombre:'null');
+
+  // Si currentUser no está cargado aún, cargarlo ahora
+  if(!currentUser){
+    console.log('[startInscription] currentUser vacío, cargando perfil...');
+    showPartialUserUI(sess.user);
+    var prof=await loadUserProfile(sess.user);
+    if(!prof){
+      alert('No pudimos cargar tu perfil. Por favor recarga la página.');
+      return;
+    }
+  }
+
   await refreshUserData();
-  actualizarTiposIdiomas();updateUsesBar();
+  actualizarTiposIdiomas();
+  updateUsesBar();
   go('input');
 }
 function toggleLoginMode(){loginIsRegister=!loginIsRegister;document.getElementById('login-heading').textContent=loginIsRegister?'Crear cuenta':'Inicia sesión';document.getElementById('login-btn').innerHTML=loginIsRegister?'🌿 Crear cuenta':'🔑 Entrar';document.getElementById('login-mode-toggle').textContent=loginIsRegister?'¿Ya tienes cuenta? Iniciar sesión':'¿No tienes cuenta? Crear una';document.getElementById('login-msg').textContent='';}
@@ -309,7 +337,21 @@ async function logout(){await sb.auth.signOut();currentUser=null;document.getEle
 function toggleDropdown(){document.getElementById('user-dropdown').classList.toggle('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.user-pill'))document.getElementById('user-dropdown').classList.remove('open');});
 
-async function loadUserProfile(authUser){var r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();if(!r.data){await new Promise(function(ok){setTimeout(ok,2000);});r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();}if(!r.data)return null;currentUser=r.data;updateUserUI();return r.data;}
+async function loadUserProfile(authUser){
+  if(!authUser||!authUser.id){console.warn('[loadUserProfile] authUser inválido');return null;}
+  console.log('[loadUserProfile] Buscando perfil para', authUser.email, authUser.id);
+  var r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();
+  console.log('[loadUserProfile] Primera query:', r.data?'ENCONTRADO':'NO ENCONTRADO', r.error||'');
+  if(!r.data){
+    await new Promise(function(ok){setTimeout(ok,2000);});
+    r=await sb.from('guardianes').select('*').eq('auth_id',authUser.id).single();
+    console.log('[loadUserProfile] Segunda query (retry):', r.data?'ENCONTRADO':'NO ENCONTRADO');
+  }
+  if(!r.data){console.error('[loadUserProfile] Perfil no encontrado después de 2 intentos');return null;}
+  currentUser=r.data;
+  updateUserUI();
+  return r.data;
+}
 async function refreshUserData(){if(!currentUser)return;var r=await sb.from('guardianes').select('*').eq('id',currentUser.id).single();if(r.data){currentUser=r.data;updateUserUI();}}
 
 function updateUserUI(){
@@ -536,7 +578,45 @@ sb.auth.onAuthStateChange(async function(event,session){
   if(event==='TOKEN_REFRESHED')console.log('[auth] Token refrescado OK');
   if(event==='USER_UPDATED')console.log('[auth] Usuario actualizado');
 });
-(async function(){var s=await sb.auth.getSession();if(s.data.session&&s.data.session.user){await loadUserProfile(s.data.session.user);actualizarTiposIdiomas();updateUsesBar();}var p=new URLSearchParams(window.location.search);if(p.get('status')==='ok'&&p.get('plan')){localStorage.setItem('thano_pending_plan',p.get('plan'));history.replaceState({},'','oraculo.html');if(currentUser)confirmPayment();else go('login');}})();
+// Muestra el pill de usuario INMEDIATAMENTE con datos del auth, antes de cargar el perfil completo
+function showPartialUserUI(authUser){
+  if(!authUser)return;
+  var email=authUser.email||'';
+  var name=email.split('@')[0];
+  var pill=document.getElementById('user-pill');
+  if(pill)pill.style.display='flex';
+  var loginBtn=document.getElementById('nav-login-btn');if(loginBtn)loginBtn.style.display='none';
+  var panelBtn=document.getElementById('nav-panel-btn');if(panelBtn)panelBtn.style.display='inline-flex';
+  var nameEl=document.getElementById('user-display-name');if(nameEl)nameEl.textContent=name;
+  var badgeEl=document.getElementById('user-credits-badge');if(badgeEl)badgeEl.textContent='...';
+  var avEl=document.getElementById('user-avatar');if(avEl)avEl.textContent='🌿';
+  var emailInput=document.getElementById('user-email');if(emailInput)emailInput.value=email;
+  console.log('[init] UI parcial mostrada para', name);
+}
+
+(async function(){
+  try{
+    console.log('[init] Iniciando Oráculo. URL:', window.location.href);
+    var s=await sb.auth.getSession();
+    console.log('[init] getSession inicial:', s.data&&s.data.session?'PRESENTE':'AUSENTE');
+    if(s.data&&s.data.session&&s.data.session.user){
+      // Mostrar pill inmediato (sin esperar query a guardianes)
+      showPartialUserUI(s.data.session.user);
+      // Luego cargar perfil completo
+      var prof=await loadUserProfile(s.data.session.user);
+      console.log('[init] Perfil cargado:', prof?prof.nombre+' ('+prof.plan+')':'NULL');
+      if(prof){actualizarTiposIdiomas();updateUsesBar();}
+    }
+    var p=new URLSearchParams(window.location.search);
+    if(p.get('status')==='ok'&&p.get('plan')){
+      localStorage.setItem('thano_pending_plan',p.get('plan'));
+      history.replaceState({},'','oraculo.html');
+      if(currentUser)confirmPayment();else go('login');
+    }
+  }catch(e){
+    console.error('[init] Error crítico:', e);
+  }
+})();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
