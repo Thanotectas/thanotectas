@@ -282,7 +282,17 @@ var currentCapsulaId=null, currentNumeroCert=null, currentEsPublica=false;
 var loginIsRegister=false;
 
 function go(id){document.querySelectorAll('.phase').forEach(function(p){p.classList.remove('active');});document.getElementById('ph-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='history')loadHistory();}
-function startInscription(){if(!currentUser){go('login');return;}refreshUserData().then(function(){actualizarTiposIdiomas();updateUsesBar();go('input');});}
+async function startInscription(){
+  var sess=await sb.auth.getSession();
+  if(!sess.data||!sess.data.session){go('login');return;}
+  if(!currentUser){
+    await loadUserProfile(sess.data.session.user);
+  }
+  if(!currentUser){go('login');return;}
+  await refreshUserData();
+  actualizarTiposIdiomas();updateUsesBar();
+  go('input');
+}
 function toggleLoginMode(){loginIsRegister=!loginIsRegister;document.getElementById('login-heading').textContent=loginIsRegister?'Crear cuenta':'Inicia sesión';document.getElementById('login-btn').innerHTML=loginIsRegister?'🌿 Crear cuenta':'🔑 Entrar';document.getElementById('login-mode-toggle').textContent=loginIsRegister?'¿Ya tienes cuenta? Iniciar sesión':'¿No tienes cuenta? Crear una';document.getElementById('login-msg').textContent='';}
 
 async function loginConGoogle(){var btn=document.getElementById('btn-google-login');try{btn.disabled=true;btn.innerHTML='<span class="spinner-google"></span> Conectando con Google...';var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/oraculo.html',queryParams:{access_type:'offline',prompt:'consent'}}});if(r.error){console.error('Google OAuth error:',r.error.message);mostrarErrorGoogle('No se pudo conectar con Google. Intenta de nuevo.');restaurarBotonGoogle(btn);}}catch(e){console.error('Google OAuth exception:',e);mostrarErrorGoogle('Error inesperado. Intenta de nuevo.');restaurarBotonGoogle(btn);}}
@@ -349,11 +359,30 @@ document.querySelectorAll('.lang-btn-ext').forEach(function(b){b.style.display=e
 function selectCat(el,cat){document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeCat=cat;}
 function selectType(el,tp){if(el.classList.contains('locked'))return;document.querySelectorAll('.type-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');activeType=tp;}
 
-async function invoke(){var subj=document.getElementById('subj').value.trim();var desc=document.getElementById('desc').value.trim();var errEl=document.getElementById('inp-err');var btn=document.getElementById('btn-invocar');if(!subj){errEl.textContent='Debes nombrar aquello que deseas honrar.';errEl.style.display='block';return;}errEl.style.display='none';if(!currentUser){go('login');return;}
-var qr=await sb.rpc('usar_consulta',{p_auth_id:currentUser.auth_id});
+async function invoke(){
+  var subj=document.getElementById('subj').value.trim();
+  var desc=document.getElementById('desc').value.trim();
+  var errEl=document.getElementById('inp-err');
+  var btn=document.getElementById('btn-invocar');
+  if(!subj){errEl.textContent='Debes nombrar aquello que deseas honrar.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+
+  // Refrescar sesión desde Supabase (fuente de verdad) antes de invocar
+  var sess=await sb.auth.getSession();
+  if(!sess.data||!sess.data.session){go('login');return;}
+  var authId=sess.data.session.user.id;
+
+  // Si currentUser no está cargado (ej: se navegó desde /g/), cargarlo ahora
+  if(!currentUser||!currentUser.auth_id){
+    var pr=await sb.from('guardianes').select('*').eq('auth_id',authId).single();
+    if(!pr.data){errEl.textContent='⚠️ No pudimos recuperar tu perfil. Recarga la página.';errEl.style.display='block';return;}
+    currentUser=pr.data;updateUserUI();actualizarTiposIdiomas();
+  }
+
+var qr=await sb.rpc('usar_consulta',{p_auth_id:authId});
 if(qr.error||!qr.data||!qr.data.ok){
   if(qr.data&&qr.data.error==='Sin consultas disponibles'){go('paywall');return;}
-  errEl.textContent='⚠️ '+(qr.data?qr.data.error:'Error verificando créditos');errEl.style.display='block';return;
+  errEl.textContent='⚠️ '+((qr.data&&qr.data.error)||(qr.error&&qr.error.message)||'Error verificando créditos');errEl.style.display='block';return;
 }
 currentUser.consultas_disponibles=qr.data.restantes;currentUser.plan=qr.data.plan||currentUser.plan;updateUserUI();btn.disabled=true;go('loading');
 try{
@@ -433,8 +462,10 @@ function openPayment(plan){
 }
 async function confirmPayment(){
   var plan=localStorage.getItem('thano_pending_plan')||'guardian';
-  if(!currentUser){go('login');return;}
-  var r=await sb.rpc('activar_plan',{p_auth_id:currentUser.auth_id,p_plan:plan,p_referencia:'bold_'+Date.now()});
+  var sess=await sb.auth.getSession();
+  if(!sess.data||!sess.data.session){go('login');return;}
+  var authId=sess.data.session.user.id;
+  var r=await sb.rpc('activar_plan',{p_auth_id:authId,p_plan:plan,p_referencia:'bold_'+Date.now()});
   if(r.error||!r.data||!r.data.ok){alert('Error activando plan. Contacta info@thanotectas.com');return;}
   localStorage.removeItem('thano_pending_plan');
   await refreshUserData();actualizarTiposIdiomas();updateUsesBar();
