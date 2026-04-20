@@ -265,9 +265,11 @@ main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:co
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
+// Lock noop: evita errores "Lock was stolen" cuando hay múltiples pestañas o clientes Supabase
+var noopLock=function(_name,_timeout,fn){return fn();};
 // detectSessionInUrl solo cuando realmente viene token de OAuth en el hash
 var hasOAuthHash = window.location.hash && window.location.hash.indexOf('access_token')!==-1;
-var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:hasOAuthHash}});
+var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:hasOAuthHash,lock:noopLock}});
 
 // === BOLD LINKS ===
 // guardian  = $45.000 COP (membresía anual)
@@ -369,19 +371,46 @@ async function invoke(){
   if(!subj){errEl.textContent='Debes nombrar aquello que deseas honrar.';errEl.style.display='block';return;}
   errEl.style.display='none';
 
+  console.log('[invoke] Iniciando. currentUser:', currentUser ? currentUser.nombre : 'null');
+
   // Refrescar sesión desde Supabase (fuente de verdad) antes de invocar
-  var sess=await sb.auth.getSession();
-  if(!sess.data||!sess.data.session){go('login');return;}
-  var authId=sess.data.session.user.id;
+  // Retry hasta 3 veces con pequeño delay para absorber lag de async
+  var sess=null;
+  for(var attempt=0; attempt<3; attempt++){
+    try{
+      var r=await sb.auth.getSession();
+      console.log('[invoke] getSession intento '+(attempt+1)+':', r);
+      if(r && r.data && r.data.session){
+        sess=r.data.session;
+        break;
+      }
+    }catch(e){
+      console.error('[invoke] getSession error:', e);
+    }
+    if(attempt<2) await new Promise(function(ok){setTimeout(ok,300);});
+  }
+
+  if(!sess){
+    console.warn('[invoke] Sin sesión después de 3 intentos. Mostrando error en lugar de redirigir.');
+    errEl.textContent='⚠️ Sesión no detectada. Por favor recarga la página (F5) e intenta de nuevo.';
+    errEl.style.display='block';
+    return;
+  }
+
+  var authId=sess.user.id;
+  console.log('[invoke] Sesión OK. authId:', authId);
 
   // Si currentUser no está cargado (ej: se navegó desde /g/), cargarlo ahora
   if(!currentUser||!currentUser.auth_id){
+    console.log('[invoke] currentUser vacío. Cargando desde DB...');
     var pr=await sb.from('guardianes').select('*').eq('auth_id',authId).single();
+    console.log('[invoke] Perfil cargado:', pr);
     if(!pr.data){errEl.textContent='⚠️ No pudimos recuperar tu perfil. Recarga la página.';errEl.style.display='block';return;}
     currentUser=pr.data;updateUserUI();actualizarTiposIdiomas();
   }
 
 var qr=await sb.rpc('usar_consulta',{p_auth_id:authId});
+console.log('[invoke] usar_consulta:', qr);
 if(qr.error||!qr.data||!qr.data.ok){
   if(qr.data&&qr.data.error==='Sin consultas disponibles'){go('paywall');return;}
   errEl.textContent='⚠️ '+((qr.data&&qr.data.error)||(qr.error&&qr.error.message)||'Error verificando créditos');errEl.style.display='block';return;
@@ -485,7 +514,28 @@ function resetAll(){document.getElementById('subj').value='';document.getElement
 function setLang(lang){activeLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});}
 async function goTo(url){window.location.href=url;}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-sb.auth.onAuthStateChange(async function(event,session){if(event==='SIGNED_IN'&&session){await loadUserProfile(session.user);if(currentUser){actualizarTiposIdiomas();updateUsesBar();var ph=document.querySelector('.phase.active');if(ph&&ph.id==='ph-login')go('hook');}}if(event==='SIGNED_OUT'){currentUser=null;document.getElementById('user-pill').style.display='none';document.getElementById('nav-login-btn').style.display='inline-flex';document.getElementById('nav-panel-btn').style.display='none';}});
+sb.auth.onAuthStateChange(async function(event,session){
+  console.log('[auth] Evento:', event, 'Session:', session?'present':'null');
+  if(event==='SIGNED_IN'&&session){
+    await loadUserProfile(session.user);
+    if(currentUser){
+      actualizarTiposIdiomas();updateUsesBar();
+      var ph=document.querySelector('.phase.active');
+      if(ph&&ph.id==='ph-login')go('hook');
+    }
+  }
+  // Solo limpiamos UI en signOut EXPLÍCITO del usuario, no en eventos transitorios
+  if(event==='SIGNED_OUT'){
+    console.log('[auth] SIGNED_OUT detectado. currentUser era:', currentUser?currentUser.nombre:'null');
+    currentUser=null;
+    document.getElementById('user-pill').style.display='none';
+    document.getElementById('nav-login-btn').style.display='inline-flex';
+    document.getElementById('nav-panel-btn').style.display='none';
+  }
+  // TOKEN_REFRESHED y USER_UPDATED: no hacemos nada, solo log
+  if(event==='TOKEN_REFRESHED')console.log('[auth] Token refrescado OK');
+  if(event==='USER_UPDATED')console.log('[auth] Usuario actualizado');
+});
 (async function(){var s=await sb.auth.getSession();if(s.data.session&&s.data.session.user){await loadUserProfile(s.data.session.user);actualizarTiposIdiomas();updateUsesBar();}var p=new URLSearchParams(window.location.search);if(p.get('status')==='ok'&&p.get('plan')){localStorage.setItem('thano_pending_plan',p.get('plan'));history.replaceState({},'','oraculo.html');if(currentUser)confirmPayment();else go('login');}})();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
