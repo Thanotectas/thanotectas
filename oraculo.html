@@ -455,22 +455,37 @@ async function loadUserProfile(authUser){
     _loadingProfile=false;
   }
 }
-}
+
 async function refreshUserData(){
   if(!currentUser)return;
   try{
-    var r=await Promise.race([
-      sb.rpc('obtener_mi_perfil'),
-      new Promise(function(_,reject){setTimeout(function(){reject(new Error('TIMEOUT'));},4000);})
-    ]);
-    var p=(r.data&&r.data.length>0)?r.data[0]:null;
-    if(p){
-      if(!p.email&&currentUser.email) p.email=currentUser.email;
-      currentUser=p;
-      updateUserUI();
+    var sess=await sb.auth.getSession();
+    var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
+    if(!token)return;
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},4000);
+    try{
+      var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_mi_perfil',{
+        method:'POST',
+        headers:{'apikey':SB_ANON,'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/json'},
+        body:'{}',
+        signal:ctrl.signal
+      });
+      clearTimeout(tid);
+      if(!res.ok)return;
+      var data=await res.json();
+      var p=(data&&data.length>0)?data[0]:null;
+      if(p){
+        if(!p.email&&currentUser.email) p.email=currentUser.email;
+        currentUser=p;
+        updateUserUI();
+      }
+    }catch(e){
+      clearTimeout(tid);
+      console.warn('[refreshUserData]', e.message, '— seguimos con datos actuales');
     }
   }catch(e){
-    console.warn('[refreshUserData]', e.message, '— seguimos con datos actuales');
+    console.warn('[refreshUserData outer]', e.message);
   }
 }
 
