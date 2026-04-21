@@ -689,8 +689,13 @@ function resetAll(){document.getElementById('subj').value='';document.getElement
 function setLang(lang){activeLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});}
 async function goTo(url){window.location.href=url;}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-sb.auth.onAuthStateChange(async function(event,session){
+// IMPORTANTE: el handler NO es async, y las llamadas a Supabase se difieren con setTimeout(0).
+// Esto evita el deadlock conocido: https://github.com/supabase/auth-js/issues/762
+// Si haces fetch() a Supabase DENTRO del handler, Supabase mantiene un lock interno
+// que bloquea el fetch → deadlock.
+sb.auth.onAuthStateChange(function(event,session){
   console.log('[auth] Evento:', event, 'Session:', session?'present':'null');
+
   if(event==='SIGNED_IN'&&session){
     // Dedupe: si recibimos SIGNED_IN para el mismo user en los últimos 3 segundos, ignorar
     var now=Date.now();
@@ -701,20 +706,29 @@ sb.auth.onAuthStateChange(async function(event,session){
     _lastSignedInUserId=session.user.id;
     _lastSignedInAt=now;
 
-    // Mostrar UI parcial inmediato (antes de cargar perfil)
+    // Mostrar UI parcial inmediato (sincrónico, no toca Supabase)
     showPartialUserUI(session.user);
 
-    // Cargar perfil completo (solo si no está ya cargado)
-    if(!currentUser||currentUser.auth_id!==session.user.id){
-      await loadUserProfile(session.user);
-    }
-    if(currentUser){
-      actualizarTiposIdiomas();updateUsesBar();
-      var ph=document.querySelector('.phase.active');
-      if(ph&&ph.id==='ph-login')go('hook');
-    }
+    // CRÍTICO: diferir cualquier llamada a Supabase fuera del handler
+    setTimeout(function(){
+      if(!currentUser||currentUser.auth_id!==session.user.id){
+        loadUserProfile(session.user).then(function(){
+          if(currentUser){
+            actualizarTiposIdiomas();updateUsesBar();
+            var ph=document.querySelector('.phase.active');
+            if(ph&&ph.id==='ph-login')go('hook');
+          }
+        }).catch(function(e){
+          console.error('[auth] Error cargando perfil diferido:', e);
+        });
+      } else if(currentUser){
+        actualizarTiposIdiomas();updateUsesBar();
+        var ph=document.querySelector('.phase.active');
+        if(ph&&ph.id==='ph-login')go('hook');
+      }
+    },0);
   }
-  // Solo limpiamos UI en signOut EXPLÍCITO del usuario, no en eventos transitorios
+
   if(event==='SIGNED_OUT'){
     console.log('[auth] SIGNED_OUT detectado. currentUser era:', currentUser?currentUser.nombre:'null');
     _lastSignedInUserId=null;
@@ -723,7 +737,7 @@ sb.auth.onAuthStateChange(async function(event,session){
     document.getElementById('nav-login-btn').style.display='inline-flex';
     document.getElementById('nav-panel-btn').style.display='none';
   }
-  // TOKEN_REFRESHED y USER_UPDATED: no hacemos nada, solo log
+
   if(event==='TOKEN_REFRESHED')console.log('[auth] Token refrescado OK');
   if(event==='USER_UPDATED')console.log('[auth] Usuario actualizado');
 });
