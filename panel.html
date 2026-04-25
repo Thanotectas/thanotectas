@@ -281,15 +281,55 @@ async function togglePublica(capsulaId, nuevoValor, idx){
     return;
   }
   event.stopPropagation();
-  var r=await sb.from('capsulas').update({es_publica:nuevoValor}).eq('id',capsulaId).select().single();
-  if(r.error){toast('Error: '+r.error.message);return;}
-  caps[idx].es_publica=nuevoValor;
-  toast(nuevoValor?'✓ Cápsula pública en el archivo':'🔒 Cápsula privada');
-  renderCaps();
-  // actualizar stats
-  var publicas=caps.filter(function(c){return c.es_publica;}).length;
-  var stEl=document.getElementById('stats');
-  if(stEl){var stn=stEl.querySelectorAll('.stat-n')[1];if(stn)stn.textContent=publicas;}
+
+  // Usar RPC dedicada (más rápida y blindada) con fetch nativo + timeout
+  try{
+    var sess=await sb.auth.getSession();
+    var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
+    if(!token){toast('Sesión perdida. Recarga la página.');return;}
+
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},5000);
+
+    var res=await fetch(SB_URL+'/rest/v1/rpc/toggle_capsula_publica',{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+token,
+        'Content-Type':'application/json',
+        'Accept':'application/json'
+      },
+      body:JSON.stringify({p_capsula_id:capsulaId, p_publica:nuevoValor}),
+      signal:ctrl.signal
+    });
+    clearTimeout(tid);
+
+    if(!res.ok){
+      var txt=await res.text();
+      console.error('[togglePublica] HTTP',res.status,txt);
+      toast('Error: '+res.status);
+      return;
+    }
+
+    var data=await res.json();
+    if(!data||!data.ok){
+      toast('Error: '+(data&&data.error||'desconocido'));
+      return;
+    }
+
+    caps[idx].es_publica=nuevoValor;
+    toast(nuevoValor?'✓ Cápsula pública en el archivo':'🔒 Cápsula privada');
+    renderCaps();
+
+    // actualizar stats
+    var publicas=caps.filter(function(c){return c.es_publica;}).length;
+    var stEl=document.getElementById('stats');
+    if(stEl){var stn=stEl.querySelectorAll('.stat-n')[1];if(stn)stn.textContent=publicas;}
+  }catch(e){
+    console.error('[togglePublica] Excepción:',e);
+    if(e.name==='AbortError') toast('Timeout — intenta de nuevo');
+    else toast('Error: '+e.message);
+  }
 }
 
 function copyPublic(url){navigator.clipboard.writeText(url).then(function(){toast('🔗 Link público copiado');});}
