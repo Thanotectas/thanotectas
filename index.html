@@ -4,294 +4,994 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1a1611">
+<meta name="theme-color" content="#0d130c">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<title>Thanotectas — Guardianes del Umbral</title>
-<meta name="description" content="Deposita tu legado al futuro. Una carta, una idea, un recuerdo sellado en el tiempo que viajará décadas para ser abierto cuando más se necesite.">
-<meta property="og:title" content="Thanotectas — Guardianes del Umbral">
-<meta property="og:description" content="Deposita hoy lo que el mundo necesitará mañana. Cápsula del Tiempo Digital.">
+<title>Thanotectas — Archivo del Umbral</title>
+<meta name="description" content="¿Qué pequeño fragmento de vida salvarías para siempre? Inscribe en el Archivo del Umbral memorias de lo que la Tierra está perdiendo. Cápsulas vivas o selladas al futuro.">
+<meta property="og:title" content="Thanotectas — Archivo del Umbral">
+<meta property="og:description" content="¿Qué pequeño fragmento de vida salvarías para siempre? Un archivo digital de duelo ecológico y memoria al futuro.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://thanotectas.com">
+<meta property="og:image" content="https://thanotectas.com/img/hero-capsula-mano.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@thanotectas">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --tierra:#1a1611; --tierra-media:#2a2319; --tierra-clara:#332c20;
-  --musgo:#2d4a2e; --musgo-claro:#3d6a3e; --musgo-glow:#4a8a4b;
-  --ocre:#c4973b; --ocre-claro:#d4a74b; --ocre-glow:#e4b75b;
-  --marfil:#f0e6d3; --marfil-tenue:#f0e6d399;
-  --cristal:rgba(240,230,211,0.06); --cristal-hover:rgba(240,230,211,0.10);
+:root{
+  --noche:#0d130c;
+  --noche-2:#141d12;
+  --noche-3:#1c2719;
+  --bosque:#1f3a25;
+  --bosque-claro:#2d5237;
+  --musgo:#4a8a4b;
+  --musgo-glow:#6cc06d;
+  --oro:#d4a547;
+  --oro-claro:#e5c068;
+  --oro-glow:#f4d989;
+  --crema:#f0e6d3;
+  --crema-50:rgba(240,230,211,.5);
+  --crema-30:rgba(240,230,211,.3);
+  --crema-15:rgba(240,230,211,.15);
+  --linea:rgba(212,165,71,.18);
+  --linea-2:rgba(212,165,71,.35);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Manrope',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--oro);color:var(--noche)}
 html{scroll-behavior:smooth}
-body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh;overflow-x:hidden}
+body{
+  font-family:var(--sans);
+  background:var(--noche);
+  color:var(--crema);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-weight:300;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
 
-#stars-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* === Estrellas de fondo === */
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.6}
 
-/* ══ NAV ══ */
-.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(26,22,17,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(196,151,59,.12)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ocre);letter-spacing:.08em;text-decoration:none;display:flex;align-items:center;gap:.6rem}
-.nav-logo svg{width:30px;height:30px;flex-shrink:0}
-.nav-logo span{color:var(--marfil-tenue);font-weight:300;font-size:.82rem;margin-left:.4rem}
-.nav-links{display:flex;gap:1.6rem;align-items:center;list-style:none}
-.nav-links a{color:var(--marfil-tenue);text-decoration:none;font-size:.82rem;font-weight:400;letter-spacing:.05em;transition:color .3s}
-.nav-links a:hover{color:var(--ocre)}
-.nav-links a.active{color:var(--ocre)}
-.nav-social{display:flex;gap:.8rem;align-items:center}
-.nav-social a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s}
-.nav-social a:hover{background:var(--cristal-hover);border-color:var(--ocre);transform:scale(1.1)}
-.nav-social svg{width:13px;height:13px;fill:var(--marfil)}
-.nav-cta{padding:.4rem 1.1rem;border:1px solid var(--ocre);border-radius:4px;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;transition:all .3s;white-space:nowrap}
-.nav-cta:hover{background:rgba(196,151,59,.1)}
+/* === Atmósfera de bosque === */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(74,138,75,.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(212,165,71,.05) 0%, transparent 50%);
+}
 
-/* ══ HERO ══ */
-.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:7rem 2rem 4rem}
-.hero-badge{display:inline-block;padding:.38rem 1.1rem;border:1px solid var(--ocre);border-radius:100px;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ocre);margin-bottom:1.8rem;opacity:0;animation:fadeUp 1s .3s forwards}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,5.5vw,4.8rem);font-weight:300;line-height:1.15;max-width:760px;opacity:0;animation:fadeUp 1s .5s forwards}
-.hero h1 em{font-style:italic;color:var(--ocre);font-weight:400}
-.hero-sub{font-size:1.05rem;font-weight:300;color:var(--marfil-tenue);max-width:520px;margin-top:1.4rem;line-height:1.75;opacity:0;animation:fadeUp 1s .7s forwards}
-.hero-btns{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin-top:2.8rem;opacity:0;animation:fadeUp 1s .9s forwards}
-.btn-primary{display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 2.3rem;background:linear-gradient(135deg,var(--ocre),var(--ocre-claro));color:var(--tierra);font-family:'Jost',sans-serif;font-size:.95rem;font-weight:600;letter-spacing:.05em;border:none;border-radius:6px;cursor:pointer;text-decoration:none;transition:all .4s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(196,151,59,.35)}
-.btn-secondary{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.8rem;background:transparent;border:1px solid rgba(196,151,59,.4);color:var(--ocre);font-family:'Jost',sans-serif;font-size:.9rem;font-weight:400;letter-spacing:.05em;border-radius:6px;cursor:pointer;text-decoration:none;transition:all .4s}
-.btn-secondary:hover{border-color:var(--ocre);background:rgba(196,151,59,.07)}
+/* === NAV === */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 2rem;
+  background:rgba(13,19,12,.85);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--linea);
+  transition:padding .3s ease;
+}
+.nav.scrolled{padding:.7rem 2rem;background:rgba(13,19,12,.95)}
+.nav-logo{
+  font-family:var(--serif);
+  font-size:1.05rem;font-weight:500;
+  color:var(--oro);
+  text-decoration:none;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:.7rem;
+}
+.nav-logo svg{width:34px;height:34px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(212,165,71,.3))}
+.nav-logo .tag{
+  color:var(--crema-50);
+  font-weight:300;
+  font-size:.7rem;
+  margin-left:.4rem;
+  font-style:italic;
+  font-family:var(--serif);
+  letter-spacing:.08em;
+  text-transform:none;
+}
+.nav-links{display:flex;gap:1.4rem;align-items:center;list-style:none}
+.nav-links a{
+  color:var(--crema-50);
+  text-decoration:none;
+  font-size:.78rem;
+  font-weight:400;
+  letter-spacing:.08em;
+  transition:color .3s;
+}
+.nav-links a:hover{color:var(--oro)}
+.nav-cta{
+  padding:.55rem 1.3rem;
+  border:1px solid var(--oro);
+  border-radius:2px;
+  color:var(--oro);
+  font-family:var(--sans);
+  font-size:.7rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  text-decoration:none;
+  transition:all .3s;
+  white-space:nowrap;
+}
+.nav-cta:hover{background:rgba(212,165,71,.1)}
+.nav-burger{display:none;background:none;border:none;color:var(--oro);font-size:1.4rem;cursor:pointer}
 
-/* STATS */
-.hero-stats{display:flex;gap:3rem;margin-top:4rem;opacity:0;animation:fadeUp 1s 1.1s forwards}
+/* === HERO === */
+.hero{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:7rem 1.5rem 4rem;
+  overflow:hidden;
+}
+.hero-bg-image{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(13,19,12,.55) 0%, rgba(13,19,12,.7) 60%, var(--noche) 100%),
+    url('/img/hero-capsula-mano.png') center/cover no-repeat;
+  background-color:var(--noche-2);
+  opacity:0;
+  animation:fadeInBg 2s ease forwards;
+}
+@keyframes fadeInBg{to{opacity:1}}
+
+.hero-tree{
+  width:90px;height:90px;
+  margin-bottom:2rem;
+  opacity:0;
+  animation:floatIn 1.4s cubic-bezier(.16,1,.3,1) .3s forwards;
+  filter:drop-shadow(0 0 20px rgba(212,165,71,.4)) drop-shadow(0 0 40px rgba(74,138,75,.2));
+}
+.hero-tree svg{width:100%;height:100%}
+.hero-tree .star-glow{animation:starPulse 4s ease-in-out infinite}
+@keyframes starPulse{
+  0%,100%{opacity:.7;transform-origin:center;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+
+.hero-pretitle{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.45em;
+  text-transform:uppercase;
+  color:var(--oro);
+  margin-bottom:1.4rem;
+  opacity:0;
+  animation:floatIn 1s ease .5s forwards;
+}
+.hero-pretitle::before{content:'✦  '}
+.hero-pretitle::after{content:'  ✦'}
+
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(2.4rem, 6vw, 5.2rem);
+  font-weight:300;
+  line-height:1.05;
+  letter-spacing:-0.015em;
+  max-width:920px;
+  opacity:0;
+  animation:floatIn 1.2s cubic-bezier(.16,1,.3,1) .65s forwards;
+}
+.hero h1 em{
+  font-style:italic;
+  color:var(--oro-claro);
+  font-weight:400;
+  font-variation-settings:"opsz" 144;
+}
+.hero h1 .question-mark{
+  color:var(--oro);
+  font-weight:400;
+}
+
+.hero-sub{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(1.05rem, 1.9vw, 1.4rem);
+  font-weight:300;
+  color:var(--crema-50);
+  max-width:580px;
+  margin-top:1.8rem;
+  line-height:1.65;
+  opacity:0;
+  animation:floatIn 1s ease .85s forwards;
+}
+
+.hero-btns{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  margin-top:3rem;
+  opacity:0;
+  animation:floatIn 1s ease 1.05s forwards;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:1.05rem 2.5rem;
+  background:linear-gradient(135deg, var(--oro), var(--oro-claro));
+  color:var(--noche);
+  font-family:var(--sans);
+  font-size:.78rem;
+  font-weight:600;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  border:none;
+  border-radius:2px;
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+  position:relative;
+  overflow:hidden;
+}
+.btn-primary::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, var(--oro-claro), var(--oro-glow));
+  opacity:0;
+  transition:opacity .3s;
+}
+.btn-primary span{position:relative;z-index:1;display:flex;align-items:center;gap:.6rem}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,165,71,.4)}
+.btn-primary:hover::before{opacity:1}
+
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:1.05rem 2rem;
+  background:transparent;
+  border:1px solid var(--linea-2);
+  color:var(--oro);
+  font-family:var(--sans);
+  font-size:.78rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  border-radius:2px;
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .35s;
+}
+.btn-secondary:hover{border-color:var(--oro);background:rgba(212,165,71,.08)}
+
+.hero-stats{
+  display:flex;gap:3.5rem;
+  margin-top:5rem;
+  flex-wrap:wrap;justify-content:center;
+  opacity:0;
+  animation:floatIn 1s ease 1.25s forwards;
+}
 .stat{text-align:center}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--ocre)}
-.stat-label{font-size:.7rem;color:var(--marfil-tenue);letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem}
+.stat-num{
+  font-family:var(--serif);
+  font-size:2.6rem;
+  font-weight:300;
+  color:var(--oro);
+  line-height:1;
+  font-variation-settings:"opsz" 144;
+}
+.stat-label{
+  font-family:var(--mono);
+  font-size:.62rem;
+  color:var(--crema-50);
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  margin-top:.5rem;
+}
 
-/* ══ SECTIONS ══ */
-section{position:relative;z-index:1;padding:5.5rem 2rem}
-.sec-inner{max-width:1060px;margin:0 auto}
-.sec-label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ocre);margin-bottom:.8rem}
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;line-height:1.2;margin-bottom:.9rem}
-.sec-desc{font-size:.95rem;font-weight:300;color:var(--marfil-tenue);max-width:580px;line-height:1.75}
+@keyframes floatIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-/* ══ WHAT IS ══ */
-.what-section{background:var(--tierra-media)}
-.what-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-top:2.8rem}
-.what-card{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;padding:1.8rem 1.5rem;transition:all .4s;position:relative;overflow:hidden}
-.what-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--musgo),var(--ocre));opacity:0;transition:opacity .4s}
-.what-card:hover{transform:translateY(-4px);border-color:rgba(196,151,59,.25)}
-.what-card:hover::before{opacity:1}
-.what-icon{font-size:1.6rem;margin-bottom:.8rem}
-.what-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.5rem;color:var(--marfil)}
-.what-text{font-size:.85rem;font-weight:300;color:var(--marfil-tenue);line-height:1.65}
+/* Scroll indicator */
+.scroll-hint{
+  position:absolute;
+  bottom:2rem;left:50%;
+  transform:translateX(-50%);
+  font-family:var(--mono);
+  font-size:.62rem;
+  letter-spacing:.4em;
+  color:var(--crema-30);
+  text-transform:uppercase;
+  opacity:0;
+  animation:floatIn 1s ease 1.6s forwards, bobUp 2.5s ease-in-out 1.6s infinite;
+}
+@keyframes bobUp{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-6px)}
+}
 
-/* ══ STEPS ══ */
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.8rem;margin-top:2.8rem}
-.step-card{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;padding:2.2rem 2rem;transition:all .4s}
-.step-card:hover{transform:translateY(-3px);border-color:rgba(196,151,59,.22)}
-.step-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--ocre);opacity:.35;line-height:1;margin-bottom:.9rem}
-.step-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;margin-bottom:.65rem}
-.step-text{font-size:.87rem;font-weight:300;color:var(--marfil-tenue);line-height:1.65}
+/* === SECCIONES === */
+section{position:relative;z-index:2;padding:6rem 1.5rem}
+.sec-inner{max-width:1100px;margin:0 auto}
+.sec-label{
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.45em;
+  text-transform:uppercase;
+  color:var(--oro);
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.sec-label::before{content:'';width:18px;height:1px;background:var(--oro)}
+.sec-title{
+  font-family:var(--serif);
+  font-size:clamp(2rem,4.5vw,3.4rem);
+  font-weight:300;
+  line-height:1.1;
+  letter-spacing:-0.01em;
+  margin-bottom:1.2rem;
+}
+.sec-title em{font-style:italic;color:var(--oro-claro);font-weight:400}
+.sec-desc{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.15rem;
+  font-weight:300;
+  color:var(--crema-50);
+  max-width:620px;
+  line-height:1.7;
+}
 
-/* ══ ORÁCULO TEASER ══ */
-.oraculo-band{background:linear-gradient(135deg,rgba(45,74,46,.2),rgba(26,22,17,.95));border-top:1px solid rgba(45,74,46,.25);border-bottom:1px solid rgba(45,74,46,.25)}
-.oraculo-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
-.oraculo-cap{border:1px solid rgba(196,151,59,.2);border-radius:14px;padding:1.8rem;background:rgba(13,11,8,.4);position:relative}
-.oraculo-cap::before{content:'✦';position:absolute;top:-.55rem;left:50%;transform:translateX(-50%);background:var(--tierra);padding:0 .5rem;color:var(--ocre);font-size:.7rem}
-.oraculo-cap-sub{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ocre);text-align:center;margin-bottom:1rem}
-.oraculo-cap-text{font-family:'Cormorant Garamond',serif;font-size:.97rem;line-height:1.85;color:var(--marfil);text-align:center;font-style:italic}
-.oraculo-cap-seal{font-size:.75rem;color:var(--musgo-glow);text-align:center;margin-top:.9rem}
+/* === DOS MODOS === */
+.modos{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--linea);
+  border:1px solid var(--linea);
+  margin-top:3.5rem;
+}
+.modo{
+  background:var(--noche-2);
+  padding:3rem 2.5rem;
+  display:flex;flex-direction:column;
+  position:relative;
+  transition:background .4s;
+  text-decoration:none;
+  color:inherit;
+}
+.modo:hover{background:var(--noche-3)}
+.modo-icon{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:3.5rem;
+  color:var(--oro);
+  font-weight:300;
+  line-height:1;
+  margin-bottom:1.5rem;
+  font-variation-settings:"opsz" 144;
+}
+.modo-tag{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--musgo-glow);
+  margin-bottom:.6rem;
+}
+.modo h3{
+  font-family:var(--serif);
+  font-size:1.9rem;
+  font-weight:400;
+  margin-bottom:1rem;
+  letter-spacing:-0.005em;
+}
+.modo h3 em{font-style:italic;color:var(--oro-claro)}
+.modo-desc{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.05rem;
+  color:var(--crema-50);
+  line-height:1.7;
+  margin-bottom:2rem;
+  flex:1;
+}
+.modo-cta{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--oro);
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.modo-cta::after{
+  content:'→';
+  transition:transform .3s;
+}
+.modo:hover .modo-cta::after{transform:translateX(6px)}
 
-/* ══ TESTIMONIALS ══ */
-.test-section{background:var(--tierra-media)}
-.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem;margin-top:2.8rem}
-.test-card{background:var(--cristal);border:1px solid rgba(196,151,59,.08);border-radius:14px;padding:1.8rem}
-.test-text{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;line-height:1.65;margin-bottom:.9rem;color:var(--marfil)}
-.test-author{font-size:.78rem;color:var(--ocre);letter-spacing:.05em}
+/* === ARCHIVO COLECTIVO (cápsulas reales) === */
+.archivo-band{background:var(--noche-2);position:relative}
+.capsulas-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1px;
+  background:var(--linea);
+  border:1px solid var(--linea);
+  margin-top:3rem;
+}
+.cap-card{
+  background:var(--noche-2);
+  padding:1.8rem 1.6rem;
+  cursor:pointer;
+  transition:background .4s;
+  text-decoration:none;
+  color:inherit;
+  display:flex;flex-direction:column;
+  min-height:240px;
+}
+.cap-card:hover{background:var(--noche-3)}
+.cap-card-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:.9rem;
+}
+.cap-card-num{
+  font-family:var(--mono);
+  font-size:.55rem;
+  letter-spacing:.25em;
+  color:var(--oro);
+  text-transform:uppercase;
+}
+.cap-card-tipo{
+  font-family:var(--mono);
+  font-size:.55rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--crema-30);
+}
+.cap-card-sujeto{
+  font-family:var(--serif);
+  font-size:1.6rem;
+  font-weight:500;
+  margin-bottom:.5rem;
+  letter-spacing:-0.005em;
+  line-height:1.1;
+}
+.cap-card-meta{
+  display:flex;gap:.5rem;align-items:center;
+  font-family:var(--mono);
+  font-size:.55rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--crema-50);
+  margin-bottom:1rem;
+}
+.cap-card-meta .cat{color:var(--musgo-glow)}
+.cap-card-meta .sep{color:var(--linea-2)}
+.cap-card-preview{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  line-height:1.6;
+  color:var(--crema-50);
+  flex:1;
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.cap-card-cta{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--oro);
+  margin-top:1rem;
+  padding-top:1rem;
+  border-top:1px solid var(--linea);
+}
+.cap-card-cta::after{content:' →'}
 
-/* ══ LEGADO DEL DÍA ══ */
-.legado-card{max-width:580px;margin:0 auto;background:rgba(240,230,211,.04);border:1px solid rgba(196,151,59,.18);border-radius:16px;padding:2.8rem 2.5rem;position:relative;text-align:center}
-.legado-card::before{content:'';position:absolute;top:-1px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(196,151,59,.5),transparent);border-radius:16px 16px 0 0}
-.legado-quote{font-size:2.5rem;opacity:.25;margin-bottom:.8rem}
-.legado-text{font-family:'Cormorant Garamond',serif;font-size:clamp(1.15rem,2.2vw,1.5rem);font-style:italic;line-height:1.65;color:var(--marfil);margin-bottom:1.3rem}
-.legado-line{width:36px;height:1px;background:var(--ocre);margin:0 auto .9rem}
-.legado-author{font-size:.82rem;color:var(--ocre);letter-spacing:.08em}
-.legado-seal{font-size:.65rem;color:var(--marfil-tenue);margin-top:1.2rem;letter-spacing:.12em}
+/* === ORÁCULO TEASER === */
+.oraculo-band{
+  background:linear-gradient(135deg, rgba(31,58,37,.4), rgba(13,19,12,.95));
+  border-top:1px solid var(--linea);
+  border-bottom:1px solid var(--linea);
+  position:relative;
+}
+.oraculo-inner{
+  max-width:980px;margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:center;
+}
+.oraculo-cap{
+  border:1px solid var(--linea-2);
+  padding:2.4rem 2.2rem;
+  background:rgba(13,11,8,.6);
+  position:relative;
+  border-radius:2px;
+}
+.oraculo-cap::before{
+  content:'❦';
+  position:absolute;
+  top:-12px;left:50%;
+  transform:translateX(-50%);
+  background:var(--noche);
+  padding:0 12px;
+  color:var(--oro);
+  font-size:1rem;
+  font-family:var(--serif);
+}
+.oraculo-cap-tag{
+  font-family:var(--mono);
+  font-size:.58rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--oro);
+  text-align:center;
+  margin-bottom:1.2rem;
+}
+.oraculo-cap-text{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.1rem;
+  line-height:1.85;
+  color:var(--crema);
+  text-align:center;
+  font-weight:300;
+}
+.oraculo-cap-seal{
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--musgo-glow);
+  text-align:center;
+  margin-top:1.4rem;
+}
 
-/* ══ CTA BAND ══ */
-.cta-band{text-align:center;padding:5rem 2rem;background:linear-gradient(180deg,var(--tierra-media),var(--tierra));position:relative;z-index:1}
-.cta-band .sec-title{margin:0 auto .8rem;max-width:580px}
-.cta-band .sec-desc{margin:0 auto 2.2rem;text-align:center}
-.cta-note{font-size:.7rem;color:var(--marfil-tenue);margin-top:1rem;letter-spacing:.08em}
-
-/* ══ CHATBOT ══ */
-.chatbot-btn{position:fixed;bottom:2rem;right:2rem;z-index:150;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--musgo),var(--musgo-claro));border:2px solid rgba(196,151,59,.3);color:var(--marfil);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .4s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.chatbot-btn:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(45,74,46,.5)}
-.chatbot-btn.has-dot::after{content:'';position:absolute;top:-2px;right:-2px;width:13px;height:13px;background:var(--ocre);border-radius:50%;border:2px solid var(--tierra)}
-.chatbot-panel{display:none;position:fixed;bottom:5.5rem;right:2rem;z-index:150;width:370px;max-height:520px;background:var(--tierra-media);border:1px solid rgba(196,151,59,.2);border-radius:20px;overflow:hidden;box-shadow:0 10px 50px rgba(0,0,0,.5);flex-direction:column;animation:modalIn .4s cubic-bezier(.16,1,.3,1)}
+/* === CHATBOT === */
+.chatbot-btn{
+  position:fixed;
+  bottom:1.8rem;right:1.8rem;
+  z-index:150;
+  width:60px;height:60px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--bosque), var(--bosque-claro));
+  border:2px solid var(--linea-2);
+  color:var(--crema);
+  font-size:1.4rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .4s;
+  box-shadow:0 4px 24px rgba(0,0,0,.5), 0 0 20px rgba(74,138,75,.2);
+}
+.chatbot-btn:hover{transform:scale(1.1);box-shadow:0 6px 32px rgba(74,138,75,.4)}
+.chatbot-btn.has-dot::after{
+  content:'';
+  position:absolute;
+  top:-2px;right:-2px;
+  width:13px;height:13px;
+  background:var(--oro);
+  border-radius:50%;
+  border:2px solid var(--noche);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.chatbot-panel{
+  display:none;
+  position:fixed;
+  bottom:5.5rem;right:1.8rem;
+  z-index:150;
+  width:380px;max-height:540px;
+  background:var(--noche-2);
+  border:1px solid var(--linea-2);
+  border-radius:4px;
+  overflow:hidden;
+  box-shadow:0 12px 60px rgba(0,0,0,.7);
+  flex-direction:column;
+  animation:slideUp .4s cubic-bezier(.16,1,.3,1);
+}
 .chatbot-panel.active{display:flex}
-.chatbot-header{padding:1.1rem 1.4rem;background:rgba(196,151,59,.08);border-bottom:1px solid rgba(196,151,59,.15);display:flex;align-items:center;gap:.8rem}
-.chatbot-avatar{width:34px;height:34px;border-radius:50%;background:var(--musgo);display:flex;align-items:center;justify-content:center;font-size:1rem}
-.chatbot-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500}
-.chatbot-status{font-size:.65rem;color:var(--musgo-glow);display:flex;align-items:center;gap:.3rem}
-.chatbot-status::before{content:'';width:6px;height:6px;background:var(--musgo-glow);border-radius:50%}
-.chatbot-messages{flex:1;overflow-y:auto;padding:1.1rem;display:flex;flex-direction:column;gap:.75rem;max-height:320px}
-.chat-msg{max-width:88%;padding:.75rem .95rem;border-radius:14px;font-size:.86rem;line-height:1.55;font-weight:300}
-.chat-msg.bot{background:var(--cristal);border:1px solid rgba(196,151,59,.1);align-self:flex-start;border-bottom-left-radius:4px}
-.chat-msg.user{background:rgba(45,74,46,.3);border:1px solid rgba(45,74,46,.3);align-self:flex-end;border-bottom-right-radius:4px}
-.chat-options{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem}
-.chat-opt-btn{padding:.35rem .75rem;border:1px solid rgba(196,151,59,.22);border-radius:100px;background:transparent;color:var(--ocre);font-family:'Jost',sans-serif;font-size:.74rem;cursor:pointer;transition:all .3s}
-.chat-opt-btn:hover{background:rgba(196,151,59,.1)}
-.chatbot-input{display:flex;gap:.45rem;padding:.9rem 1.1rem;border-top:1px solid rgba(196,151,59,.1)}
-.chatbot-input input{flex:1;background:rgba(13,11,8,.5);border:1px solid rgba(196,151,59,.15);border-radius:100px;padding:.55rem .95rem;font-family:'Jost',sans-serif;font-size:.83rem;color:var(--marfil);outline:none}
-.chatbot-input input::placeholder{color:rgba(240,230,211,.3)}
-.chatbot-input input:focus{border-color:var(--ocre)}
-.chatbot-input button{width:34px;height:34px;border-radius:50%;background:var(--ocre);border:none;color:var(--tierra);font-size:.95rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
-.chatbot-input button:hover{background:var(--ocre-claro)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.chatbot-header{
+  padding:1.1rem 1.4rem;
+  background:rgba(212,165,71,.06);
+  border-bottom:1px solid var(--linea);
+  display:flex;align-items:center;gap:.8rem;
+}
+.chatbot-avatar{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--bosque);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+  border:1px solid var(--linea-2);
+}
+.chatbot-name{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  font-weight:500;
+}
+.chatbot-status{
+  font-family:var(--mono);
+  font-size:.6rem;
+  color:var(--musgo-glow);
+  display:flex;align-items:center;gap:.4rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+.chatbot-status::before{content:'';width:6px;height:6px;background:var(--musgo-glow);border-radius:50%;box-shadow:0 0 6px var(--musgo-glow)}
+.chatbot-close{
+  margin-left:auto;background:none;border:none;
+  color:var(--crema-50);font-size:1rem;cursor:pointer;
+  padding:.2rem .5rem;
+}
+.chatbot-close:hover{color:var(--oro)}
+.chatbot-messages{
+  flex:1;overflow-y:auto;
+  padding:1.2rem;
+  display:flex;flex-direction:column;gap:.8rem;
+  max-height:340px;
+}
+.chat-msg{
+  max-width:88%;
+  padding:.8rem 1rem;
+  border-radius:4px;
+  font-size:.85rem;
+  line-height:1.55;
+  font-weight:300;
+  font-family:var(--sans);
+}
+.chat-msg.bot{
+  background:rgba(212,165,71,.05);
+  border:1px solid var(--linea);
+  align-self:flex-start;
+}
+.chat-msg.user{
+  background:rgba(74,138,75,.15);
+  border:1px solid rgba(74,138,75,.25);
+  align-self:flex-end;
+}
+.chat-options{
+  display:flex;flex-wrap:wrap;gap:.4rem;
+  margin-top:.5rem;
+}
+.chat-opt-btn{
+  padding:.4rem .85rem;
+  border:1px solid var(--linea-2);
+  border-radius:100px;
+  background:transparent;
+  color:var(--oro);
+  font-family:var(--sans);
+  font-size:.72rem;
+  cursor:pointer;
+  transition:all .3s;
+}
+.chat-opt-btn:hover{background:rgba(212,165,71,.1)}
+.chatbot-input{
+  display:flex;gap:.5rem;
+  padding:.9rem 1.1rem;
+  border-top:1px solid var(--linea);
+}
+.chatbot-input input{
+  flex:1;
+  background:rgba(13,11,8,.5);
+  border:1px solid var(--linea);
+  border-radius:100px;
+  padding:.6rem 1rem;
+  font-family:var(--sans);
+  font-size:.82rem;
+  color:var(--crema);
+  outline:none;
+}
+.chatbot-input input::placeholder{color:var(--crema-30)}
+.chatbot-input input:focus{border-color:var(--oro)}
+.chatbot-input button{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--oro);
+  border:none;
+  color:var(--noche);
+  font-size:1rem;cursor:pointer;
+  transition:all .3s;
+  display:flex;align-items:center;justify-content:center;
+}
+.chatbot-input button:hover{background:var(--oro-claro)}
 
-/* ══ FOOTER ══ */
-footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid rgba(196,151,59,.1)}
-.footer-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--ocre);letter-spacing:.06em;display:flex;align-items:center;gap:.5rem}
-.footer-logo svg{width:28px;height:28px}
-.footer-tagline{font-size:.83rem;color:var(--marfil-tenue);font-weight:300;margin-top:.5rem;line-height:1.65;max-width:280px}
-.footer-social{display:flex;gap:.7rem;margin-top:1.3rem}
-.footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--cristal);border:1px solid rgba(196,151,59,.15);transition:all .3s;text-decoration:none}
-.footer-social a:hover{background:var(--cristal-hover);border-color:var(--ocre);transform:translateY(-2px)}
-.footer-social svg{width:14px;height:14px;fill:var(--marfil)}
-.footer-col h4{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:var(--ocre);margin-bottom:.9rem}
-.footer-col a{display:block;color:var(--marfil-tenue);text-decoration:none;font-size:.83rem;font-weight:300;padding:.28rem 0;transition:color .3s}
-.footer-col a:hover{color:var(--ocre)}
-.footer-bottom{max-width:1060px;margin:2.5rem auto 0;padding-top:1.3rem;border-top:1px solid rgba(196,151,59,.08);display:flex;justify-content:space-between;align-items:center}
-.footer-bottom p{font-size:.72rem;color:var(--marfil-tenue);font-weight:300}
+/* === LEGADO DEL DÍA === */
+.legado-card{
+  max-width:680px;margin:0 auto;
+  background:rgba(240,230,211,.03);
+  border:1px solid var(--linea-2);
+  border-radius:2px;
+  padding:3rem 2.8rem;
+  position:relative;
+  text-align:center;
+}
+.legado-card::before{
+  content:'';
+  position:absolute;
+  top:-1px;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg, transparent, var(--oro), transparent);
+  border-radius:2px 2px 0 0;
+}
+.legado-quote{
+  font-family:var(--serif);
+  font-size:3rem;
+  color:var(--oro);
+  opacity:.3;
+  line-height:1;
+  margin-bottom:.5rem;
+}
+.legado-text{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(1.2rem,2.4vw,1.65rem);
+  font-weight:300;
+  line-height:1.55;
+  color:var(--crema);
+  margin-bottom:1.5rem;
+}
+.legado-line{
+  width:42px;height:1px;
+  background:var(--oro);
+  margin:0 auto 1rem;
+}
+.legado-author{
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--oro);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.legado-seal{
+  font-family:var(--mono);
+  font-size:.6rem;
+  color:var(--crema-50);
+  margin-top:1.2rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+}
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* === CTA BAND === */
+.cta-band{
+  text-align:center;
+  padding:6rem 1.5rem;
+  background:linear-gradient(180deg, var(--noche-2), var(--noche));
+  border-top:1px solid var(--linea);
+  position:relative;
+  z-index:2;
+}
+.cta-band .sec-title{margin:0 auto 1.2rem;max-width:680px}
+.cta-band .sec-desc{margin:0 auto 2.5rem;text-align:center}
+.cta-note{
+  font-family:var(--mono);
+  font-size:.6rem;
+  color:var(--crema-50);
+  margin-top:1.5rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+}
+
+/* === FOOTER === */
+footer{
+  position:relative;z-index:2;
+  padding:5rem 1.5rem 2rem;
+  border-top:1px solid var(--linea);
+}
+.footer-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:3rem;
+}
+.footer-logo{
+  font-family:var(--serif);
+  font-size:1.4rem;
+  font-weight:500;
+  color:var(--oro);
+  letter-spacing:.06em;
+  display:flex;align-items:center;gap:.6rem;
+}
+.footer-logo svg{width:32px;height:32px}
+.footer-tagline{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--crema-50);
+  font-weight:300;
+  margin-top:1rem;
+  line-height:1.7;
+  max-width:320px;
+}
+.footer-social{display:flex;gap:.6rem;margin-top:1.5rem}
+.footer-social a{
+  display:flex;align-items:center;justify-content:center;
+  width:38px;height:38px;
+  border-radius:50%;
+  background:rgba(240,230,211,.04);
+  border:1px solid var(--linea);
+  transition:all .3s;
+  text-decoration:none;
+}
+.footer-social a:hover{background:rgba(212,165,71,.1);border-color:var(--oro);transform:translateY(-2px)}
+.footer-social svg{width:14px;height:14px;fill:var(--crema)}
+.footer-col h4{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  font-weight:500;
+  color:var(--oro);
+  margin-bottom:1rem;
+  letter-spacing:.005em;
+}
+.footer-col a{
+  display:block;
+  color:var(--crema-50);
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:300;
+  padding:.3rem 0;
+  transition:color .3s;
+}
+.footer-col a:hover{color:var(--oro)}
+.footer-bottom{
+  max-width:1100px;margin:3rem auto 0;
+  padding-top:1.5rem;
+  border-top:1px solid var(--linea);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-bottom p{
+  font-family:var(--mono);
+  font-size:.65rem;
+  color:var(--crema-50);
+  font-weight:300;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
 
 /* RESPONSIVE */
 @media(max-width:900px){
   .footer-inner{grid-template-columns:1fr 1fr}
-  .oraculo-inner{grid-template-columns:1fr}
+  .oraculo-inner{grid-template-columns:1fr;gap:2rem}
+  .modos{grid-template-columns:1fr}
 }
 @media(max-width:680px){
-  .top-nav{padding:.9rem 1.2rem}
+  .nav{padding:.9rem 1.2rem}
+  .nav-logo{font-size:.85rem;letter-spacing:.1em}
+  .nav-logo .tag{display:none}
   .nav-links{display:none}
-  .hero{padding:6rem 1.5rem 3rem}
-  .hero-stats{flex-direction:column;gap:1.5rem}
-  section{padding:4rem 1.5rem}
+  .nav-burger{display:block}
+  .hero{padding:6rem 1.5rem 3rem;min-height:90vh}
+  .hero-tree{width:70px;height:70px;margin-bottom:1.5rem}
+  .hero-pretitle{font-size:.62rem;letter-spacing:.32em}
+  .hero-stats{gap:1.8rem;margin-top:3rem}
+  section{padding:4rem 1.2rem}
+  .modo{padding:2rem 1.5rem}
   .footer-inner{grid-template-columns:1fr}
-  .footer-bottom{flex-direction:column;gap:.5rem;text-align:center}
+  .footer-bottom{flex-direction:column;text-align:center}
   .chatbot-panel{right:.5rem;left:.5rem;width:auto;bottom:5rem}
+  .chatbot-btn{bottom:1.2rem;right:1.2rem;width:54px;height:54px}
 }
 </style>
 </head>
 <body>
 
-<canvas id="stars-canvas"></canvas>
+<canvas id="stars"></canvas>
 
 <!-- ══ NAV ══ -->
-<nav class="top-nav">
-  <a href="index.html" class="nav-logo">
+<nav class="nav" id="nav">
+  <a href="/" class="nav-logo">
     <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient>
-        <linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient>
+        <linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f4d989"/><stop offset="100%" stop-color="#d4a547"/></linearGradient>
+        <linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6cc06d"/><stop offset="100%" stop-color="#2d5237"/></linearGradient>
       </defs>
-      <line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/>
+      <line x1="40" y1="132" x2="180" y2="132" stroke="#d4a547" stroke-width="0.5" opacity="0.4"/>
       <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#nrg)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-      <path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+      <path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
       <path d="M108 132 Q109 110 110 72" stroke="url(#ntg)" stroke-width="2.8" stroke-linecap="round"/>
       <path d="M110 90 Q92 76 70 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
       <path d="M110 90 Q128 76 150 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
-      <circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
+      <circle cx="110" cy="72" r="5" fill="#f4d989" opacity="0.95" class="star-glow"/>
+      <circle cx="110" cy="72" r="2.5" fill="#fffaee"/>
     </svg>
-    THANOTECTAS <span>Guardianes del Umbral</span>
+    THANOTECTAS<span class="tag">Archivo del Umbral</span>
   </a>
   <ul class="nav-links">
-    <li><a href="oraculo.html">Oráculo</a></li>
-    <li><a href="depositar.html">Depositar</a></li>
-    <li><a href="planes.html">Planes</a></li>
-    <li><a href="archivo.html">Archivo</a></li>
-    <li><a href="guardianes.html">Guardianes</a></li>
-    <div class="nav-social">
-      <a href="https://instagram.com/thanotectas" target="_blank" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-      <a href="https://x.com/thanotectas" target="_blank" title="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-    </div>
-    <a href="depositar.html" class="nav-cta">🌿 Depositar legado</a>
+    <li><a href="/oraculo.html">Oráculo</a></li>
+    <li><a href="#archivo">Archivo</a></li>
+    <li><a href="/planes.html">Planes</a></li>
+    <li><a href="/oraculo.html" class="nav-cta">Inscribir cápsula</a></li>
   </ul>
+  <button class="nav-burger" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">☰</button>
 </nav>
 
 <!-- ══ HERO ══ -->
 <section class="hero">
-  <div class="hero-badge">Cápsula del Tiempo Digital · Colombia</div>
-  <h1>Deposita hoy lo que el mundo<br>necesitará <em>mañana</em></h1>
-  <p class="hero-sub">Una carta. Una idea. Un recuerdo. Un legado sellado en el tiempo que viajará décadas para ser abierto cuando más se necesite.</p>
+  <div class="hero-bg-image"></div>
+
+  <div class="hero-tree">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f4d989"/><stop offset="100%" stop-color="#d4a547"/></linearGradient>
+        <linearGradient id="hr" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6cc06d"/><stop offset="100%" stop-color="#2d5237"/></linearGradient>
+      </defs>
+      <line x1="40" y1="132" x2="180" y2="132" stroke="#d4a547" stroke-width="0.5" opacity="0.5"/>
+      <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#hr)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M108 148 Q94 158 80 168" stroke="url(#hr)" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+      <path d="M112 148 Q126 158 140 168" stroke="url(#hr)" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+      <path d="M108 132 Q109 110 110 72" stroke="url(#hg)" stroke-width="2.8" stroke-linecap="round"/>
+      <path d="M110 90 Q92 76 70 66" stroke="url(#hg)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M110 90 Q128 76 150 66" stroke="url(#hg)" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="110" cy="72" r="6" fill="#f4d989" opacity="0.95" class="star-glow"/>
+      <circle cx="110" cy="72" r="3" fill="#fffaee"/>
+    </svg>
+  </div>
+
+  <div class="hero-pretitle">Archivo del Umbral · Colombia</div>
+  <h1>¿Qué pequeño <em>fragmento de vida</em><br>salvarías para siempre<span class="question-mark">?</span></h1>
+  <p class="hero-sub">Inscribe en el Archivo memorias de lo que la Tierra está perdiendo: especies, ríos, saberes, lugares, sonidos. Cada cápsula recibe un certificado permanente, sellado en el tiempo.</p>
   <div class="hero-btns">
-    <a href="depositar.html" class="btn-primary">🌿 Depositar mi legado</a>
-    <a href="oraculo.html" class="btn-secondary">✦ Oráculo del Umbral</a>
+    <a href="/oraculo.html" class="btn-primary"><span>🌿 Inscribir mi primera cápsula</span></a>
+    <a href="#modos" class="btn-secondary">Conocer el Archivo</a>
   </div>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num" id="counter-legados">0</div><div class="stat-label">Legados depositados</div></div>
-    <div class="stat"><div class="stat-num">2100</div><div class="stat-label">Año más lejano</div></div>
+    <div class="stat"><div class="stat-num" id="stat-capsulas">···</div><div class="stat-label">Cápsulas inscritas</div></div>
+    <div class="stat"><div class="stat-num" id="stat-publicas">···</div><div class="stat-label">En el Archivo Colectivo</div></div>
     <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Permanencia</div></div>
   </div>
+  <div class="scroll-hint">↓ El umbral se abre hacia abajo</div>
 </section>
 
-<!-- ══ QUÉ ES ══ -->
-<section class="what-section">
+<!-- ══ DOS MODOS ══ -->
+<section id="modos">
   <div class="sec-inner">
-    <div class="sec-label">¿Qué es Thanotectas?</div>
-    <h2 class="sec-title">Un lugar para el duelo ecológico<br>y el legado al futuro</h2>
-    <p class="sec-desc">Nació de una pregunta: ¿qué pasa cuando amamos algo que el mundo está perdiendo y no sabemos cómo despedirnos?</p>
-    <div class="what-grid">
-      <div class="what-card">
-        <div class="what-icon">📜</div>
-        <div class="what-title">Cápsulas del tiempo</div>
-        <div class="what-text">Deposita cartas, ideas, memorias o promesas que serán abiertas en el futuro — en 2030, 2050 o 2100. Selladas. Intactas.</div>
-      </div>
-      <div class="what-card">
-        <div class="what-icon">🌿</div>
-        <div class="what-title">Duelo ecológico</div>
-        <div class="what-text">Un espacio para honrar lo que la Tierra está perdiendo. Glaciares, especies, bosques, sonidos. Todo merece ser recordado.</div>
-      </div>
-      <div class="what-card">
-        <div class="what-icon">🔮</div>
-        <div class="what-title">El Oráculo del Umbral</div>
-        <div class="what-text">Una herramienta poética gratuita que convierte tu memoria en una inscripción elegíaca. Lista para compartir en redes.</div>
-      </div>
-      <div class="what-card">
-        <div class="what-icon">🤝</div>
-        <div class="what-title">Comunidad de Guardianes</div>
-        <div class="what-text">Personas de toda América Latina y el mundo unidas por el mismo amor y la misma pérdida. No estás solo en tu duelo.</div>
-      </div>
+    <div class="sec-label">Dos modos de inscribir</div>
+    <h2 class="sec-title">Una cápsula es <em>un acto de memoria</em><br>contra el olvido.</h2>
+    <p class="sec-desc">El Archivo del Umbral acepta dos formas de inscripción. Las dos son la misma cosa esencial: alguien se negó a olvidar.</p>
+
+    <div class="modos">
+      <a href="/oraculo.html" class="modo">
+        <div class="modo-icon">✦</div>
+        <div class="modo-tag">Modo 1 · Visible hoy</div>
+        <h3>Cápsula <em>Viva</em></h3>
+        <p class="modo-desc">Una memoria que se inscribe HOY y queda visible en el Archivo Colectivo. Como un grito. Una constancia. Un "yo estuve aquí cuando esto se iba". Para especies, ríos, saberes, lugares, sonidos que desaparecen ahora.</p>
+        <span class="modo-cta">Abrir el Oráculo</span>
+      </a>
+
+      <a href="/depositar.html" class="modo">
+        <div class="modo-icon">⏳</div>
+        <div class="modo-tag">Modo 2 · Sellado al futuro</div>
+        <h3>Cápsula <em>Sellada</em></h3>
+        <p class="modo-desc">Una memoria que se cifra y se sella hasta una fecha futura: 2030, 2050, 2100. Solo se abre cuando llega ese año. Una carta a los que vendrán. Para legados personales, ideas, promesas, despedidas.</p>
+        <span class="modo-cta">Sellar al futuro</span>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ══ CÓMO FUNCIONA ══ -->
-<section>
+<!-- ══ ARCHIVO COLECTIVO ══ -->
+<section id="archivo" class="archivo-band">
   <div class="sec-inner">
-    <div class="sec-label">El proceso</div>
-    <h2 class="sec-title">Tu legado viaja al futuro<br>en tres pasos</h2>
-    <p class="sec-desc">No necesitas ser escritor ni filósofo. Solo necesitas tener algo que decirle al mundo que viene.</p>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num">01</div>
-        <h3 class="step-title">Escribe tu legado</h3>
-        <p class="step-text">Una carta al futuro, una idea que quieres preservar, una reflexión sobre lo que el mundo está perdiendo, o un mensaje para alguien que aún no ha nacido.</p>
+    <div class="sec-label">Archivo Colectivo</div>
+    <h2 class="sec-title">Las primeras <em>memorias</em><br>inscritas al Umbral.</h2>
+    <p class="sec-desc">Estas son cápsulas vivas que ya forman parte del Archivo. Las puedes leer hoy. Cada una es un acto de memoria contra la pérdida.</p>
+
+    <div class="capsulas-grid" id="capsulas-grid">
+      <div class="cap-card" style="opacity:.5;justify-content:center;align-items:center">
+        <p style="font-family:var(--serif);font-style:italic;color:var(--crema-50)">Cargando del Archivo…</p>
       </div>
-      <div class="step-card">
-        <div class="step-num">02</div>
-        <h3 class="step-title">Elige el año de apertura</h3>
-        <p class="step-text">¿Cuándo quieres que se abra? 2030 para un futuro cercano. 2050 para la generación que viene. 2100 para el mundo que no conocerás.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">03</div>
-        <h3 class="step-title">Sella y viaja</h3>
-        <p class="step-text">Tu legado queda sellado y cifrado. Nadie — ni siquiera nosotros — podrá leerlo hasta la fecha elegida. Viajará intacto a través del tiempo.</p>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:2.5rem">
-      <a href="depositar.html" class="btn-primary">🌿 Depositar mi primer legado</a>
-      &nbsp;&nbsp;
-      <a href="planes.html" class="btn-secondary">Ver planes y precios</a>
     </div>
   </div>
 </section>
@@ -301,38 +1001,16 @@ footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid r
   <div class="sec-inner">
     <div class="oraculo-inner">
       <div>
-        <div class="sec-label">Oráculo del Umbral</div>
-        <h2 class="sec-title">Honra lo que la Tierra<br>está perdiendo</h2>
-        <p class="sec-desc" style="margin-bottom:1.8rem">Nombra una especie, un glaciar, un río, un sonido del bosque. El Oráculo inscribirá su memoria en una cápsula poética gratuita, lista para compartir.</p>
-        <a href="oraculo.html" class="btn-primary">✦ Abrir el Oráculo</a>
-        <p style="font-size:.75rem;color:var(--marfil-tenue);margin-top:.9rem;">Gratuito · Sin registro · thanotectas.com/oraculo</p>
+        <div class="sec-label">El Oráculo del Umbral</div>
+        <h2 class="sec-title">Honra <em>lo que se va</em>.<br>Recibe una cápsula sellada.</h2>
+        <p class="sec-desc" style="margin-bottom:2rem">Nombra una especie, un glaciar, un río, un sonido del bosque, un saber ancestral. El Oráculo lo convierte en una cápsula con certificado permanente. Las primeras 3 son gratuitas.</p>
+        <a href="/oraculo.html" class="btn-primary"><span>✦ Abrir el Oráculo</span></a>
+        <p style="font-family:var(--mono);font-size:.7rem;color:var(--crema-50);margin-top:1.2rem;letter-spacing:.15em">Gratuito · Sin tarjeta · 3 cápsulas iniciales</p>
       </div>
       <div class="oraculo-cap">
-        <div class="oraculo-cap-sub">— Cápsula de ejemplo —</div>
-        <div class="oraculo-cap-text">Conocimos su nombre cuando todavía era posible pronunciarlo sin lágrimas. Vivió donde la sombra y la luz se negociaban en silencio. Fuimos testigos de su último aliento sin saberlo.</div>
-        <div class="oraculo-cap-seal">Kausay pacha — tierra que vive.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TESTIMONIALS ══ -->
-<section class="test-section">
-  <div class="sec-inner">
-    <div class="sec-label">Voces de los Guardianes</div>
-    <h2 class="sec-title">Lo que dicen quienes<br>ya depositaron</h2>
-    <div class="test-grid">
-      <div class="test-card">
-        <p class="test-text">«Le escribí a mi hija que aún no ha nacido. Lloré mientras lo hacía. Nunca pensé que una página web me haría sentir tanto.»</p>
-        <div class="test-author">— Valentina M., Colombia</div>
-      </div>
-      <div class="test-card">
-        <p class="test-text">«Deposité una idea sobre energía limpia que espero que en 2050 ya sea realidad. Si no lo es, al menos sabrán que alguien la soñó.»</p>
-        <div class="test-author">— Diego R., México</div>
-      </div>
-      <div class="test-card">
-        <p class="test-text">«No soy religioso, pero esto se sintió sagrado. Como enviar un mensaje en una botella al océano del tiempo.»</p>
-        <div class="test-author">— Sarah K., United States</div>
+        <div class="oraculo-cap-tag">Cápsula TH-2026-00007</div>
+        <div class="oraculo-cap-text">«Oh, espíritus ancestrales del altiplano cundiboyacense, convocamos vuestra presencia inmortal. Que nuestra memoria sea sagrada. Invocamos el nombre del Río Bogotá…»</div>
+        <div class="oraculo-cap-seal">— Río Bogotá · Ritual · 2026</div>
       </div>
     </div>
   </div>
@@ -341,29 +1019,29 @@ footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid r
 <!-- ══ LEGADO DEL DÍA ══ -->
 <section>
   <div class="sec-inner" style="text-align:center">
-    <div class="sec-label">Legado del día</div>
-    <h2 class="sec-title" style="margin:0 auto 2rem;max-width:500px">Una voz que viaja al futuro</h2>
+    <div class="sec-label" style="justify-content:center">Cápsula del día</div>
+    <h2 class="sec-title" style="margin:0 auto 2.5rem;max-width:540px">Una voz que se <em>negó</em> a olvidar.</h2>
     <div class="legado-card">
       <div class="legado-quote">❝</div>
-      <p class="legado-text" id="legado-text">A quien lea esto en 2075: los colibríes aún existían. Eran diminutos y brillantes. Ojalá los conozcas.</p>
+      <p class="legado-text" id="legado-text">Cargando del Archivo…</p>
       <div class="legado-line"></div>
-      <p class="legado-author" id="legado-author">— Guardián anónimo, Colombia, 2026</p>
-      <p class="legado-seal" id="legado-seal">SELLADO HASTA 2075</p>
+      <p class="legado-author" id="legado-author">— Archivo del Umbral</p>
+      <p class="legado-seal" id="legado-seal">CÁPSULA VIVA</p>
     </div>
-    <p style="margin-top:1.8rem;font-size:.9rem;color:var(--marfil-tenue)">
-      <a href="depositar.html" style="color:var(--ocre);text-decoration:none">Deposita tu legado ahora →</a>
+    <p style="margin-top:2rem">
+      <a href="/oraculo.html" style="color:var(--oro);text-decoration:none;font-family:var(--mono);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;">Inscribir tu cápsula →</a>
     </p>
   </div>
 </section>
 
 <!-- ══ CTA BAND ══ -->
 <div class="cta-band">
-  <div class="sec-label" style="text-align:center">Empieza hoy</div>
-  <h2 class="sec-title" style="text-align:center;margin:0 auto .8rem;max-width:560px">El umbral está abierto.<br>Tu voz merece viajar al futuro.</h2>
-  <p class="sec-desc" style="text-align:center;margin:0 auto 2rem">El plan básico es gratuito para siempre. Sin registro complicado. En menos de 5 minutos tu legado está sellado.</p>
+  <div class="sec-label" style="justify-content:center">El umbral está abierto</div>
+  <h2 class="sec-title">Tu memoria <em>merece</em><br>quedar inscrita.</h2>
+  <p class="sec-desc" style="margin:0 auto 2rem">Sin registro complicado. Las primeras 3 cápsulas son gratuitas. En menos de 2 minutos tu primera memoria está sellada en el Archivo.</p>
   <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
-    <a href="depositar.html" class="btn-primary">🌿 Depositar gratis</a>
-    <a href="planes.html" class="btn-secondary">Ver todos los planes</a>
+    <a href="/oraculo.html" class="btn-primary"><span>🌿 Empezar gratis</span></a>
+    <a href="/planes.html" class="btn-secondary">Ver planes Guardián</a>
   </div>
   <p class="cta-note">Sin suscripciones · Pago único · Desde $0</p>
 </div>
@@ -374,38 +1052,38 @@ footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid r
     <div>
       <div class="footer-logo">
         <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs><linearGradient id="ftg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e8c49a"/><stop offset="100%" stop-color="#c4973b"/></linearGradient><linearGradient id="frg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d6b4f"/><stop offset="100%" stop-color="#2d4a2d"/></linearGradient></defs>
-          <line x1="40" y1="132" x2="180" y2="132" stroke="#c4973b" stroke-width="0.5" opacity="0.35"/>
+          <defs><linearGradient id="ftg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f4d989"/><stop offset="100%" stop-color="#d4a547"/></linearGradient><linearGradient id="frg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6cc06d"/><stop offset="100%" stop-color="#2d5237"/></linearGradient></defs>
+          <line x1="40" y1="132" x2="180" y2="132" stroke="#d4a547" stroke-width="0.5" opacity="0.4"/>
           <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#frg)" stroke-width="2" stroke-linecap="round"/>
-          <path d="M108 148 Q94 158 80 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-          <path d="M112 148 Q126 158 140 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+          <path d="M108 148 Q94 158 80 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+          <path d="M112 148 Q126 158 140 168" stroke="url(#frg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
           <path d="M108 132 Q109 110 110 72" stroke="url(#ftg)" stroke-width="2.8" stroke-linecap="round"/>
           <path d="M110 90 Q92 76 70 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/>
           <path d="M110 90 Q128 76 150 66" stroke="url(#ftg)" stroke-width="1.6" stroke-linecap="round"/>
-          <circle cx="110" cy="72" r="5" fill="#e8c49a" opacity="0.9"/><circle cx="110" cy="72" r="2.5" fill="#f0ead6"/>
+          <circle cx="110" cy="72" r="5" fill="#f4d989" opacity="0.95"/>
+          <circle cx="110" cy="72" r="2.5" fill="#fffaee"/>
         </svg>
         THANOTECTAS
       </div>
-      <p class="footer-tagline">Guardianes del Umbral. Un movimiento de duelo ecológico y legado para quienes sienten el peso de lo que se está perdiendo.</p>
+      <p class="footer-tagline">Archivo del Umbral. Un movimiento de duelo ecológico y memoria al futuro. Para quienes sienten el peso de lo que se está perdiendo.</p>
       <div class="footer-social">
-        <a href="https://instagram.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-        <a href="https://x.com/thanotectas" target="_blank"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-        <a href="mailto:info@thanotectas.com"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+        <a href="https://instagram.com/thanotectas" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        <a href="https://x.com/thanotectas" target="_blank" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="mailto:info@thanotectas.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
       </div>
     </div>
     <div class="footer-col">
       <h4>Explorar</h4>
-      <a href="oraculo.html">✦ Oráculo del Umbral</a>
-      <a href="depositar.html">Depositar legado</a>
-      <a href="planes.html">Planes y precios</a>
-      <a href="archivo.html">Archivo de legados</a>
-      <a href="guardianes.html">Muro de Guardianes</a>
+      <a href="/oraculo.html">Abrir el Oráculo</a>
+      <a href="/depositar.html">Sellar al futuro</a>
+      <a href="/planes.html">Planes Guardián</a>
+      <a href="#archivo">Archivo Colectivo</a>
     </div>
     <div class="footer-col">
       <h4>Apoyar</h4>
-      <a href="planes.html">Guardián — $5 USD</a>
-      <a href="planes.html">Legado Eterno — $19 USD</a>
-      <a href="https://vaki.co/vaki/thanotectas-la-c-psula-del-tiempo-para-el-planeta" target="_blank">Vaki (Latinoamérica)</a>
+      <a href="/planes.html">Plan Guardián</a>
+      <a href="/planes.html">Guardián Eterno</a>
+      <a href="https://vaki.co/vaki/thanotectas-la-c-psula-del-tiempo-para-el-planeta" target="_blank">Vaki (LATAM)</a>
       <a href="https://ko-fi.com/thanotectas" target="_blank">Ko-fi (Internacional)</a>
     </div>
     <div class="footer-col">
@@ -413,40 +1091,35 @@ footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid r
       <a href="mailto:info@thanotectas.com">info@thanotectas.com</a>
       <a href="https://instagram.com/thanotectas" target="_blank">@thanotectas</a>
       <a href="https://x.com/thanotectas" target="_blank">X / Twitter</a>
-      <a href="guardianes.html">Ceremonias</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Thanotectas — Guardianes del Umbral · Colombia</p>
-    <p>Todo legado viaja sellado. Toda voz merece ser escuchada.</p>
+    <p>© 2026 Thanotectas · Bogotá, Colombia</p>
+    <p>Toda memoria merece quedar inscrita</p>
   </div>
 </footer>
 
 <!-- ══ CHATBOT ══ -->
-<button class="chatbot-btn has-dot" onclick="toggleChat()" id="chat-toggle">🌿</button>
+<button class="chatbot-btn has-dot" onclick="toggleChat()" id="chat-toggle" aria-label="Abrir chat">🌿</button>
 <div class="chatbot-panel" id="chat-panel">
   <div class="chatbot-header">
     <div class="chatbot-avatar">🌿</div>
     <div>
       <div class="chatbot-name">Guardián del Umbral</div>
-      <div class="chatbot-status">En línea · Thanotectas</div>
+      <div class="chatbot-status">En línea</div>
     </div>
-    <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;color:var(--marfil-tenue);font-size:1rem;cursor:pointer;">✕</button>
+    <button class="chatbot-close" onclick="toggleChat()" aria-label="Cerrar">✕</button>
   </div>
   <div class="chatbot-messages" id="chat-messages">
-    <div class="chat-msg bot">Bienvenido, futuro Guardián 🌿 Soy el asistente de Thanotectas. ¿En qué te puedo ayudar?</div>
+    <div class="chat-msg bot">Bienvenido al Umbral 🌿 Soy el asistente del Archivo. ¿En qué te ayudo?</div>
     <div class="chat-msg bot">
       <div class="chat-options">
         <button class="chat-opt-btn" onclick="chatQ('que-es')">¿Qué es Thanotectas?</button>
-        <button class="chat-opt-btn" onclick="chatQ('duelo')">¿Qué es el duelo ecológico?</button>
-        <button class="chat-opt-btn" onclick="chatQ('oraculo')">El Oráculo del Umbral</button>
+        <button class="chat-opt-btn" onclick="chatQ('capsula-viva')">Cápsula Viva</button>
+        <button class="chat-opt-btn" onclick="chatQ('capsula-sellada')">Cápsula Sellada</button>
         <button class="chat-opt-btn" onclick="chatQ('como')">¿Cómo funciona?</button>
         <button class="chat-opt-btn" onclick="chatQ('precios')">Planes y precios</button>
-        <button class="chat-opt-btn" onclick="chatQ('depositar')">¿Cómo deposito?</button>
-        <button class="chat-opt-btn" onclick="chatQ('seguridad')">¿Es seguro mi legado?</button>
-        <button class="chat-opt-btn" onclick="chatQ('permanencia')">¿Y si Thanotectas cierra?</button>
-        <button class="chat-opt-btn" onclick="chatQ('apertura')">¿Cómo se abre un legado?</button>
-        <button class="chat-opt-btn" onclick="chatQ('ceremonia')">Ceremonias colectivas</button>
+        <button class="chat-opt-btn" onclick="chatQ('seguridad')">¿Es seguro?</button>
         <button class="chat-opt-btn" onclick="chatQ('apoyar')">¿Cómo apoyar?</button>
         <button class="chat-opt-btn" onclick="chatQ('contacto')">Contacto</button>
       </div>
@@ -454,75 +1127,149 @@ footer{position:relative;z-index:1;padding:4rem 2rem 2rem;border-top:1px solid r
   </div>
   <div class="chatbot-input">
     <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" onkeydown="if(event.key==='Enter')sendChat()">
-    <button onclick="sendChat()">→</button>
+    <button onclick="sendChat()" aria-label="Enviar">→</button>
   </div>
 </div>
 
 <script>
-// ── Stars ──
-const cv=document.getElementById('stars-canvas'),cx=cv.getContext('2d');let st=[];
-function initS(){cv.width=window.innerWidth;cv.height=window.innerHeight;st=[];for(let i=0;i<Math.floor(cv.width*cv.height/7500);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*.9+.2,a:Math.random()*.5+.1,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
+// ══ Estrellas de fondo ══
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');let st=[];
+function initS(){cv.width=window.innerWidth;cv.height=window.innerHeight;st=[];const n=Math.floor(cv.width*cv.height/9000);for(let i=0;i<n;i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.1+.2,a:Math.random()*.5+.15,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}
 function drawS(){cx.clearRect(0,0,cv.width,cv.height);const t=Date.now();st.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(240,230,211,${a})`;cx.fill();});requestAnimationFrame(drawS);}
 initS();drawS();window.addEventListener('resize',initS);
 
-// ── Counter ──
-let legacyCount=47;const cEl=document.getElementById('counter-legados');
-function animC(){let c=0,dur=2000,start=Date.now();function t(){const e=Date.now()-start,p=Math.min(e/dur,1),ea=1-Math.pow(1-p,3);c=Math.floor(ea*legacyCount);cEl.textContent=c;if(p<1)requestAnimationFrame(t);}t();}
-new IntersectionObserver(e=>{if(e[0].isIntersecting){animC();e[0].target._obs.disconnect();}},{threshold:.5}).observe(Object.assign(cEl,{_obs:new IntersectionObserver(()=>{})}));
-setTimeout(animC,800);
+// ══ Nav scroll effect ══
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80)});
 
-// ── Legado del día ──
-const LEGADOS=[
-  {text:"A quien lea esto en 2075: los colibríes aún existían. Eran diminutos y brillantes. Ojalá los conozcas.",author:"Guardián anónimo, Colombia, 2026",seal:"SELLADO HASTA 2075"},
-  {text:"Papá, si lees esto, quiero que sepas que planté el árbol que siempre quisiste en el jardín. Espero que siga ahí.",author:"Guardián anónimo, México, 2026",seal:"SELLADO HASTA 2060"},
-  {text:"Escribo esto mientras llueve en la selva. En 2050, ¿seguirá lloviendo así? Ojalá que sí.",author:"Guardián anónimo, Ecuador, 2026",seal:"SELLADO HASTA 2050"},
-  {text:"Hoy vi el último glaciar del nevado. Era pequeño y triste. Estoy llorando mientras escribo esto.",author:"Guardián anónimo, Colombia, 2026",seal:"SELLADO HASTA 2040"},
-];
-const d=new Date(),idx=(d.getFullYear()*366+d.getMonth()*31+d.getDate())%LEGADOS.length;
-document.getElementById('legado-text').textContent=LEGADOS[idx].text;
-document.getElementById('legado-author').textContent='— '+LEGADOS[idx].author;
-document.getElementById('legado-seal').textContent=LEGADOS[idx].seal;
+// ══ Stats reales desde Supabase ══
+const SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
 
-// ── Chatbot ──
+async function cargarStats(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/rpc/estadisticas_globales',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body:'{}'
+    });
+    if(!r.ok)return;
+    const data=await r.json();
+    animateCount('stat-capsulas',data.total_capsulas||0);
+    animateCount('stat-publicas',data.publicas||0);
+  }catch(e){console.warn('Stats fallback:',e);document.getElementById('stat-capsulas').textContent='22';document.getElementById('stat-publicas').textContent='10';}
+}
+function animateCount(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  let c=0,dur=1800,start=Date.now();
+  function t(){const e=Date.now()-start,p=Math.min(e/dur,1),ea=1-Math.pow(1-p,3);c=Math.floor(ea*target);el.textContent=c;if(p<1)requestAnimationFrame(t);}t();
+}
+setTimeout(cargarStats,1300);
+
+// ══ Cápsulas reales desde Supabase ══
+async function cargarCapsulas(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/rpc/obtener_feed_publico',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({p_limite:6})
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const caps=await r.json();
+    if(!caps||caps.length===0)throw new Error('sin caps');
+    renderCaps(caps);
+    renderLegadoDelDia(caps);
+  }catch(e){
+    console.warn('Caps fallback:',e);
+    renderCapsFallback();
+  }
+}
+function renderCaps(caps){
+  const TM={poema:'Poema',dato:'Dato científico',carta:'Carta',obituario:'Obituario',alerta:'Alerta',ritual:'Ritual'};
+  const CATM={especies:'Especies',ecosistemas:'Ecosistemas',rios:'Ríos',sonidos:'Sonidos',territorios:'Territorios',saberes:'Saberes'};
+  const grid=document.getElementById('capsulas-grid');
+  grid.innerHTML=caps.slice(0,6).map(c=>{
+    const cert=c.numero_certificado||'';
+    const tipoLabel=TM[c.tipo]||c.tipo||'';
+    const catLabel=CATM[c.categoria]||c.categoria||'';
+    const preview=(c.contenido||'').replace(/^#+\s*|\*+/g,'').substring(0,180);
+    return `<a href="/c/${cert}" class="cap-card">
+      <div class="cap-card-head">
+        <span class="cap-card-num">${cert.replace(/-/g,'·')}</span>
+        <span class="cap-card-tipo">${tipoLabel}</span>
+      </div>
+      <div class="cap-card-sujeto">${esc(c.sujeto||'')}</div>
+      <div class="cap-card-meta">
+        <span class="cat">${catLabel}</span>
+        <span class="sep">·</span>
+        <span>${(c.idioma||'es').toUpperCase()}</span>
+      </div>
+      <div class="cap-card-preview">«${esc(preview)}…»</div>
+      <div class="cap-card-cta">Leer cápsula completa</div>
+    </a>`;
+  }).join('');
+}
+function renderCapsFallback(){
+  const fb=[
+    {numero_certificado:'TH-2026-00007',sujeto:'Río Bogotá',tipo:'ritual',categoria:'rios',idioma:'es',contenido:'Oh, espíritus ancestrales del altiplano cundiboyacense, convocamos vuestra presencia inmortal. Que nuestra memoria sea sagrada.'},
+    {numero_certificado:'TH-2026-00010',sujeto:'Chicha',tipo:'dato',categoria:'saberes',idioma:'es',contenido:'INFORME DE PÉRDIDA DE SABER ANCESTRAL: CHICHA. Desde el Observatorio de Saberes en Extinción de Thanotectas presentamos este informe.'},
+    {numero_certificado:'TH-2026-00019',sujeto:'Corales',tipo:'dato',categoria:'ecosistemas',idioma:'es',contenido:'Los ecosistemas coralinos se encuentran en un estado crítico, con una trayectoria alarmante hacia la extinción funcional.'},
+    {numero_certificado:'TH-2026-00012',sujeto:'Amazonas',tipo:'dato',categoria:'territorios',idioma:'es',contenido:'Reporte de la Unidad de Documentación de Declive Ecosistémico. Organización Thanotectas. La Amazonía perdió 17% de su cobertura.'},
+    {numero_certificado:'TH-2026-00015',sujeto:'Yagé',tipo:'dato',categoria:'saberes',idioma:'es',contenido:'Desde el Centro de Monitoreo de Patrimonios Desvanecientes de Thanotectas presentamos este informe crítico sobre la pérdida del yagé.'},
+    {numero_certificado:'TH-2026-00020',sujeto:'Polo Norte',tipo:'obituario',categoria:'ecosistemas',idioma:'es',contenido:'Comunicado de Prensa de la Agencia Global para la Conservación del Ártico. AGCA Lamenta la Desaparición.'}
+  ];
+  renderCaps(fb);
+  renderLegadoDelDia(fb);
+}
+function renderLegadoDelDia(caps){
+  const d=new Date();const idx=(d.getFullYear()*366+d.getMonth()*31+d.getDate())%caps.length;
+  const c=caps[idx];if(!c)return;
+  const preview=(c.contenido||'').replace(/^#+\s*|\*+/g,'').substring(0,180);
+  document.getElementById('legado-text').textContent=`«${preview}…»`;
+  document.getElementById('legado-author').textContent=`— ${c.sujeto} · ${c.numero_certificado||'Cápsula'}`;
+  document.getElementById('legado-seal').textContent='CÁPSULA VIVA · INSCRITA EN EL ARCHIVO';
+}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+setTimeout(cargarCapsulas,500);
+
+// ══ Chatbot ══
 const BOT={
-  'que-es':`Thanotectas es un movimiento de duelo ecológico y legado digital fundado en Colombia. 🌿\n\nAquí puedes depositar cartas, ideas, memorias y promesas que serán abiertas en el futuro — en 2030, 2050 o incluso 2100.\n\nSomos un archivo vivo de voces que se niegan a olvidar lo que la Tierra está perdiendo.`,
-  'duelo':`El duelo ecológico es la tristeza, angustia o sensación de pérdida que sentimos cuando vemos que el medioambiente se deteriora: glaciares que desaparecen, especies que se extinguen, bosques que arden. 🌍\n\nEs un duelo real, pero a menudo no tiene espacio en nuestra cultura.\n\nThanotectas nació para darle ese espacio. Para que el duelo ecológico tenga nombre, forma y permanencia.`,
-  'oraculo':`El Oráculo del Umbral es una herramienta poética gratuita. 🔮\n\n1. Nombras algo que la Tierra está perdiendo\n2. Añades un recuerdo personal (opcional)\n3. El Oráculo genera una inscripción poética sellada\n4. La compartes en redes o la preservas en tu legado\n\nPruébalo ahora en:\nthanotectas.com/oraculo`,
-  'como':`El proceso es simple:\n\n1️⃣ Escribe tu legado — carta, idea, memoria o promesa\n2️⃣ Elige el año de apertura: 2030, 2050 o 2100\n3️⃣ Sella — queda cifrado, nadie puede leerlo hasta esa fecha\n\nEl formulario está en thanotectas.com/depositar ¡Es gratuito para empezar!`,
-  'precios':`Tres planes con pago único — sin suscripciones:\n\n🌱 SEMILLA — Gratis\n• 1 legado · 500 caracteres · Años 2030–2035\n\n🛡️ GUARDIÁN — $5 USD\n• 5 legados · 5.000 caracteres · 2030–2075\n• Nombre en el Muro de Guardianes\n\n♾️ LEGADO ETERNO — $19 USD\n• Legados ilimitados · Sin límite · 2030–2100\n• Legado destacado + Ceremonias exclusivas\n\nVer planes completos: thanotectas.com/planes`,
-  'depositar':`Para depositar tu legado ve a:\nthanotectas.com/depositar\n\nNecesitas:\n📝 Nombre o seudónimo\n📧 Correo electrónico\n💭 Tipo: Carta, Idea, Memoria o Promesa\n✍️ El texto de tu legado\n📅 El año de apertura\n\n¡El plan gratuito no requiere tarjeta!`,
-  'seguridad':`Tu legado está completamente protegido. 🔒\n\n• Almacenado cifrado: ni nosotros podemos leerlo\n• Respaldado en múltiples servidores con redundancia geográfica\n• Solo se desbloquea en la fecha que elegiste\n• Protocolos de archivo permanente\n\nPiénsalo como una caja fuerte digital que solo el tiempo puede abrir.`,
-  'permanencia':`Es una preocupación legítima y la tomamos en serio:\n\n1. Respaldo en múltiples servidores independientes\n2. Protocolos de archivo permanente (como los de bibliotecas nacionales)\n3. Protocolo de transferencia a institución custodio si fuera necesario\n\nTu voz importa. Haremos todo lo posible para que llegue al año que elegiste. 🌿`,
-  'apertura':`Cuando llegue el año elegido:\n\n📬 Legado PÚBLICO: aparece automáticamente en el Archivo de Thanotectas\n🔐 Legado PRIVADO: enviamos un código al correo registrado\n📧 Recibes una notificación de apertura\n\nPuedes ver los legados públicos en:\nthanotectas.com/archivo`,
-  'ceremonia':`Una vez al mes hacemos la Ceremonia de Depósito Colectivo en Instagram Live. 🕯️\n\n• Lectura de legados de la comunidad\n• Reflexión sobre el duelo ecológico\n• Sellado de legados en colectivo\n• Gratis y abierto a todos\n\nSíguenos @thanotectas para no perderte la próxima.`,
-  'apoyar':`¡Gracias! Tienes varias formas de apoyar 🌿\n\n💳 Planes de pago (la mejor forma):\n• Guardián: $5 USD\n• Legado Eterno: $19 USD\n→ thanotectas.com/planes\n\n🌍 Donación libre (Latinoamérica):\n→ vaki.co/vaki/thanotectas...\n\n☕ Internacional:\n→ ko-fi.com/thanotectas\n\n📢 Sin costo:\n• Comparte thanotectas.com/oraculo\n• Cuéntale a alguien sobre el proyecto`,
-  'contacto':`Estamos disponibles en: 📬\n\n✉️ info@thanotectas.com\n📸 Instagram: @thanotectas\n𝕏 Twitter/X: @thanotectas\n\nRespondemos en 24–48 horas. Para temas urgentes, el email es la vía más rápida. 🌿`,
-  'default':`Gracias por tu mensaje 🌿\n\nPuedo ayudarte con preguntas sobre Thanotectas, los legados, el Oráculo, planes y más. También puedes escribirnos a:\ninfo@thanotectas.com`
+  'que-es':`Thanotectas es el Archivo del Umbral 🌿\n\nUn lugar para nombrar lo que el mundo está perdiendo. Cada inscripción se convierte en una cápsula sellada, con certificado permanente.\n\nHay dos modos:\n✦ Cápsula Viva (visible hoy)\n⏳ Cápsula Sellada (al futuro)\n\nTodo lo que se inscribe queda inalterable.`,
+  'capsula-viva':`Una Cápsula Viva es una memoria que se inscribe HOY y queda visible en el Archivo Colectivo. ✦\n\nPara qué:\n• Especies que se están extinguiendo\n• Ríos que mueren\n• Saberes ancestrales en riesgo\n• Lugares que se pierden\n• Sonidos del bosque que se apagan\n\nLa creas en el Oráculo del Umbral. Las primeras 3 son gratuitas.\n\nthanotectas.com/oraculo`,
+  'capsula-sellada':`Una Cápsula Sellada se cifra y se mantiene oculta hasta una fecha futura: 2030, 2050 o 2100. ⏳\n\nPara qué:\n• Carta a los que vendrán\n• Idea que esperas se haga realidad\n• Promesa personal\n• Despedida\n• Mensaje a alguien que aún no nace\n\nNadie puede leerla — ni siquiera nosotros — hasta que llegue el año.`,
+  'como':`El proceso es simple:\n\n1️⃣ Eliges modo (Viva o Sellada)\n2️⃣ Nombras el sujeto\n3️⃣ Eliges tipo: Dato, Poema, Carta, Obituario, Alerta o Ritual\n4️⃣ El Oráculo genera o tú escribes\n5️⃣ Recibes certificado con número permanente\n\nTodo cifrado. Inalterable. Tuyo.`,
+  'precios':`Tres planes:\n\n🌱 VISITANTE — Gratis\n• 3 cápsulas iniciales\n• Acceso al Archivo Colectivo\n\n🛡️ GUARDIÁN — $45.000 COP/año\n• 20 cápsulas anuales\n• Cápsulas públicas en perfil\n• Certificados PDF descargables\n\n♾️ GUARDIÁN ETERNO — $250.000 COP único\n• Cápsulas ilimitadas\n• Membresía vitalicia\n• Perfil destacado\n• Cápsulas selladas a 2100\n\nVer: thanotectas.com/planes`,
+  'seguridad':`Tu cápsula está protegida 🔒\n\n• Almacenamiento cifrado en Supabase\n• Respaldo en múltiples servidores\n• Cápsulas Selladas no son legibles hasta su fecha\n• Certificados con número correlativo permanente\n• No vendemos datos. Sin publicidad.`,
+  'apoyar':`Gracias 🌿 Hay varias formas:\n\n💳 Planes Guardián\n→ thanotectas.com/planes\n\n🌍 Vaki (Latinoamérica)\n→ vaki.co/vaki/thanotectas\n\n☕ Ko-fi (Internacional)\n→ ko-fi.com/thanotectas\n\n📢 Sin costo: comparte el Oráculo con quien lo necesite.`,
+  'contacto':`📬 info@thanotectas.com\n📸 Instagram: @thanotectas\n𝕏 Twitter: @thanotectas\n\nRespondemos en 24-48 horas.`,
+  'default':`Gracias por escribir 🌿\n\nPuedo ayudarte con preguntas sobre el Archivo, las cápsulas, el Oráculo y los planes. También: info@thanotectas.com`
 };
-const LABELS={'que-es':'¿Qué es Thanotectas?','duelo':'¿Qué es el duelo ecológico?','oraculo':'El Oráculo del Umbral','como':'¿Cómo funciona?','precios':'Planes y precios','depositar':'¿Cómo deposito?','seguridad':'¿Es seguro?','permanencia':'¿Y si Thanotectas cierra?','apertura':'¿Cómo se abre un legado?','ceremonia':'Ceremonias colectivas','apoyar':'¿Cómo apoyar?','contacto':'Contacto'};
+const LBL={'que-es':'¿Qué es Thanotectas?','capsula-viva':'Cápsula Viva','capsula-sellada':'Cápsula Sellada','como':'¿Cómo funciona?','precios':'Planes y precios','seguridad':'¿Es seguro?','apoyar':'¿Cómo apoyar?','contacto':'Contacto'};
 
-function toggleChat(){document.getElementById('chat-panel').classList.toggle('active');document.getElementById('chat-toggle').classList.remove('has-dot');}
-function addMsg(text,role){const msgs=document.getElementById('chat-messages'),div=document.createElement('div');div.className='chat-msg '+role;div.style.whiteSpace='pre-line';div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
-function chatQ(k){addMsg(LABELS[k]||k,'user');setTimeout(()=>addMsg(BOT[k]||BOT.default,'bot'),700);}
+function toggleChat(){
+  document.getElementById('chat-panel').classList.toggle('active');
+  document.getElementById('chat-toggle').classList.remove('has-dot');
+}
+function addMsg(text,role){
+  const msgs=document.getElementById('chat-messages'),div=document.createElement('div');
+  div.className='chat-msg '+role;div.style.whiteSpace='pre-line';div.textContent=text;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function chatQ(k){addMsg(LBL[k]||k,'user');setTimeout(()=>addMsg(BOT[k]||BOT.default,'bot'),700);}
 function sendChat(){
   const inp=document.getElementById('chat-input'),t=inp.value.trim();if(!t)return;
   addMsg(t,'user');inp.value='';
   const l=t.toLowerCase();let k='default';
   if(l.includes('qué es')||l.includes('que es'))k='que-es';
-  else if(l.includes('duelo')||l.includes('ecológico')||l.includes('ecologico'))k='duelo';
-  else if(l.includes('oráculo')||l.includes('oraculo')||l.includes('poema'))k='oraculo';
+  else if(l.includes('viva'))k='capsula-viva';
+  else if(l.includes('sell')||l.includes('futuro')||l.includes('2050')||l.includes('2100'))k='capsula-sellada';
   else if(l.includes('cómo')||l.includes('como')||l.includes('funciona'))k='como';
-  else if(l.includes('precio')||l.includes('plan')||l.includes('cuánto')||l.includes('costo'))k='precios';
-  else if(l.includes('deposit')||l.includes('subir')||l.includes('crear'))k='depositar';
+  else if(l.includes('precio')||l.includes('plan')||l.includes('cuánto')||l.includes('cuesta'))k='precios';
   else if(l.includes('segur')||l.includes('cifr')||l.includes('proteg'))k='seguridad';
-  else if(l.includes('cierra')||l.includes('permanencia')||l.includes('garantía'))k='permanencia';
-  else if(l.includes('abre')||l.includes('apertura')||l.includes('leer'))k='apertura';
-  else if(l.includes('ceremonia')||l.includes('evento')||l.includes('live'))k='ceremonia';
   else if(l.includes('apoy')||l.includes('donar')||l.includes('vaki'))k='apoyar';
   else if(l.includes('contact')||l.includes('correo')||l.includes('email'))k='contacto';
   setTimeout(()=>addMsg(BOT[k],'bot'),800);
 }
 </script>
-  <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
 </html>
