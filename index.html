@@ -1171,7 +1171,7 @@ async function cargarCapsulas(){
     const r=await fetch(SB_URL+'/rest/v1/rpc/obtener_feed_publico',{
       method:'POST',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({p_limite:6})
+      body:JSON.stringify({limite:6})
     });
     if(!r.ok)throw new Error('HTTP '+r.status);
     const caps=await r.json();

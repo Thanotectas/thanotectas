@@ -459,7 +459,7 @@ async function cargarCapsulas(){
         'Authorization':'Bearer '+SB_ANON,
         'Content-Type':'application/json'
       },
-      body:JSON.stringify({p_limite:30})
+      body:JSON.stringify({limite:30})
     });
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();
