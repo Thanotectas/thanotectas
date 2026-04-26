@@ -885,12 +885,23 @@ function renderizarPreview(capsula){
     canvas.style.maxHeight=maxH+'px';
   }
   var ctx=canvas.getContext('2d');
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(function(){
-      renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
-    });
+  // Helper: render con/sin imagen de fondo
+  function doRenderPreview(imgBg){
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){
+        renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual,imgBg);
+      });
+    } else {
+      renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual,imgBg);
+    }
+  }
+  // Si hay imagen_url, cargarla primero (con timeout para no bloquear si falla CORS o lenta)
+  if(capsula.imagen_url){
+    cargarImagenConTimeout(capsula.imagen_url, 4000)
+      .then(function(img){doRenderPreview(img);})
+      .catch(function(){doRenderPreview(null);});
   } else {
-    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
+    doRenderPreview(null);
   }
 
   frame.innerHTML='';
@@ -919,32 +930,75 @@ function resetPreview(){
   document.getElementById('btn-descargar-g').disabled=true;
 }
 
-function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
-  var grad=ctx.createLinearGradient(0,0,width,height);
-  grad.addColorStop(0,'#0d130c');
-  grad.addColorStop(0.5,'#141d12');
-  grad.addColorStop(1,'#0d130c');
-  ctx.fillStyle=grad;
-  ctx.fillRect(0,0,width,height);
+function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato, imgBg){
+  // Si tenemos imagen de fondo cargada, la dibujamos primero en modo "cover"
+  if(imgBg){
+    var iw=imgBg.naturalWidth||imgBg.width;
+    var ih=imgBg.naturalHeight||imgBg.height;
+    var canvasRatio=width/height;
+    var imgRatio=iw/ih;
+    var sx,sy,sw,sh;
+    if(imgRatio > canvasRatio){
+      // Imagen más ancha que canvas: recortar lados
+      sh=ih;
+      sw=ih*canvasRatio;
+      sx=(iw-sw)/2;
+      sy=0;
+    } else {
+      // Imagen más alta que canvas: recortar arriba/abajo
+      sw=iw;
+      sh=iw/canvasRatio;
+      sx=0;
+      sy=(ih-sh)/2;
+    }
+    try{
+      ctx.drawImage(imgBg, sx, sy, sw, sh, 0, 0, width, height);
+    }catch(e){
+      console.warn('[render] No se pudo dibujar imagen de fondo:',e);
+      // Fallback: gradiente como antes
+      var gradF=ctx.createLinearGradient(0,0,width,height);
+      gradF.addColorStop(0,'#0d130c');gradF.addColorStop(0.5,'#141d12');gradF.addColorStop(1,'#0d130c');
+      ctx.fillStyle=gradF;ctx.fillRect(0,0,width,height);
+    }
+    // Overlay verde-bosque-dorado para legibilidad del texto
+    var overlayGrad=ctx.createLinearGradient(0,0,0,height);
+    overlayGrad.addColorStop(0,'rgba(13,19,12,0.78)');
+    overlayGrad.addColorStop(0.5,'rgba(20,29,18,0.65)');
+    overlayGrad.addColorStop(1,'rgba(13,19,12,0.85)');
+    ctx.fillStyle=overlayGrad;
+    ctx.fillRect(0,0,width,height);
+    // Tinte verde sutil
+    ctx.fillStyle='rgba(31,58,37,0.18)';
+    ctx.fillRect(0,0,width,height);
+  } else {
+    // Sin imagen: gradiente verde-bosque original
+    var grad=ctx.createLinearGradient(0,0,width,height);
+    grad.addColorStop(0,'#0d130c');
+    grad.addColorStop(0.5,'#141d12');
+    grad.addColorStop(1,'#0d130c');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,width,height);
 
-  var radial=ctx.createRadialGradient(width*0.2,0,0,width*0.5,height*0.5,width*0.8);
-  radial.addColorStop(0,'rgba(74,138,75,0.12)');
-  radial.addColorStop(0.6,'rgba(0,0,0,0)');
-  ctx.fillStyle=radial;
-  ctx.fillRect(0,0,width,height);
+    var radial=ctx.createRadialGradient(width*0.2,0,0,width*0.5,height*0.5,width*0.8);
+    radial.addColorStop(0,'rgba(74,138,75,0.12)');
+    radial.addColorStop(0.6,'rgba(0,0,0,0)');
+    ctx.fillStyle=radial;
+    ctx.fillRect(0,0,width,height);
 
-  ctx.save();
-  for(var i=0;i<60;i++){
-    var sx=Math.random()*width;
-    var sy=Math.random()*height;
-    var sr=Math.random()*1.5+0.3;
-    var sa=Math.random()*0.5+0.1;
-    ctx.beginPath();
-    ctx.arc(sx,sy,sr,0,Math.PI*2);
-    ctx.fillStyle='rgba(240,230,211,'+sa+')';
-    ctx.fill();
+    // Estrellas (solo cuando NO hay imagen de fondo)
+    ctx.save();
+    for(var i=0;i<60;i++){
+      var sxs=Math.random()*width;
+      var sys=Math.random()*height;
+      var srs=Math.random()*1.5+0.3;
+      var sas=Math.random()*0.5+0.1;
+      ctx.beginPath();
+      ctx.arc(sxs,sys,srs,0,Math.PI*2);
+      ctx.fillStyle='rgba(240,230,211,'+sas+')';
+      ctx.fill();
+    }
+    ctx.restore();
   }
-  ctx.restore();
 
   ctx.strokeStyle='rgba(212,165,71,0.18)';
   ctx.lineWidth=1;
@@ -1109,8 +1163,8 @@ function doDownload(capsula){
   canvas.height=dims.h;
   var ctx=canvas.getContext('2d');
 
-  function doRender(){
-    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
+  function doRender(imgBg){
+    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual,imgBg);
     var slug=(capsula.numero_certificado||'capsula').toLowerCase().replace(/^th-2026-/,'').replace(/[^a-z0-9-]/g,'-');
     var fname='thanotectas-'+slug+'-'+formatoActual.replace(':','x')+'.png';
     canvas.toBlob(function(blob){
@@ -1125,11 +1179,45 @@ function doDownload(capsula){
     },'image/png');
   }
 
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(doRender);
-  } else {
-    doRender();
+  function startRender(imgBg){
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){doRender(imgBg);});
+    } else {
+      doRender(imgBg);
+    }
   }
+
+  if(capsula.imagen_url){
+    cargarImagenConTimeout(capsula.imagen_url, 5000)
+      .then(function(img){startRender(img);})
+      .catch(function(){startRender(null);});
+  } else {
+    startRender(null);
+  }
+}
+
+// === Cargar imagen con timeout y CORS habilitado para canvas ===
+function cargarImagenConTimeout(url, timeoutMs){
+  return new Promise(function(resolve, reject){
+    if(!url){reject(new Error('URL vacía'));return;}
+    var img=new Image();
+    img.crossOrigin='anonymous';
+    var timer=setTimeout(function(){
+      img.src='';
+      reject(new Error('Timeout cargando imagen'));
+    }, timeoutMs||5000);
+    img.onload=function(){clearTimeout(timer);resolve(img);};
+    img.onerror=function(){
+      clearTimeout(timer);
+      // Intentar sin crossOrigin como fallback (puede dar canvas tainted pero al menos se ve)
+      var img2=new Image();
+      var t2=setTimeout(function(){img2.src='';reject(new Error('Timeout 2'));}, timeoutMs||5000);
+      img2.onload=function(){clearTimeout(t2);resolve(img2);};
+      img2.onerror=function(){clearTimeout(t2);reject(new Error('No se pudo cargar imagen'));};
+      img2.src=url;
+    };
+    img.src=url;
+  });
 }
 
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}

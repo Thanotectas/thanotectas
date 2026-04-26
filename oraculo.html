@@ -556,6 +556,77 @@ main{
   font-style:italic;
 }
 
+/* === FOTO UPLOAD ZONE === */
+.foto-zone{
+  background:rgba(13,11,8,.6);
+  border:1px dashed var(--linea-2);
+  border-radius:2px;
+  padding:1.5rem 1.1rem;
+  cursor:pointer;
+  transition:all .3s;
+  text-align:center;
+  position:relative;
+  min-height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.foto-zone:hover{border-color:var(--oro);background:rgba(212,165,71,.04)}
+.foto-zone .foto-icon{
+  font-family:var(--serif);
+  font-size:2rem;
+  color:var(--oro);
+  font-weight:300;
+  margin-bottom:.5rem;
+  line-height:1;
+}
+.foto-zone .foto-text{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--crema-50);
+  margin-bottom:.4rem;
+}
+.foto-zone .foto-hint{
+  font-family:var(--mono);
+  font-size:.55rem;
+  letter-spacing:.15em;
+  color:var(--crema-30);
+  text-transform:uppercase;
+}
+.foto-zone img{
+  max-width:100%;
+  max-height:240px;
+  display:block;
+  margin:0 auto;
+  border-radius:2px;
+}
+.foto-remove{
+  position:absolute;
+  top:.5rem;right:.5rem;
+  width:32px;height:32px;
+  border-radius:50%;
+  border:1px solid var(--linea-2);
+  background:rgba(13,19,12,.85);
+  color:var(--crema);
+  cursor:pointer;
+  font-size:.85rem;
+  font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.foto-remove:hover{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.foto-status{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.15em;
+  text-align:center;
+  min-height:.8rem;
+}
+.foto-status.ok{color:var(--musgo-glow)}
+.foto-status.err{color:var(--rojo)}
+
 /* === MODO TOGGLE (Cápsula Viva / Sellada) === */
 .modo-toggle{
   display:grid;
@@ -1318,6 +1389,8 @@ main{
 
   <div class="field"><label>Lo que nominas al Umbral</label><input id="subj" type="text" maxlength="120" placeholder="Ej: El oso de anteojos, La selva del Putumayo…"/></div>
   <div class="field"><label>Un recuerdo o testimonio (opcional)</label><textarea id="desc" rows="3" placeholder="Un encuentro, una sensación, lo que más extrañarías…"></textarea></div>
+
+  <div class="field" id="foto-field"><label>Una foto de tu cápsula <span style="font-family:var(--mono);font-size:.55rem;letter-spacing:.18em;color:var(--crema-30)">· OPCIONAL</span></label><div class="foto-zone" id="foto-zone" onclick="document.getElementById('foto-input').click()"><input type="file" id="foto-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="onFotoSelected(event)"><div id="foto-empty"><div class="foto-icon">⊕</div><div class="foto-text">Toca para subir una foto</div><div class="foto-hint">JPG, PNG o WEBP · Se comprime a 1MB</div></div><div id="foto-preview-wrap" style="display:none"><img id="foto-preview-img"/><button type="button" class="foto-remove" onclick="event.stopPropagation();removerFoto()">✕</button></div></div><div class="foto-status" id="foto-status"></div></div>
   <div class="uses-bar"><span class="uses-text" id="uses-text">Cargando…</span></div>
   <div class="err-box" id="inp-err"></div>
   <button class="btn-main" id="btn-invocar" onclick="invoke()">Que el Oráculo inscriba</button>
@@ -1492,6 +1565,7 @@ var hookN=0;setInterval(function(){hookN++;document.getElementById('hook-n').tex
 
 var activeLang='es',activeCat='especies',activeType='poema',currentPoema='',currentSujeto='',currentUser=null;
 var currentCapsulaId=null, currentNumeroCert=null, currentEsPublica=false;
+var fotoComprimidaBlob=null; // Foto comprimida lista para subir antes de inscribir
 var loginIsRegister=false;
 
 function go(id){document.querySelectorAll('.phase').forEach(function(p){p.classList.remove('active');});document.getElementById('ph-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='history')loadHistory();}
@@ -1768,7 +1842,20 @@ async function invoke(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     var data=await res.json();if(!data.poema)throw new Error('Respuesta vacía');
     currentPoema=data.poema;currentSujeto=subj;
-    var ins=await sb.from('capsulas').insert({guardian_id:currentUser.id,sujeto:subj,testimonio:desc||null,categoria:activeCat,tipo:activeType,idioma:activeLang,contenido:data.poema,imagen_url:data.imagen||null,plan_usado:currentUser.plan}).select('id,numero_certificado,es_publica').single();
+    // Si el usuario subió una foto propia, la sube a Storage y usa esa URL como imagen_url
+    var fotoUrlFinal = data.imagen||null;
+    if(fotoComprimidaBlob){
+      try{
+        setStatus('Subiendo tu foto al Archivo…');
+        var fotoUploaded = await subirFotoAStorage(fotoComprimidaBlob);
+        if(fotoUploaded) fotoUrlFinal = fotoUploaded;
+      }catch(eFoto){
+        console.warn('[oraculo] Error subiendo foto, continúa sin ella:',eFoto);
+        // No bloqueamos la inscripción si falla la foto
+      }
+    }
+
+    var ins=await sb.from('capsulas').insert({guardian_id:currentUser.id,sujeto:subj,testimonio:desc||null,categoria:activeCat,tipo:activeType,idioma:activeLang,contenido:data.poema,imagen_url:fotoUrlFinal,plan_usado:currentUser.plan}).select('id,numero_certificado,es_publica').single();
     if(ins.data){
       currentCapsulaId=ins.data.id;
       currentNumeroCert=ins.data.numero_certificado;
@@ -1781,12 +1868,20 @@ async function invoke(){
     document.getElementById('r-date').textContent='Inscrita el '+new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
     var certEl=document.getElementById('r-cert-num');
     if(currentNumeroCert){certEl.style.display='block';certEl.innerHTML='<code>'+esc(currentNumeroCert)+'</code>';}
-    if(data.imagen){var box=document.getElementById('capsule-box');box.style.backgroundImage='linear-gradient(160deg,rgba(13,11,8,.85),rgba(20,29,18,.75)),url('+data.imagen+')';box.style.backgroundSize='cover';box.style.backgroundPosition='center';}
+    var imagenParaPreview = fotoUrlFinal || data.imagen;
+    if(imagenParaPreview){var box=document.getElementById('capsule-box');box.style.backgroundImage='linear-gradient(160deg,rgba(13,11,8,.85),rgba(20,29,18,.75)),url('+imagenParaPreview+')';box.style.backgroundSize='cover';box.style.backgroundPosition='center';}
     var pr=data.poema.split('\n').filter(function(l){return l.trim();})[0]||data.poema.slice(0,80);
     document.getElementById('share-txt').textContent='Acabo de inscribir a "'+subj+'" en el Oráculo del Umbral de @thanotectas 🌿\n"'+pr+'"\nthanotectas.com/oraculo #ArchivoDelUmbral';
     document.getElementById('witness-text').innerHTML='Cápsula inscrita y sellada en el Archivo del Umbral.';
     renderArchiveBlock();
-    updateUsesBar();go('result');
+    updateUsesBar();
+    // Limpiar foto + form para próxima cápsula
+    fotoComprimidaBlob=null;
+    document.getElementById('foto-empty').style.display='block';
+    document.getElementById('foto-preview-wrap').style.display='none';
+    document.getElementById('foto-input').value='';
+    document.getElementById('foto-status').textContent='';
+    go('result');
   }catch(e){console.error('[Oraculo]',e.message);go('input');errEl.textContent='⚠️ '+e.message;errEl.style.display='block';await sb.from('guardianes').update({consultas_disponibles:currentUser.consultas_disponibles+1}).eq('id',currentUser.id);currentUser.consultas_disponibles++;updateUserUI();}finally{btn.disabled=false;}
 }
 
@@ -1862,6 +1957,130 @@ function copyShare(){navigator.clipboard.writeText(document.getElementById('shar
 function resetAll(){document.getElementById('subj').value='';document.getElementById('desc').value='';document.getElementById('capsule-box').style.backgroundImage='';currentCapsulaId=null;currentNumeroCert=null;currentEsPublica=false;go('input');}
 function setLang(lang){activeLang=lang;document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});}
 async function goTo(url){window.location.href=url;}
+// === FOTO UPLOAD === 
+async function onFotoSelected(ev){
+  var file = ev.target.files && ev.target.files[0];
+  if(!file) return;
+  var status = document.getElementById('foto-status');
+  status.textContent='';
+  status.className='foto-status';
+
+  // Validar tipo
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)){
+    status.textContent='⚠️ Solo JPG, PNG o WEBP';
+    status.className='foto-status err';
+    return;
+  }
+  // Validar tamaño máximo razonable antes de comprimir (50MB)
+  if(file.size > 50*1024*1024){
+    status.textContent='⚠️ La foto es demasiado grande (máx 50MB original)';
+    status.className='foto-status err';
+    return;
+  }
+
+  status.textContent='Comprimiendo foto…';
+  try{
+    var compressed = await comprimirImagen(file);
+    fotoComprimidaBlob = compressed.blob;
+
+    // Mostrar preview
+    var reader = new FileReader();
+    reader.onload = function(e){
+      document.getElementById('foto-preview-img').src = e.target.result;
+      document.getElementById('foto-empty').style.display='none';
+      document.getElementById('foto-preview-wrap').style.display='block';
+    };
+    reader.readAsDataURL(compressed.blob);
+
+    var sizeKB = (compressed.blob.size/1024).toFixed(0);
+    status.textContent='✓ Foto lista · '+sizeKB+'KB';
+    status.className='foto-status ok';
+  }catch(e){
+    console.error('[foto] Error comprimiendo:',e);
+    status.textContent='⚠️ Error procesando la foto';
+    status.className='foto-status err';
+    fotoComprimidaBlob=null;
+  }
+}
+
+function removerFoto(){
+  fotoComprimidaBlob=null;
+  document.getElementById('foto-input').value='';
+  document.getElementById('foto-empty').style.display='block';
+  document.getElementById('foto-preview-wrap').style.display='none';
+  document.getElementById('foto-preview-img').src='';
+  document.getElementById('foto-status').textContent='';
+}
+
+// Comprimir imagen a max 1920px del lado mayor + JPEG quality 0.85, target ≤1MB
+async function comprimirImagen(file){
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    img.onload = function(){
+      var maxLado = 1920;
+      var w = img.width, h = img.height;
+      if(w > maxLado || h > maxLado){
+        var ratio = Math.min(maxLado/w, maxLado/h);
+        w = Math.round(w*ratio);
+        h = Math.round(h*ratio);
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, w, h);
+
+      // Iterar bajando calidad hasta ≤1MB
+      function tryCompress(quality){
+        canvas.toBlob(function(blob){
+          if(!blob) return reject(new Error('toBlob falló'));
+          if(blob.size <= 1024*1024 || quality <= 0.5){
+            resolve({blob: blob, width: w, height: h});
+          } else {
+            tryCompress(quality - 0.1);
+          }
+        }, 'image/jpeg', quality);
+      }
+      tryCompress(0.85);
+    };
+    img.onerror = function(){reject(new Error('No se pudo cargar la imagen'));};
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// Subir foto comprimida a Supabase Storage en carpeta del usuario autenticado
+async function subirFotoAStorage(blob){
+  var sess = await sb.auth.getSession();
+  var token = sess.data && sess.data.session ? sess.data.session.access_token : null;
+  if(!token) throw new Error('Sin sesión');
+  var authId = sess.data.session.user.id;
+
+  // Path: {authId}/{timestamp}-{random}.jpg
+  var ts = Date.now();
+  var rand = Math.random().toString(36).substring(2, 9);
+  var path = authId + '/' + ts + '-' + rand + '.jpg';
+
+  // Upload usando supabase-js
+  var { data, error } = await sb.storage
+    .from('capsulas-imagenes')
+    .upload(path, blob, {
+      contentType: 'image/jpeg',
+      cacheControl: '31536000',
+      upsert: false
+    });
+
+  if(error){
+    console.error('[storage upload]', error);
+    throw error;
+  }
+
+  // Obtener URL pública
+  var pub = sb.storage.from('capsulas-imagenes').getPublicUrl(path);
+  return pub.data.publicUrl;
+}
+
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 // IMPORTANTE: el handler NO es async, y las llamadas a Supabase se difieren con setTimeout(0).

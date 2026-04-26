@@ -4,149 +4,752 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1a1611">
+<meta name="theme-color" content="#0d130c">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<title>Mi Panel — Thanotectas · Guardianes del Umbral</title>
+<title>Mi Panel — Thanotectas · Archivo del Umbral</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--tierra:#1a1611;--tierra2:#2a2319;--musgo:#2d4a2e;--musgo-c:#3d6a3e;--musgo-g:#4a8a4b;--ocre:#c4973b;--ocre-c:#d4a74b;--marfil:#f0e6d3;--marfil-t:rgba(240,230,211,.6);--cristal:rgba(240,230,211,.06);--azul:#5a9ec8;--lila:#8b7ec8;--coral:#d08060;--rosa:#c87a9a;--rojo:#c04030}
+:root{
+  --noche:#0d130c;
+  --noche-2:#141d12;
+  --noche-3:#1c2719;
+  --bosque:#1f3a25;
+  --bosque-claro:#2d5237;
+  --musgo:#4a8a4b;
+  --musgo-glow:#6cc06d;
+  --oro:#d4a547;
+  --oro-claro:#e5c068;
+  --oro-glow:#f4d989;
+  --crema:#f0e6d3;
+  --crema-50:rgba(240,230,211,.5);
+  --crema-30:rgba(240,230,211,.3);
+  --linea:rgba(212,165,71,.18);
+  --linea-2:rgba(212,165,71,.35);
+  --rojo:#c47050;
+  --azul:#5a9ec8;
+  --lila:#8b7ec8;
+  --coral:#d08060;
+  --rosa:#c87a9a;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Manrope',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Jost',sans-serif;background:var(--tierra);color:var(--marfil);min-height:100vh}
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:rgba(26,22,17,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(196,151,59,.1)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--ocre);text-decoration:none;letter-spacing:.08em}
+::selection{background:var(--oro);color:var(--noche)}
+body{
+  font-family:var(--sans);
+  background:var(--noche);
+  color:var(--crema);
+  min-height:100vh;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(74,138,75,.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(212,165,71,.04) 0%, transparent 50%);
+}
+
+/* === NAV === */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.8rem;
+  background:rgba(13,19,12,.92);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--linea);
+}
+.nav-logo{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  font-weight:500;
+  color:var(--oro);
+  text-decoration:none;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:.7rem;
+}
+.nav-logo svg{width:30px;height:30px;filter:drop-shadow(0 0 8px rgba(212,165,71,.3))}
 .nav-links{display:flex;gap:.5rem;align-items:center}
-.nav-links a{font-size:.78rem;color:var(--marfil-t);text-decoration:none;padding:.45rem 1rem;border-radius:6px;transition:all .2s;letter-spacing:.03em}
-.nav-links a:hover{color:var(--marfil);background:rgba(240,230,211,.06)}
-.nav-links a.on{color:var(--ocre);background:rgba(196,151,59,.1);border:1px solid rgba(196,151,59,.2)}
-.nav-links .btn-new{background:linear-gradient(135deg,var(--musgo),var(--musgo-c));color:var(--marfil);font-weight:500;padding:.5rem 1.2rem;border-radius:6px}
-.nav-links .btn-new:hover{box-shadow:0 4px 16px rgba(45,74,46,.3)}
-.wrap{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem}
-.loading{text-align:center;padding:6rem 1.5rem;color:var(--marfil-t)}
-.spinner{width:28px;height:28px;border:2px solid rgba(196,151,59,.15);border-top-color:var(--ocre);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 1rem}
+.nav-links a{
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--crema-50);
+  text-decoration:none;
+  padding:.55rem 1rem;
+  border-radius:2px;
+  transition:all .25s;
+}
+.nav-links a:hover{color:var(--crema);background:rgba(240,230,211,.04)}
+.nav-links a.on{
+  color:var(--oro);
+  background:rgba(212,165,71,.08);
+  border:1px solid var(--linea);
+}
+.nav-links .btn-new{
+  background:linear-gradient(135deg, var(--oro), var(--oro-claro));
+  color:var(--noche);
+  font-weight:600;
+  padding:.55rem 1.2rem;
+  border-radius:2px;
+  letter-spacing:.18em;
+}
+.nav-links .btn-new:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,165,71,.3)}
+
+.wrap{max-width:920px;margin:0 auto;padding:2.5rem 1.5rem 5rem;position:relative;z-index:2}
+
+.loading{text-align:center;padding:6rem 1.5rem;color:var(--crema-50)}
+.loading h2{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.6rem;
+  font-weight:400;
+  color:var(--oro);
+  margin-bottom:.6rem;
+}
+.spinner{
+  width:34px;height:34px;
+  border:1px solid var(--linea);
+  border-top-color:var(--oro);
+  border-radius:50%;
+  animation:sp 1s linear infinite;
+  margin:0 auto 1.2rem;
+  filter:drop-shadow(0 0 6px rgba(244,217,137,.3));
+}
 @keyframes sp{to{transform:rotate(360deg)}}
-.welcome{margin-bottom:2rem}
-.welcome h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:.3rem}
-.welcome h1 em{color:var(--ocre);font-style:normal;font-weight:600}
-.welcome p{font-size:.85rem;color:var(--marfil-t)}
-.prof{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;margin-bottom:1.5rem}
-.prof-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:rgba(196,151,59,.1);border:1px solid rgba(196,151,59,.15)}
+
+/* === WELCOME === */
+.welcome{margin-bottom:2.5rem}
+.welcome .pretitle{
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--oro);
+  margin-bottom:.7rem;
+  display:flex;align-items:center;gap:.7rem;
+}
+.welcome .pretitle::before{content:'';width:18px;height:1px;background:var(--oro)}
+.welcome h1{
+  font-family:var(--serif);
+  font-size:2.4rem;
+  font-weight:300;
+  letter-spacing:-0.012em;
+  line-height:1.1;
+  margin-bottom:.5rem;
+}
+.welcome h1 em{
+  font-style:italic;
+  color:var(--oro-claro);
+  font-weight:400;
+}
+.welcome p{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1rem;
+  color:var(--crema-50);
+  line-height:1.65;
+}
+
+/* === PROFILE === */
+.prof{
+  display:flex;align-items:center;gap:1.2rem;
+  padding:1.4rem 1.6rem;
+  background:rgba(240,230,211,.04);
+  border:1px solid var(--linea);
+  border-radius:2px;
+  margin-bottom:1.5rem;
+  position:relative;
+  overflow:hidden;
+}
+.prof::before{
+  content:'';
+  position:absolute;
+  top:-1px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent, var(--oro), transparent);
+}
+.prof-av{
+  width:54px;height:54px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+  flex-shrink:0;
+  background:rgba(212,165,71,.1);
+  border:1px solid var(--linea-2);
+}
 .prof-info{flex:1;min-width:0}
-.prof-name{font-size:.95rem;font-weight:500;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.prof-email{font-size:.72rem;color:var(--marfil-t)}
-.badge{font-size:.55rem;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-.badge-gratis{background:rgba(74,138,75,.15);color:var(--musgo-g)}
+.prof-name{
+  font-family:var(--serif);
+  font-size:1.15rem;
+  font-weight:500;
+  display:flex;align-items:center;gap:.6rem;
+  flex-wrap:wrap;
+  letter-spacing:-0.005em;
+}
+.prof-email{
+  font-family:var(--mono);
+  font-size:.68rem;
+  color:var(--crema-50);
+  letter-spacing:.05em;
+  margin-top:.2rem;
+}
+.badge{
+  font-family:var(--mono);
+  font-size:.55rem;
+  padding:.18rem .65rem;
+  font-weight:500;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.badge-gratis{background:rgba(74,138,75,.15);color:var(--musgo-glow)}
 .badge-explorador{background:rgba(90,158,200,.12);color:var(--azul)}
-.badge-guardian{background:rgba(196,151,59,.12);color:var(--ocre)}
-.badge-eterno{background:linear-gradient(135deg,rgba(196,151,59,.25),rgba(212,167,75,.2));color:var(--ocre-c);border:1px solid rgba(196,151,59,.3)}
+.badge-guardian{background:rgba(212,165,71,.12);color:var(--oro)}
+.badge-eterno{
+  background:linear-gradient(135deg, rgba(212,165,71,.25), rgba(244,217,137,.18));
+  color:var(--oro-glow);
+  border:1px solid var(--linea-2);
+}
 .badge-admin{background:rgba(139,126,200,.12);color:var(--lila)}
-.plan-status{font-size:.62rem;color:var(--marfil-t);margin-top:.3rem;letter-spacing:.04em}
-.plan-status strong{color:var(--ocre);font-weight:500}
+.plan-status{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.85rem;
+  color:var(--crema-50);
+  margin-top:.45rem;
+  line-height:1.5;
+}
+.plan-status strong{color:var(--oro);font-style:normal;font-weight:500}
+.plan-status a{color:var(--oro);text-decoration:none;font-weight:500;font-style:normal}
 .prof-actions{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap}
-.prof-btn{font-size:.68rem;color:var(--ocre);padding:.35rem .7rem;border:1px solid rgba(196,151,59,.2);border-radius:5px;cursor:pointer;background:none;font-family:'Jost',sans-serif;transition:all .2s;text-decoration:none}
-.prof-btn:hover{background:rgba(196,151,59,.1)}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:2rem}
-.quick a,.quick div{display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:1rem .5rem;background:var(--cristal);border:1px solid rgba(196,151,59,.08);border-radius:10px;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--marfil)}
-.quick a:hover,.quick div:hover{border-color:rgba(196,151,59,.25);background:rgba(196,151,59,.06);transform:translateY(-2px)}
-.quick .qi{font-size:1.5rem}
-.quick .ql{font-size:.7rem;font-weight:500;text-align:center;letter-spacing:.02em}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:2rem}
-.stat{background:var(--cristal);border:1px solid rgba(196,151,59,.08);border-radius:10px;padding:1rem;text-align:center}
-.stat-n{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;line-height:1}
-.stat-n.c1{color:var(--musgo-g)}.stat-n.c2{color:var(--ocre)}.stat-n.c3{color:var(--azul)}.stat-n.c4{color:var(--coral)}
-.stat-l{font-size:.62rem;color:var(--marfil-t);margin-top:.3rem;letter-spacing:.06em;text-transform:uppercase}
-.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
-.sec-h h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400}
-.filters{display:flex;gap:.3rem;flex-wrap:wrap}
-.fbtn{font-size:.65rem;padding:.3rem .7rem;border-radius:12px;border:1px solid rgba(196,151,59,.12);color:var(--marfil-t);cursor:pointer;background:none;font-family:'Jost',sans-serif;transition:all .15s}
-.fbtn:hover{border-color:rgba(196,151,59,.3);color:var(--marfil)}
-.fbtn.on{background:rgba(196,151,59,.12);color:var(--ocre);border-color:rgba(196,151,59,.25)}
-.caps{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
-.cap{background:var(--cristal);border:1px solid rgba(196,151,59,.08);border-radius:12px;cursor:pointer;transition:all .2s;overflow:hidden}
-.cap:hover{border-color:rgba(196,151,59,.2);background:rgba(240,230,211,.04)}
-.cap-inner{display:flex;padding:1.1rem 1.3rem;gap:1rem;align-items:flex-start}
-.cap-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.cap-icon.t-poema{background:rgba(139,126,200,.12)}.cap-icon.t-dato{background:rgba(90,158,200,.1)}.cap-icon.t-carta{background:rgba(90,158,200,.1)}.cap-icon.t-obituario{background:rgba(208,128,96,.1)}.cap-icon.t-alerta{background:rgba(196,151,59,.1)}.cap-icon.t-ritual{background:rgba(200,122,154,.1)}
-.cap-body{flex:1;min-width:0}
-.cap-subj{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cap-meta{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;flex-wrap:wrap}
-.cap-tag{font-size:.52rem;padding:2px 6px;border-radius:4px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.cap-tag.tipo{background:rgba(139,126,200,.12);color:var(--lila)}
-.cap-tag.idioma{background:rgba(74,138,75,.12);color:var(--musgo-g)}
-.cap-tag.cert{background:rgba(196,151,59,.1);color:var(--ocre);font-family:'Jost',sans-serif;letter-spacing:.08em}
-.cap-tag.publica{background:rgba(74,138,75,.15);color:var(--musgo-g)}
-.cap-date{font-size:.62rem;color:var(--marfil-t)}
-.cap-preview{font-family:'Cormorant Garamond',serif;font-size:.9rem;color:var(--marfil-t);line-height:1.65;font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.cap-exp{display:none;padding:0 1.3rem 1.3rem;border-top:1px solid rgba(196,151,59,.08)}
-.cap-exp.open{display:block;padding-top:1rem}
-.cap-full{font-family:'Cormorant Garamond',serif;font-size:1rem;line-height:1.9;white-space:pre-wrap;margin-bottom:1rem}
-.cap-actions-primary{display:flex;gap:.5rem;flex-wrap:wrap;padding-bottom:.8rem;margin-bottom:.8rem;border-bottom:1px dashed rgba(196,151,59,.15)}
-.act-btn{font-size:.74rem;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
-.act-cert{background:linear-gradient(135deg,rgba(196,151,59,.18),rgba(212,167,75,.12));color:var(--ocre-c);border:1px solid rgba(196,151,59,.35);font-weight:500}
-.act-cert:hover{background:linear-gradient(135deg,rgba(196,151,59,.3),rgba(212,167,75,.2));transform:translateY(-1px)}
-.act-toggle{background:rgba(74,138,75,.08);color:var(--musgo-g);border:1px solid rgba(74,138,75,.25)}
-.act-toggle:hover{background:rgba(74,138,75,.15)}
-.act-toggle.active{background:rgba(74,138,75,.2);color:var(--musgo-g);border-color:var(--musgo-g)}
-.act-toggle.locked{opacity:.55;cursor:not-allowed}
-.act-share-public{background:rgba(90,158,200,.08);color:var(--azul);border:1px solid rgba(90,158,200,.25)}
-.act-share-public:hover{background:rgba(90,158,200,.15)}
-.share-row{display:flex;gap:.4rem;flex-wrap:wrap}
-.shr{font-size:.68rem;padding:.4rem .75rem;border-radius:5px;border:1px solid rgba(196,151,59,.15);background:rgba(196,151,59,.04);color:var(--ocre);cursor:pointer;font-family:'Jost',sans-serif;transition:all .15s;display:flex;align-items:center;gap:4px}
-.shr:hover{background:rgba(196,151,59,.12);border-color:rgba(196,151,59,.3)}
-.shr svg{width:12px;height:12px}
-.publicprofile{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;padding:1rem 1.3rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.prof-btn{
+  font-family:var(--mono);
+  font-size:.62rem;
+  color:var(--oro);
+  padding:.5rem .9rem;
+  border:1px solid var(--linea);
+  border-radius:2px;
+  cursor:pointer;
+  background:none;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  transition:all .25s;
+  text-decoration:none;
+}
+.prof-btn:hover{background:rgba(212,165,71,.08);border-color:var(--linea-2)}
+
+/* === PERFIL PÚBLICO CARD === */
+.publicprofile{
+  background:linear-gradient(135deg, rgba(212,165,71,.08), rgba(212,165,71,.03));
+  border:1px solid var(--linea-2);
+  border-radius:2px;
+  padding:1.2rem 1.5rem;
+  margin-bottom:1.5rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
 .publicprofile-info{flex:1;min-width:0}
-.publicprofile-label{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ocre);margin-bottom:.25rem}
-.publicprofile-url{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--marfil);word-break:break-all}
-.publicprofile-btn{font-size:.72rem;padding:.5rem 1rem;background:rgba(196,151,59,.1);color:var(--ocre);border:1px solid rgba(196,151,59,.25);border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;text-decoration:none;white-space:nowrap}
-.publicprofile-btn:hover{background:rgba(196,151,59,.2)}
-.ref{background:var(--cristal);border:1px solid rgba(196,151,59,.1);border-radius:12px;padding:1.3rem 1.5rem;margin-bottom:2rem}
-.ref-head{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
-.ref-head span{font-size:1.5rem}
-.ref-head h3{font-size:.9rem;font-weight:500}
-.ref p{font-size:.78rem;color:var(--marfil-t);margin-bottom:.8rem}
-.ref strong{color:var(--ocre)}
-.ref-row{display:flex;gap:.4rem;margin-bottom:.6rem}
-.ref-in{flex:1;background:rgba(13,11,8,.5);border:1px solid rgba(196,151,59,.12);color:var(--marfil);padding:.55rem .8rem;border-radius:5px;font-size:.75rem;font-family:'Jost',sans-serif}
-.ref-in:focus{outline:none;border-color:var(--ocre)}
-.ref-btn{background:rgba(196,151,59,.1);color:var(--ocre);border:1px solid rgba(196,151,59,.2);padding:.55rem 1rem;border-radius:5px;cursor:pointer;font-size:.72rem;font-weight:500;font-family:'Jost',sans-serif;transition:all .2s;white-space:nowrap}
-.ref-btn:hover{background:rgba(196,151,59,.2)}
-.ref-stats{font-size:.68rem;color:var(--marfil-t);display:flex;gap:1.2rem}
-.ref-stats strong{color:var(--ocre)}
-.empty{text-align:center;padding:3rem 1.5rem;background:var(--cristal);border:1px dashed rgba(196,151,59,.12);border-radius:12px}
-.empty .ei{font-size:2.5rem;margin-bottom:.8rem}
-.empty h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;margin-bottom:.4rem}
-.empty p{font-size:.8rem;color:var(--marfil-t);margin-bottom:1rem}
-.empty .btn-go{display:inline-block;padding:.55rem 1.5rem;background:linear-gradient(135deg,var(--musgo),var(--musgo-c));color:var(--marfil);border-radius:6px;text-decoration:none;font-size:.82rem;font-weight:500}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ocre);color:var(--tierra);padding:.7rem 1.5rem;border-radius:6px;font-size:.82rem;font-weight:500;opacity:0;transition:all .3s;z-index:300;pointer-events:none}
+.publicprofile-label{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--oro);
+  margin-bottom:.4rem;
+}
+.publicprofile-url{
+  font-family:var(--mono);
+  font-size:.85rem;
+  color:var(--crema);
+  word-break:break-all;
+  letter-spacing:.05em;
+}
+.publicprofile-btn{
+  font-family:var(--mono);
+  font-size:.62rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  padding:.55rem 1rem;
+  background:rgba(212,165,71,.1);
+  color:var(--oro);
+  border:1px solid var(--linea-2);
+  border-radius:2px;
+  cursor:pointer;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:all .25s;
+}
+.publicprofile-btn:hover{background:rgba(212,165,71,.2);border-color:var(--oro)}
+
+/* === QUICK ACCESS === */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:2rem;background:var(--linea);border:1px solid var(--linea)}
+.quick a, .quick div{
+  display:flex;flex-direction:column;align-items:center;
+  gap:.6rem;
+  padding:1.4rem .5rem;
+  background:var(--noche-2);
+  cursor:pointer;
+  transition:all .25s;
+  text-decoration:none;
+  color:var(--crema);
+  border:none;
+}
+.quick a:hover, .quick div:hover{background:var(--noche-3)}
+.quick .qi{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.7rem;
+  color:var(--oro);
+  font-weight:300;
+  font-variation-settings:"opsz" 144;
+}
+.quick .ql{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  text-align:center;
+  color:var(--crema-50);
+}
+.quick a:hover .ql, .quick div:hover .ql{color:var(--oro)}
+
+/* === STATS === */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:2.5rem;background:var(--linea);border:1px solid var(--linea)}
+.stat{
+  background:var(--noche-2);
+  padding:1.3rem 1rem;
+  text-align:center;
+}
+.stat-n{
+  font-family:var(--serif);
+  font-size:2.4rem;
+  font-weight:300;
+  line-height:1;
+  font-variation-settings:"opsz" 144;
+}
+.stat-n.c1{color:var(--musgo-glow)}
+.stat-n.c2{color:var(--oro)}
+.stat-n.c3{color:var(--azul)}
+.stat-n.c4{color:var(--coral)}
+.stat-l{
+  font-family:var(--mono);
+  font-size:.58rem;
+  color:var(--crema-50);
+  margin-top:.5rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+}
+
+/* === SECTION HEADER === */
+.sec-h{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.2rem;
+  flex-wrap:wrap;gap:.8rem;
+  padding-bottom:.8rem;
+  border-bottom:1px solid var(--linea);
+}
+.sec-h h2{
+  font-family:var(--serif);
+  font-size:1.7rem;
+  font-weight:300;
+  letter-spacing:-0.005em;
+}
+.sec-h h2 em{font-style:italic;color:var(--oro-claro);font-weight:400}
+
+/* === FILTERS === */
+.filters{display:flex;gap:.4rem;flex-wrap:wrap}
+.fbtn{
+  font-family:var(--mono);
+  font-size:.6rem;
+  padding:.45rem .9rem;
+  border:1px solid var(--linea);
+  color:var(--crema-50);
+  cursor:pointer;
+  background:none;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  transition:all .2s;
+  border-radius:2px;
+}
+.fbtn:hover{border-color:var(--linea-2);color:var(--crema)}
+.fbtn.on{
+  background:rgba(212,165,71,.1);
+  color:var(--oro);
+  border-color:var(--linea-2);
+}
+
+/* === CAPSULAS === */
+.caps{display:flex;flex-direction:column;gap:1px;margin-bottom:2.5rem;background:var(--linea);border:1px solid var(--linea)}
+.cap{
+  background:var(--noche-2);
+  cursor:pointer;
+  transition:background .25s;
+  overflow:hidden;
+}
+.cap:hover{background:var(--noche-3)}
+.cap-inner{
+  display:flex;
+  padding:1.3rem 1.5rem;
+  gap:1.1rem;
+  align-items:flex-start;
+}
+.cap-icon{
+  width:42px;height:42px;
+  border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+  border:1px solid;
+}
+.cap-icon.t-poema{background:rgba(139,126,200,.1);border-color:rgba(139,126,200,.25)}
+.cap-icon.t-dato{background:rgba(90,158,200,.08);border-color:rgba(90,158,200,.25)}
+.cap-icon.t-carta{background:rgba(90,158,200,.08);border-color:rgba(90,158,200,.25)}
+.cap-icon.t-obituario{background:rgba(208,128,96,.08);border-color:rgba(208,128,96,.25)}
+.cap-icon.t-alerta{background:rgba(212,165,71,.08);border-color:var(--linea-2)}
+.cap-icon.t-ritual{background:rgba(200,122,154,.08);border-color:rgba(200,122,154,.25)}
+.cap-body{flex:1;min-width:0}
+.cap-subj{
+  font-family:var(--serif);
+  font-size:1.25rem;
+  font-weight:500;
+  margin-bottom:.4rem;
+  letter-spacing:-0.005em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cap-meta{
+  display:flex;gap:.5rem;align-items:center;
+  margin-bottom:.55rem;
+  flex-wrap:wrap;
+}
+.cap-tag{
+  font-family:var(--mono);
+  font-size:.52rem;
+  padding:.15rem .55rem;
+  font-weight:500;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.cap-tag.tipo{background:rgba(139,126,200,.12);color:var(--lila)}
+.cap-tag.idioma{background:rgba(74,138,75,.12);color:var(--musgo-glow)}
+.cap-tag.cert{background:rgba(212,165,71,.1);color:var(--oro);letter-spacing:.18em}
+.cap-tag.publica{background:rgba(74,138,75,.18);color:var(--musgo-glow)}
+.cap-date{
+  font-family:var(--mono);
+  font-size:.58rem;
+  color:var(--crema-50);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+.cap-preview{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--crema-50);
+  line-height:1.6;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.cap-exp{display:none;padding:0 1.5rem 1.5rem;border-top:1px solid var(--linea)}
+.cap-exp.open{display:block;padding-top:1.2rem}
+.cap-full{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.05rem;
+  font-weight:300;
+  line-height:1.85;
+  white-space:pre-wrap;
+  margin-bottom:1.3rem;
+  color:var(--crema);
+}
+.cap-actions-primary{
+  display:flex;gap:.5rem;flex-wrap:wrap;
+  padding-bottom:1rem;
+  margin-bottom:1rem;
+  border-bottom:1px dashed var(--linea);
+}
+.act-btn{
+  font-family:var(--mono);
+  font-size:.62rem;
+  padding:.6rem 1.1rem;
+  border-radius:2px;
+  cursor:pointer;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  transition:all .25s;
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  text-decoration:none;
+  border:1px solid;
+}
+.act-cert{
+  background:linear-gradient(135deg, var(--oro), var(--oro-claro));
+  color:var(--noche);
+  border-color:var(--oro);
+  font-weight:600;
+}
+.act-cert:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,165,71,.35)}
+.act-toggle{
+  background:rgba(74,138,75,.08);
+  color:var(--musgo-glow);
+  border-color:rgba(74,138,75,.3);
+}
+.act-toggle:hover{background:rgba(74,138,75,.15)}
+.act-toggle.active{background:rgba(74,138,75,.22);border-color:var(--musgo-glow)}
+.act-toggle.locked{opacity:.55;cursor:not-allowed;background:rgba(240,230,211,.03);color:var(--crema-50);border-color:var(--linea)}
+.act-share-public{
+  background:rgba(90,158,200,.08);
+  color:var(--azul);
+  border-color:rgba(90,158,200,.3);
+}
+.act-share-public:hover{background:rgba(90,158,200,.18)}
+
+.share-row{display:flex;gap:.4rem;flex-wrap:wrap}
+.shr{
+  font-family:var(--mono);
+  font-size:.6rem;
+  padding:.5rem .9rem;
+  border:1px solid var(--linea);
+  background:rgba(212,165,71,.04);
+  color:var(--oro);
+  cursor:pointer;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  transition:all .2s;
+  display:flex;align-items:center;gap:.35rem;
+  border-radius:2px;
+}
+.shr:hover{background:rgba(212,165,71,.12);border-color:var(--linea-2)}
+.shr svg{width:11px;height:11px}
+
+/* === REFERIDOS === */
+.ref{
+  background:linear-gradient(135deg, rgba(74,138,75,.06), rgba(212,165,71,.04));
+  border:1px solid var(--linea);
+  border-radius:2px;
+  padding:1.5rem 1.8rem;
+  margin-bottom:2rem;
+}
+.ref-head{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.ref-head .icon{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.6rem;
+  color:var(--oro);
+  font-variation-settings:"opsz" 144;
+}
+.ref-head h3{
+  font-family:var(--serif);
+  font-size:1.2rem;
+  font-weight:500;
+  letter-spacing:-0.005em;
+}
+.ref h3 em{color:var(--oro-claro);font-style:italic}
+.ref p{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--crema-50);
+  margin-bottom:1.1rem;
+  line-height:1.6;
+}
+.ref strong{color:var(--oro);font-style:normal;font-weight:500}
+.ref-row{display:flex;gap:.5rem;margin-bottom:.8rem}
+.ref-in{
+  flex:1;
+  background:rgba(13,11,8,.6);
+  border:1px solid var(--linea);
+  color:var(--crema);
+  padding:.7rem 1rem;
+  border-radius:2px;
+  font-family:var(--mono);
+  font-size:.78rem;
+  letter-spacing:.05em;
+}
+.ref-in:focus{outline:none;border-color:var(--oro)}
+.ref-btn{
+  background:rgba(212,165,71,.1);
+  color:var(--oro);
+  border:1px solid var(--linea-2);
+  padding:.7rem 1.2rem;
+  border-radius:2px;
+  cursor:pointer;
+  font-family:var(--mono);
+  font-size:.62rem;
+  font-weight:500;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  transition:all .25s;
+  white-space:nowrap;
+}
+.ref-btn:hover{background:rgba(212,165,71,.2);border-color:var(--oro)}
+.ref-stats{
+  font-family:var(--mono);
+  font-size:.65rem;
+  color:var(--crema-50);
+  display:flex;gap:1.5rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.ref-stats strong{color:var(--oro);font-weight:500}
+
+/* === EMPTY === */
+.empty{
+  text-align:center;
+  padding:3.5rem 1.5rem;
+  background:rgba(240,230,211,.03);
+  border:1px dashed var(--linea-2);
+  border-radius:2px;
+}
+.empty .ei{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:3rem;
+  color:var(--oro);
+  margin-bottom:1rem;
+  font-variation-settings:"opsz" 144;
+}
+.empty h3{
+  font-family:var(--serif);
+  font-size:1.4rem;
+  font-weight:400;
+  margin-bottom:.6rem;
+  letter-spacing:-0.005em;
+}
+.empty p{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--crema-50);
+  margin-bottom:1.5rem;
+  line-height:1.6;
+}
+.empty .btn-go{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.85rem 2rem;
+  background:linear-gradient(135deg, var(--oro), var(--oro-claro));
+  color:var(--noche);
+  border-radius:2px;
+  text-decoration:none;
+  font-family:var(--sans);
+  font-size:.78rem;
+  font-weight:600;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  transition:all .35s;
+}
+.empty .btn-go:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,165,71,.4)}
+
+/* === TOAST === */
+.toast{
+  position:fixed;
+  bottom:1.8rem;left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:var(--oro);
+  color:var(--noche);
+  padding:.85rem 1.8rem;
+  border-radius:2px;
+  font-family:var(--sans);
+  font-size:.78rem;
+  font-weight:600;
+  letter-spacing:.05em;
+  opacity:0;
+  transition:all .35s cubic-bezier(.16,1,.3,1);
+  z-index:300;
+  pointer-events:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:600px){.wrap{padding:1.2rem 1rem 4rem}.nav{padding:.7rem 1rem}.nav-links a{font-size:.68rem;padding:.35rem .6rem}.welcome h1{font-size:1.5rem}.prof{flex-wrap:wrap}.prof-actions{width:100%}.quick,.stats{grid-template-columns:repeat(2,1fr)}.cap-inner{padding:.9rem 1rem}.ref-row{flex-direction:column}}
+
+@media(max-width:680px){
+  .wrap{padding:1.5rem 1rem 4rem}
+  .nav{padding:.8rem 1rem}
+  .nav-logo{font-size:.85rem;letter-spacing:.1em}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-links a{font-size:.55rem;padding:.4rem .65rem;letter-spacing:.15em}
+  .nav-links .btn-new{padding:.45rem .85rem}
+  .welcome h1{font-size:1.7rem}
+  .prof{flex-wrap:wrap}
+  .prof-actions{width:100%}
+  .quick,.stats{grid-template-columns:repeat(2,1fr)}
+  .cap-inner{padding:1rem 1.1rem;gap:.85rem}
+  .cap-subj{font-size:1.1rem}
+  .ref-row{flex-direction:column}
+  .ref{padding:1.2rem 1.3rem}
+  .stat-n{font-size:1.9rem}
+}
 </style>
 </head>
 <body>
 <nav class="nav">
-    <a href="/" class="nav-logo">THANOTECTAS</a>
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ntg" x1="110" y1="40" x2="110" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f4d989"/><stop offset="100%" stop-color="#d4a547"/></linearGradient>
+          <linearGradient id="nrg" x1="110" y1="130" x2="110" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#6cc06d"/><stop offset="100%" stop-color="#2d5237"/></linearGradient>
+        </defs>
+        <line x1="40" y1="132" x2="180" y2="132" stroke="#d4a547" stroke-width="0.5" opacity="0.4"/>
+        <path d="M108 132 L108 180 M112 132 L112 180" stroke="url(#nrg)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M108 148 Q94 158 80 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+        <path d="M112 148 Q126 158 140 168" stroke="url(#nrg)" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+        <path d="M108 132 Q109 110 110 72" stroke="url(#ntg)" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M110 90 Q92 76 70 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M110 90 Q128 76 150 66" stroke="url(#ntg)" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="110" cy="72" r="5" fill="#f4d989" opacity="0.95"/>
+        <circle cx="110" cy="72" r="2.5" fill="#fffaee"/>
+      </svg>
+      THANOTECTAS
+    </a>
     <div class="nav-links">
-        <a class="on">📋 Panel</a>
-        <a href="#" onclick="goTo('/oraculo.html');return false">🔮 Oráculo</a>
-        <a href="#" onclick="goTo('/cuenta.html');return false">⚙️ Cuenta</a>
+        <a class="on">Mi Panel</a>
+        <a href="#" onclick="goTo('/oraculo.html');return false">Oráculo</a>
+        <a href="#" onclick="goTo('/cuenta.html');return false">Cuenta</a>
         <a class="btn-new" href="#" onclick="goTo('/oraculo.html');return false">✦ Inscribir</a>
     </div>
 </nav>
-<div class="wrap" id="v-load"><div class="loading"><div class="spinner"></div>Conectando con el Umbral...</div></div>
-<div class="wrap" id="v-auth" style="display:none"><div class="loading"><h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--ocre);margin-bottom:.6rem">Inicia sesión</h2><p style="color:var(--marfil-t);margin-bottom:1.5rem">Necesitas una cuenta para ver tu panel.</p><a href="#" onclick="goTo('/oraculo.html');return false" style="display:inline-block;padding:.6rem 2rem;background:linear-gradient(135deg,var(--musgo),var(--musgo-c));color:var(--marfil);border-radius:6px;text-decoration:none;font-weight:500">Ir al Oráculo</a></div></div>
+<div class="wrap" id="v-load">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p style="font-family:var(--mono);font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--crema-50)">Conectando con el Umbral…</p>
+  </div>
+</div>
+<div class="wrap" id="v-auth" style="display:none">
+  <div class="loading">
+    <h2>Inicia <em>sesión</em></h2>
+    <p style="font-family:var(--serif);font-style:italic;color:var(--crema-50);margin-bottom:1.8rem;font-size:1rem">Necesitas una cuenta para ver tu panel del Archivo del Umbral.</p>
+    <a href="#" onclick="goTo('/oraculo.html');return false" style="display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.2rem;background:linear-gradient(135deg, var(--oro), var(--oro-claro));color:var(--noche);border-radius:2px;text-decoration:none;font-family:var(--sans);font-weight:600;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;transition:all .35s">Ir al Oráculo</a>
+  </div>
+</div>
 <div class="wrap" id="v-panel" style="display:none">
     <div class="welcome" id="welcome"></div>
     <div class="prof" id="prof"></div>
     <div class="publicprofile" id="publicprofile" style="display:none"></div>
     <div class="quick">
-        <a href="#" onclick="goTo('/oraculo.html');return false"><span class="qi">✦</span><span class="ql">Inscribir memoria</span></a>
-        <a href="#" onclick="goTo('/cuenta.html');return false"><span class="qi">⚙️</span><span class="ql">Mi cuenta</span></a>
-        <div onclick="exportAll()"><span class="qi">📥</span><span class="ql">Exportar</span></div>
-        <div onclick="shareRefLink()"><span class="qi">🎁</span><span class="ql">Invitar amigos</span></div>
+        <a href="#" onclick="goTo('/oraculo.html');return false"><span class="qi">✦</span><span class="ql">Inscribir</span></a>
+        <a href="#" onclick="goTo('/generador.html');return false"><span class="qi">🖼</span><span class="ql">Generar imagen</span></a>
+        <div onclick="exportAll()"><span class="qi">⤓</span><span class="ql">Exportar</span></div>
+        <div onclick="shareRefLink()"><span class="qi">❦</span><span class="ql">Invitar</span></div>
     </div>
     <div class="stats" id="stats"></div>
-    <div class="sec-h"><h2>Mis cápsulas</h2><div class="filters" id="filters"></div></div>
+    <div class="sec-h"><h2>Mis <em>cápsulas</em></h2><div class="filters" id="filters"></div></div>
     <div class="caps" id="caps"></div>
     <div class="ref" id="ref-card"></div>
 </div>
@@ -158,7 +761,7 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var noopLock=function(_name,_timeout,fn){return fn();};
 var sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,lock:noopLock}});
 var CU=null,UP=null,caps=[],filt='todas';
-var TM={poema:{icon:'✍️',css:'t-poema',lb:'Poema'},dato:{icon:'📊',css:'t-dato',lb:'Dato'},carta:{icon:'✉️',css:'t-carta',lb:'Carta'},obituario:{icon:'🕯️',css:'t-obituario',lb:'Obituario'},alerta:{icon:'⚠️',css:'t-alerta',lb:'Alerta'},ritual:{icon:'🪻',css:'t-ritual',lb:'Ritual'}};
+var TM={poema:{icon:'📜',css:'t-poema',lb:'Poema'},dato:{icon:'🔬',css:'t-dato',lb:'Dato'},carta:{icon:'✉️',css:'t-carta',lb:'Carta'},obituario:{icon:'🕯️',css:'t-obituario',lb:'Obituario'},alerta:{icon:'⚠️',css:'t-alerta',lb:'Alerta'},ritual:{icon:'🙏',css:'t-ritual',lb:'Ritual'}};
 var PM={gratis:{e:'🌱',lb:'Gratis',mx:3},explorador:{e:'🌿',lb:'Explorador',mx:10},guardian:{e:'🛡️',lb:'Guardián',mx:20},eterno:{e:'✦',lb:'Eterno',mx:999999},admin:{e:'⚡',lb:'Admin',mx:999999}};
 
 async function init(){
@@ -167,7 +770,6 @@ async function init(){
     if(!r.data.session){sh('v-auth');return;}
     CU=r.data.session.user;
 
-    // Usar fetch nativo directo a la API REST para evitar cuelgues del cliente Supabase
     async function fetchPerfil(){
       var sess=await sb.auth.getSession();
       var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
@@ -215,29 +817,28 @@ function sh(id){document.getElementById('v-load').style.display='none';document.
 function wt(ms){return new Promise(function(ok){setTimeout(ok,ms)});}
 
 function planStatusText(){
-  if(UP.es_admin) return '✦ Administrador · acceso ilimitado';
+  if(UP.es_admin) return '✦ <strong>Administrador</strong> · acceso ilimitado';
   if(UP.plan==='eterno') return '✦ <strong>Guardián Eterno</strong> · membresía vitalicia';
   if(UP.plan==='guardian'&&UP.plan_vence_en){
     var d=Math.max(0,Math.ceil((new Date(UP.plan_vence_en)-new Date())/86400000));
-    return '<strong>Membresía activa</strong> · '+d+' días restantes';
+    return '<strong>Membresía Guardián activa</strong> · '+d+' días restantes';
   }
   if(UP.plan==='guardian') return '<strong>Guardián</strong> · membresía activa';
   if(UP.plan==='explorador') return 'Plan <strong>Explorador</strong>';
-  return 'Plan <strong>Gratuito</strong> · <a href="#" onclick="goTo(\'/oraculo.html\');return false" style="color:var(--ocre)">hacerse Guardián →</a>';
+  return 'Plan <strong>Visitante</strong> · <a href="#" onclick="goTo(\'/oraculo.html\');return false">hacerse Guardián →</a>';
 }
 
 function render(){sh('v-panel');
 var plan=UP.plan||'gratis',pc=PM[plan]||PM.gratis,name=UP.nombre||CU.email.split('@')[0],av=UP.avatar||pc.e,cred=UP.consultas_disponibles||0;
 var h=new Date().getHours(),g=h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches';
-document.getElementById('welcome').innerHTML='<h1>'+g+', <em>'+esc(name)+'</em></h1><p>Tu archivo de memorias ecológicas en el Umbral</p>';
+document.getElementById('welcome').innerHTML='<div class="pretitle">Mi Panel</div><h1>'+g+', <em>'+esc(name)+'</em></h1><p>Tu archivo personal de memorias en el Umbral.</p>';
 
-document.getElementById('prof').innerHTML='<div class="prof-av">'+av+'</div><div class="prof-info"><div class="prof-name">'+esc(name)+' <span class="badge badge-'+plan+'">'+pc.lb+'</span></div><div class="prof-email">'+esc(CU.email)+'</div><div class="plan-status">'+planStatusText()+'</div></div><div class="prof-actions"><a class="prof-btn" href="#" onclick="goTo(\'/cuenta.html\');return false">⚙️ Cuenta</a></div>';
+document.getElementById('prof').innerHTML='<div class="prof-av">'+av+'</div><div class="prof-info"><div class="prof-name">'+esc(name)+' <span class="badge badge-'+plan+'">'+pc.lb+'</span></div><div class="prof-email">'+esc(CU.email)+'</div><div class="plan-status">'+planStatusText()+'</div></div><div class="prof-actions"><a class="prof-btn" href="#" onclick="goTo(\'/cuenta.html\');return false">⚙ Cuenta</a></div>';
 
-// Tarjeta de perfil público
 if(UP.slug && UP.perfil_publico){
   var publicUrl='https://thanotectas.com/g/'+UP.slug;
   document.getElementById('publicprofile').style.display='flex';
-  document.getElementById('publicprofile').innerHTML='<div class="publicprofile-info"><div class="publicprofile-label">🌐 Tu perfil público como Guardián</div><div class="publicprofile-url">'+publicUrl+'</div></div><a class="publicprofile-btn" href="/g/'+UP.slug+'" target="_blank">Ver perfil →</a><button class="publicprofile-btn" onclick="copyPublic(\''+publicUrl+'\')">Copiar link</button>';
+  document.getElementById('publicprofile').innerHTML='<div class="publicprofile-info"><div class="publicprofile-label">✦ Tu perfil público</div><div class="publicprofile-url">'+publicUrl+'</div></div><a class="publicprofile-btn" href="/g/'+UP.slug+'" target="_blank">Ver perfil</a><button class="publicprofile-btn" onclick="copyPublic(\''+publicUrl+'\')">Copiar link</button>';
 }
 
 var tipos={};caps.forEach(function(c){tipos[c.tipo]=1;});
@@ -245,7 +846,7 @@ var publicas=caps.filter(function(c){return c.es_publica;}).length;
 document.getElementById('stats').innerHTML='<div class="stat"><div class="stat-n c1">'+caps.length+'</div><div class="stat-l">Cápsulas</div></div><div class="stat"><div class="stat-n c2">'+publicas+'</div><div class="stat-l">Públicas</div></div><div class="stat"><div class="stat-n c3">'+Object.keys(tipos).length+'</div><div class="stat-l">Tipos</div></div><div class="stat"><div class="stat-n c4">'+(UP.es_admin?'∞':cred)+'</div><div class="stat-l">Créditos</div></div>';
 
 var code=UP.codigo_referido||CU.id.substring(0,8).toUpperCase(),link='https://thanotectas.com/bienvenida.html?ref='+code,ex=UP.referidos_exitosos||0;
-document.getElementById('ref-card').innerHTML='<div class="ref-head"><span>🎁</span><h3>Invita y gana 2 cápsulas gratis</h3></div><p>Comparte tu enlace. Cuando alguien se registre, <strong>ambos reciben 2 consultas extra</strong>.</p><div class="ref-row"><input class="ref-in" id="ref-link" value="'+link+'" readonly onclick="this.select()"><button class="ref-btn" onclick="copyRef()">Copiar</button><button class="ref-btn" onclick="shareRefLink()">Compartir</button></div><div class="ref-stats"><span>Referidos: <strong>'+ex+'</strong></span><span>Ganadas: <strong>'+(ex*2)+'</strong></span></div>';
+document.getElementById('ref-card').innerHTML='<div class="ref-head"><span class="icon">❦</span><h3>Invita y gana <em>2 cápsulas</em> gratis</h3></div><p>Comparte tu enlace. Cuando alguien se registre, <strong>ambos reciben 2 inscripciones extra</strong>.</p><div class="ref-row"><input class="ref-in" id="ref-link" value="'+link+'" readonly onclick="this.select()"><button class="ref-btn" onclick="copyRef()">Copiar</button><button class="ref-btn" onclick="shareRefLink()">Compartir</button></div><div class="ref-stats"><span>Referidos · <strong>'+ex+'</strong></span><span>Ganadas · <strong>'+(ex*2)+'</strong></span></div>';
 
 renderFilters();renderCaps();}
 
@@ -258,18 +859,25 @@ else if(filt==='publicas') list=caps.filter(function(c){return c.es_publica;});
 else list=caps.filter(function(c){return c.tipo===filt;});
 
 var el=document.getElementById('caps');
-if(list.length===0){el.innerHTML='<div class="empty"><div class="ei">🌍</div><h3>'+(caps.length===0?'Aún no tienes cápsulas':'Sin cápsulas en este filtro')+'</h3><p>'+(caps.length===0?'Visita el Oráculo para inscribir tu primera memoria.':'Prueba otro filtro.')+'</p><a class="btn-go" href="#" onclick="goTo(\'/oraculo.html\');return false">Ir al Oráculo</a></div>';return;}
+if(list.length===0){el.innerHTML='<div class="empty"><div class="ei">❦</div><h3>'+(caps.length===0?'Aún no tienes cápsulas':'Sin cápsulas en este filtro')+'</h3><p>'+(caps.length===0?'Visita el Oráculo para inscribir tu primera memoria.':'Prueba otro filtro.')+'</p><a class="btn-go" href="#" onclick="goTo(\'/oraculo.html\');return false">Ir al Oráculo</a></div>';return;}
 
 el.innerHTML=list.map(function(c,i){
 var tc=TM[c.tipo]||{icon:'📝',css:'t-poema',lb:c.tipo};
 var f=new Date(c.created_at).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'});
 var pv=(c.contenido||'').substring(0,200);
 var puedeHacerPublica=(UP.plan==='guardian'||UP.plan==='eterno'||UP.es_admin);
-var toggleLabel=c.es_publica?'✓ Pública en el archivo':(puedeHacerPublica?'🔒 Hacer pública':'🔒 Requiere plan Guardián');
+var toggleLabel=c.es_publica?'✓ Pública en el Archivo':(puedeHacerPublica?'🔒 Hacer pública':'🔒 Requiere Guardián');
 var toggleClass=c.es_publica?'act-toggle active':(puedeHacerPublica?'act-toggle':'act-toggle locked');
 var publicLink=c.es_publica&&c.numero_certificado?'https://thanotectas.com/certificado.html?n='+c.numero_certificado:'';
+var tieneFotoPropia = c.imagen_url && /supabase\.co\/storage\/.*capsulas-imagenes/.test(c.imagen_url);
+var iconoHtml = tieneFotoPropia
+  ? '<div class="cap-icon" style="background-image:url(\''+esc(c.imagen_url)+'\');background-size:cover;background-position:center;border-color:var(--linea-2)"></div>'
+  : '<div class="cap-icon '+tc.css+'">'+tc.icon+'</div>';
+var fotoExpandHtml = tieneFotoPropia
+  ? '<figure style="margin:0 0 1.3rem;text-align:center"><img src="'+esc(c.imagen_url)+'" alt="'+esc(c.sujeto||'')+'" loading="lazy" style="max-width:100%;max-height:400px;border:1px solid var(--linea);border-radius:2px;display:inline-block"/></figure>'
+  : '';
 
-return '<div class="cap"><div class="cap-inner" onclick="togCap('+i+')"><div class="cap-icon '+tc.css+'">'+tc.icon+'</div><div class="cap-body"><div class="cap-subj">'+esc(c.sujeto||'Sin título')+'</div><div class="cap-meta">'+(c.numero_certificado?'<span class="cap-tag cert">'+esc(c.numero_certificado)+'</span>':'')+'<span class="cap-tag tipo">'+tc.lb+'</span><span class="cap-tag idioma">'+(c.idioma||'ES').toUpperCase()+'</span>'+(c.es_publica?'<span class="cap-tag publica">✦ Pública</span>':'')+'<span class="cap-date">'+f+'</span></div><div class="cap-preview">«'+esc(pv)+'...»</div></div></div><div class="cap-exp" id="ce'+i+'"><div class="cap-full">'+esc(c.contenido||'')+'</div><div class="cap-actions-primary"><a class="act-btn act-cert" href="/certificado.html?id='+c.id+'" target="_blank">📜 Descargar Certificado PDF</a><button class="act-btn '+toggleClass+'" onclick="togglePublica(\''+c.id+'\','+(!c.es_publica)+','+i+')">'+toggleLabel+'</button>'+(publicLink?'<button class="act-btn act-share-public" onclick="copyPublic(\''+publicLink+'\')">🔗 Copiar link público</button>':'')+'</div><div class="share-row"><button class="shr" onclick="event.stopPropagation();sX('+i+')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button><button class="shr" onclick="event.stopPropagation();sWA('+i+')">💬 WhatsApp</button><button class="shr" onclick="event.stopPropagation();sFB('+i+')">📘 Facebook</button><button class="shr" onclick="event.stopPropagation();sLI('+i+')">💼 LinkedIn</button><button class="shr" onclick="event.stopPropagation();sCopy('+i+')">📋 Copiar</button><button class="shr" onclick="event.stopPropagation();sEmail('+i+')">📧 Email</button></div></div></div>';
+return '<div class="cap"><div class="cap-inner" onclick="togCap('+i+')">'+iconoHtml+'<div class="cap-body"><div class="cap-subj">'+esc(c.sujeto||'Sin título')+'</div><div class="cap-meta">'+(c.numero_certificado?'<span class="cap-tag cert">'+esc(c.numero_certificado)+'</span>':'')+'<span class="cap-tag tipo">'+tc.lb+'</span><span class="cap-tag idioma">'+(c.idioma||'ES').toUpperCase()+'</span>'+(c.es_publica?'<span class="cap-tag publica">✦ Pública</span>':'')+(tieneFotoPropia?'<span class="cap-tag tipo" style="background:rgba(74,138,75,.12);color:var(--musgo-glow)">📷 Con foto</span>':'')+'<span class="cap-date">'+f+'</span></div><div class="cap-preview">«'+esc(pv)+'…»</div></div></div><div class="cap-exp" id="ce'+i+'">'+fotoExpandHtml+'<div class="cap-full">'+esc(c.contenido||'')+'</div><div class="cap-actions-primary"><a class="act-btn act-cert" href="/certificado.html?id='+c.id+'" target="_blank">📜 Certificado PDF</a><button class="act-btn '+toggleClass+'" onclick="togglePublica(\''+c.id+'\','+(!c.es_publica)+','+i+')">'+toggleLabel+'</button>'+(publicLink?'<button class="act-btn act-share-public" onclick="copyPublic(\''+publicLink+'\')">🔗 Link público</button>':'')+'<a class="act-btn act-share-public" href="/generador.html" style="background:rgba(212,165,71,.08);color:var(--oro);border-color:var(--linea-2)" target="_blank">🖼 Imagen</a></div><div class="share-row"><button class="shr" onclick="event.stopPropagation();sX('+i+')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button><button class="shr" onclick="event.stopPropagation();sWA('+i+')">WhatsApp</button><button class="shr" onclick="event.stopPropagation();sFB('+i+')">Facebook</button><button class="shr" onclick="event.stopPropagation();sLI('+i+')">LinkedIn</button><button class="shr" onclick="event.stopPropagation();sCopy('+i+')">Copiar</button><button class="shr" onclick="event.stopPropagation();sEmail('+i+')">Email</button></div></div></div>';
 }).join('');}
 
 function togCap(i){var e=document.getElementById('ce'+i);if(e)e.classList.toggle('open');}
@@ -277,12 +885,11 @@ function setF(f){filt=f;renderFilters();renderCaps();}
 
 async function togglePublica(capsulaId, nuevoValor, idx){
   if(!(UP.plan==='guardian'||UP.plan==='eterno'||UP.es_admin)){
-    toast('⚠️ Hacer pública una cápsula requiere plan Guardián');
+    toast('⚠️ Hacer pública requiere plan Guardián');
     return;
   }
   event.stopPropagation();
 
-  // Usar RPC dedicada (más rápida y blindada) con fetch nativo + timeout
   try{
     var sess=await sb.auth.getSession();
     var token=sess.data&&sess.data.session?sess.data.session.access_token:null;
@@ -318,10 +925,9 @@ async function togglePublica(capsulaId, nuevoValor, idx){
     }
 
     caps[idx].es_publica=nuevoValor;
-    toast(nuevoValor?'✓ Cápsula pública en el archivo':'🔒 Cápsula privada');
+    toast(nuevoValor?'✓ Cápsula pública en el Archivo':'🔒 Cápsula privada');
     renderCaps();
 
-    // actualizar stats
     var publicas=caps.filter(function(c){return c.es_publica;}).length;
     var stEl=document.getElementById('stats');
     if(stEl){var stn=stEl.querySelectorAll('.stat-n')[1];if(stn)stn.textContent=publicas;}
@@ -338,7 +944,7 @@ function copyRef(){navigator.clipboard.writeText(document.getElementById('ref-li
 function shareRefLink(){
   var code=UP?UP.codigo_referido||CU.id.substring(0,8).toUpperCase():'';
   var url='https://thanotectas.com/bienvenida.html?ref='+encodeURIComponent(code);
-  var texto='🌿 Te invito a Thanotectas — Guardianes del Umbral\n\nHonra lo que la Tierra está perdiendo. Genera cápsulas de memoria ecológica con inteligencia artificial.\n\n✦ Nos regalan 2 cápsulas extra a los dos:\n'+url;
+  var texto='🌿 Te invito a Thanotectas — Archivo del Umbral\n\n¿Qué pequeño fragmento de vida salvarías para siempre? Inscribí cápsulas de memoria contra el olvido.\n\n✦ Nos regalan 2 cápsulas extra a los dos:\n'+url;
   if(navigator.share){navigator.share({title:'Thanotectas',text:texto,url:url});}
   else{navigator.clipboard.writeText(url).then(function(){toast('Enlace copiado ✓');});}
 }
@@ -351,7 +957,7 @@ function sLI(i){var c=caps[i];var url=c.es_publica&&c.numero_certificado?'https:
 function sCopy(i){navigator.clipboard.writeText(caps[i].contenido||'').then(function(){toast('Cápsula copiada ✓');});}
 function sEmail(i){var c=caps[i];window.open('mailto:?subject='+encodeURIComponent('Cápsula Thanotectas: '+c.sujeto)+'&body='+encodeURIComponent(gTxt(i)));}
 
-function exportAll(){if(caps.length===0){toast('No hay cápsulas');return;}var t='═══════════════════════════════════════\n  THANOTECTAS — Guardianes del Umbral\n═══════════════════════════════════════\n\n';caps.forEach(function(c,i){var f=new Date(c.created_at).toLocaleDateString('es-CO');t+='── Cápsula '+(i+1)+' ──────────────────\n'+(c.numero_certificado?'Nº archivo: '+c.numero_certificado+'\n':'')+'Tipo: '+((TM[c.tipo]||{}).lb||c.tipo)+'\nSujeto: '+c.sujeto+'\nIdioma: '+(c.idioma||'es').toUpperCase()+'\nFecha: '+f+'\n\n'+(c.contenido||'')+'\n\n';});t+='═══════════════════════════════════════\nthanotectas.com\n';var b=new Blob([t],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='thanotectas-capsulas-'+new Date().toISOString().slice(0,10)+'.txt';a.click();toast('Cápsulas exportadas ✓');}
+function exportAll(){if(caps.length===0){toast('No hay cápsulas');return;}var t='═══════════════════════════════════════\n  THANOTECTAS — Archivo del Umbral\n═══════════════════════════════════════\n\n';caps.forEach(function(c,i){var f=new Date(c.created_at).toLocaleDateString('es-CO');t+='── Cápsula '+(i+1)+' ──────────────────\n'+(c.numero_certificado?'Nº archivo: '+c.numero_certificado+'\n':'')+'Tipo: '+((TM[c.tipo]||{}).lb||c.tipo)+'\nSujeto: '+c.sujeto+'\nIdioma: '+(c.idioma||'es').toUpperCase()+'\nFecha: '+f+'\n\n'+(c.contenido||'')+'\n\n';});t+='═══════════════════════════════════════\nthanotectas.com\n';var b=new Blob([t],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='thanotectas-capsulas-'+new Date().toISOString().slice(0,10)+'.txt';a.click();toast('Cápsulas exportadas ✓');}
 
 function goTo(url){window.location.href=url;}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
