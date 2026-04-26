@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generador de Cápsulas — Thanotectas</title>
-<meta name="description" content="Convierte cualquier cápsula del Archivo del Umbral en imagen compartible para redes.">
+<meta name="description" content="¿Qué pequeño fragmento de vida salvarías para siempre? El Oráculo lo convierte en cápsula visual lista para compartir.">
+<meta property="og:title" content="Generador de Cápsulas — Thanotectas">
+<meta property="og:description" content="Crea una cápsula visual del Archivo del Umbral en segundos. Lista para compartir.">
+<meta property="og:image" content="https://thanotectas.com/img/hero-capsula-mano.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +30,7 @@
   --crema-30:rgba(240,230,211,.3);
   --linea:rgba(212,165,71,.18);
   --linea-2:rgba(212,165,71,.35);
+  --rojo:#c47050;
   --serif:'Fraunces',Georgia,serif;
   --sans:'Manrope',system-ui,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -53,6 +57,8 @@ body::before{
     radial-gradient(ellipse at 20% 0%, rgba(74,138,75,.08) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 100%, rgba(212,165,71,.05) 0%, transparent 50%);
 }
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
 .top-bar{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
@@ -72,6 +78,7 @@ body::before{
   letter-spacing:.18em;
   text-transform:uppercase;
 }
+.bar-right{display:flex;gap:.7rem;align-items:center}
 .bar-link{
   font-family:var(--mono);
   font-size:.65rem;
@@ -82,6 +89,22 @@ body::before{
   transition:color .3s;
 }
 .bar-link:hover{color:var(--oro)}
+.user-pill{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.32rem .8rem .32rem .42rem;
+  border:1px solid var(--linea);
+  border-radius:100px;
+  background:rgba(212,165,71,.04);
+  font-family:var(--sans);
+  font-size:.72rem;
+}
+.user-pill .av{
+  width:24px;height:24px;
+  border-radius:50%;
+  background:var(--bosque);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;
+}
 
 main{
   position:relative;z-index:2;
@@ -90,7 +113,7 @@ main{
   margin:0 auto;
 }
 
-.hero-block{text-align:center;margin-bottom:3rem}
+.hero-block{text-align:center;margin-bottom:2.5rem}
 .brand-sub{
   font-family:var(--mono);
   font-size:.62rem;
@@ -99,35 +122,74 @@ main{
   color:var(--crema-50);
   margin-bottom:.7rem;
 }
+.brand-sub::before{content:'✦  '}
+.brand-sub::after{content:'  ✦'}
 .hero-title{
   font-family:var(--serif);
-  font-size:clamp(1.9rem,4vw,2.8rem);
+  font-size:clamp(1.9rem,4.2vw,3rem);
   font-weight:300;
-  line-height:1.15;
-  letter-spacing:-0.01em;
-  margin-bottom:.8rem;
+  line-height:1.12;
+  letter-spacing:-0.012em;
+  margin-bottom:.9rem;
 }
 .hero-title em{font-style:italic;color:var(--oro-claro);font-weight:400}
 .hero-desc{
   font-family:var(--serif);
   font-style:italic;
-  font-size:1rem;
+  font-size:1.05rem;
   color:var(--crema-50);
-  max-width:620px;
+  max-width:680px;
   margin:0 auto;
   line-height:1.7;
+}
+
+/* === Mode Tabs (Visitante / Guardián) === */
+.mode-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--linea);
+  border:1px solid var(--linea);
+  margin:1.8rem auto 0;
+  max-width:560px;
+}
+.mode-tab{
+  background:var(--noche-2);
+  padding:.85rem .8rem;
+  cursor:pointer;
+  text-align:center;
+  border:none;
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--crema-50);
+  transition:all .3s;
+}
+.mode-tab:hover{background:var(--noche-3);color:var(--crema)}
+.mode-tab.active{background:rgba(212,165,71,.12);color:var(--oro)}
+.mode-tab.disabled{opacity:.4;cursor:not-allowed}
+.mode-tab .badge{
+  display:inline-block;
+  margin-left:.5rem;
+  padding:.15rem .45rem;
+  background:rgba(74,138,75,.15);
+  color:var(--musgo-glow);
+  font-size:.55rem;
+  border-radius:2px;
+  letter-spacing:.18em;
 }
 
 .grid-main{
   display:grid;
   grid-template-columns:1fr 1.2fr;
   gap:2rem;
+  margin-top:2rem;
 }
 
-/* === COLUMNA IZQUIERDA: SELECTOR === */
-.selector-col{
-  display:flex;flex-direction:column;gap:1.5rem;
-}
+/* === COLUMNA IZQUIERDA === */
+.selector-col{display:flex;flex-direction:column;gap:1.5rem}
+
 .section-title{
   font-family:var(--mono);
   font-size:.65rem;
@@ -139,11 +201,69 @@ main{
 }
 .section-title::before{content:'';width:18px;height:1px;background:var(--oro)}
 
+/* === Modo Visitante: Form === */
+.field{display:flex;flex-direction:column;gap:.5rem}
+.field input,.field textarea{
+  background:rgba(13,11,8,.6);
+  border:1px solid var(--linea);
+  border-radius:2px;
+  padding:.95rem 1.1rem;
+  font-family:var(--serif);
+  font-size:1.05rem;
+  color:var(--crema);
+  transition:border-color .3s;
+  outline:none;
+  width:100%;
+  resize:none;
+  font-weight:300;
+}
+.field input:focus,.field textarea:focus{border-color:var(--oro)}
+.field input::placeholder,.field textarea::placeholder{
+  color:var(--crema-30);
+  font-style:italic;
+}
+.field-hint{
+  font-family:var(--mono);
+  font-size:.6rem;
+  color:var(--crema-50);
+  letter-spacing:.1em;
+}
+
+/* Tipo grid */
+.tipo-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--linea);
+  border:1px solid var(--linea);
+}
+.tipo-btn{
+  background:rgba(74,138,75,.04);
+  padding:.8rem .5rem;
+  cursor:pointer;
+  border:none;
+  text-align:center;
+  font-family:var(--sans);
+  color:var(--crema-50);
+  transition:all .3s;
+  display:flex;flex-direction:column;align-items:center;gap:.3rem;
+}
+.tipo-btn:hover{background:rgba(74,138,75,.1);color:var(--crema)}
+.tipo-btn.active{background:rgba(74,138,75,.2);color:var(--musgo-glow)}
+.tipo-btn .ico{font-size:1.2rem}
+.tipo-btn .nm{
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+/* Cápsulas list (Guardián) */
 .capsulas-list{
   background:rgba(240,230,211,.04);
   border:1px solid var(--linea);
   border-radius:2px;
-  max-height:420px;
+  max-height:380px;
   overflow-y:auto;
 }
 .capsula-item{
@@ -155,45 +275,33 @@ main{
 .capsula-item:last-child{border-bottom:none}
 .capsula-item:hover{background:rgba(212,165,71,.06)}
 .capsula-item.active{background:rgba(212,165,71,.1);border-left:3px solid var(--oro);padding-left:calc(1.1rem - 3px)}
-.cap-it-head{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:.4rem;
-}
-.cap-it-num{
-  font-family:var(--mono);
-  font-size:.55rem;
-  letter-spacing:.22em;
-  color:var(--oro);
-  text-transform:uppercase;
-}
-.cap-it-tipo{
-  font-family:var(--mono);
-  font-size:.55rem;
-  letter-spacing:.22em;
-  color:var(--musgo-glow);
-  text-transform:uppercase;
-}
-.cap-it-sujeto{
-  font-family:var(--serif);
-  font-size:1.1rem;
-  font-weight:500;
-  color:var(--crema);
-  letter-spacing:-0.005em;
-  margin-bottom:.3rem;
-}
-.cap-it-prev{
-  font-family:var(--serif);
-  font-style:italic;
-  font-size:.85rem;
-  color:var(--crema-50);
-  line-height:1.55;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
+.cap-it-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.cap-it-num{font-family:var(--mono);font-size:.55rem;letter-spacing:.22em;color:var(--oro);text-transform:uppercase}
+.cap-it-tipo{font-family:var(--mono);font-size:.55rem;letter-spacing:.22em;color:var(--musgo-glow);text-transform:uppercase}
+.cap-it-sujeto{font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--crema);letter-spacing:-0.005em;margin-bottom:.3rem}
+.cap-it-prev{font-family:var(--serif);font-style:italic;font-size:.85rem;color:var(--crema-50);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* === FORMATO SELECTOR === */
+.list-toggle{
+  display:flex;
+  gap:.5rem;
+  font-family:var(--mono);
+  font-size:.6rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:.6rem;
+}
+.list-toggle button{
+  flex:1;
+  padding:.5rem;
+  background:transparent;
+  border:1px solid var(--linea);
+  color:var(--crema-50);
+  cursor:pointer;
+  transition:all .3s;
+}
+.list-toggle button.active{border-color:var(--oro);color:var(--oro);background:rgba(212,165,71,.05)}
+
+/* Formato grid */
 .formato-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -213,31 +321,16 @@ main{
 }
 .formato-btn:hover{background:var(--noche-3);color:var(--crema)}
 .formato-btn.active{background:rgba(212,165,71,.12);color:var(--oro)}
-.formato-icon{
-  display:block;
-  margin:0 auto .35rem;
-  background:currentColor;
-  opacity:.4;
-}
+.formato-icon{display:block;margin:0 auto .35rem;background:currentColor;opacity:.4}
 .formato-btn.active .formato-icon{opacity:.8}
 .formato-icon.f9-16{width:14px;height:24px}
 .formato-icon.f1-1{width:22px;height:22px}
 .formato-icon.f16-9{width:24px;height:14px}
-.formato-name{
-  font-family:var(--mono);
-  font-size:.6rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
-.formato-dim{
-  font-family:var(--mono);
-  font-size:.55rem;
-  letter-spacing:.1em;
-  color:var(--crema-30);
-  margin-top:.2rem;
-}
+.formato-name{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase}
+.formato-dim{font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;color:var(--crema-30);margin-top:.2rem}
 
-.btn-download{
+/* Buttons */
+.btn-primary{
   display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
   padding:1.05rem 2rem;
   background:linear-gradient(135deg, var(--oro), var(--oro-claro));
@@ -253,29 +346,61 @@ main{
   transition:all .35s;
   width:100%;
 }
-.btn-download:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,165,71,.4)}
-.btn-download:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-.empty-state{
-  background:rgba(240,230,211,.04);
-  border:1px solid var(--linea);
-  border-radius:2px;
-  padding:2.5rem 1.5rem;
-  text-align:center;
-}
-.empty-state p{
-  font-family:var(--serif);
-  font-style:italic;
-  color:var(--crema-50);
-  margin-bottom:1rem;
-}
-.empty-state a{
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,165,71,.4)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-secondary{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.85rem 1.5rem;
+  background:transparent;
+  border:1px solid var(--linea-2);
   color:var(--oro);
   font-family:var(--mono);
   font-size:.7rem;
-  letter-spacing:.18em;
+  letter-spacing:.22em;
   text-transform:uppercase;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .3s;
   text-decoration:none;
+  width:100%;
+}
+.btn-secondary:hover{border-color:var(--oro);background:rgba(212,165,71,.08)}
+
+.status{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.15em;
+  text-align:center;
+  min-height:1rem;
+  margin-top:.3rem;
+}
+.status.ok{color:var(--musgo-glow)}
+.status.err{color:var(--rojo)}
+.status.info{color:var(--crema-50)}
+
+/* Limit reached banner */
+.limit-banner{
+  background:linear-gradient(135deg, rgba(212,165,71,.1), rgba(212,165,71,.03));
+  border:1px solid var(--linea-2);
+  border-radius:2px;
+  padding:1.4rem 1.5rem;
+  text-align:center;
+}
+.limit-banner h3{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.2rem;
+  color:var(--oro);
+  margin-bottom:.5rem;
+  font-weight:400;
+}
+.limit-banner p{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.95rem;
+  color:var(--crema);
+  line-height:1.65;
+  margin-bottom:1.2rem;
 }
 
 /* === COLUMNA DERECHA: PREVIEW === */
@@ -302,24 +427,48 @@ main{
   display:block;
   box-shadow:0 12px 60px rgba(0,0,0,.5);
 }
-.preview-frame.empty{
+.preview-frame.empty,.preview-frame.loading{
   font-family:var(--serif);
   font-style:italic;
   color:var(--crema-30);
   text-align:center;
+  flex-direction:column;
+  gap:1rem;
 }
+.preview-frame.loading{color:var(--oro)}
+.ring{
+  width:50px;height:50px;
+  border:1px solid var(--linea);
+  border-top-color:var(--oro);
+  border-radius:50%;
+  animation:spin 2s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(244,217,137,.3));
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* === STATUS === */
-.status{
-  font-family:var(--mono);
-  font-size:.7rem;
-  letter-spacing:.15em;
+/* CTA after generation */
+.cta-after{
+  background:rgba(74,138,75,.06);
+  border:1px solid rgba(74,138,75,.2);
+  border-radius:2px;
+  padding:1.2rem 1.4rem;
   text-align:center;
-  min-height:1rem;
-  margin-top:.5rem;
 }
-.status.ok{color:var(--musgo-glow)}
-.status.err{color:#c47050}
+.cta-after p{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:.92rem;
+  color:var(--crema);
+  margin-bottom:.9rem;
+}
+.cta-after a{
+  color:var(--oro);
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  text-decoration:none;
+}
 
 footer{
   position:relative;z-index:2;
@@ -328,13 +477,7 @@ footer{
   border-top:1px solid var(--linea);
   margin-top:3rem;
 }
-footer p{
-  font-family:var(--mono);
-  font-size:.62rem;
-  color:var(--crema-50);
-  letter-spacing:.2em;
-  text-transform:uppercase;
-}
+footer p{font-family:var(--mono);font-size:.62rem;color:var(--crema-50);letter-spacing:.2em;text-transform:uppercase}
 footer a{color:var(--oro);text-decoration:none}
 
 @media(max-width:880px){
@@ -346,10 +489,13 @@ footer a{color:var(--oro);text-decoration:none}
   .top-bar{padding:.85rem 1rem}
   .bar-name{font-size:.85rem;letter-spacing:.1em}
   main{padding:5rem 1rem 3rem}
+  .mode-tab{font-size:.55rem;letter-spacing:.15em}
 }
 </style>
 </head>
 <body>
+
+<canvas id="stars"></canvas>
 
 <header class="top-bar">
   <a href="/" class="bar-logo">
@@ -370,63 +516,128 @@ footer a{color:var(--oro);text-decoration:none}
     </svg>
     <span class="bar-name">THANOTECTAS</span>
   </a>
-  <a href="/oraculo.html" class="bar-link">← Volver al Oráculo</a>
+  <div class="bar-right">
+    <a href="/oraculo.html" class="bar-link">Oráculo</a>
+    <div class="user-pill" id="user-pill" style="display:none">
+      <div class="av">🌿</div>
+      <span id="user-name"></span>
+    </div>
+    <a href="/oraculo.html" class="bar-link" id="login-link">Iniciar sesión</a>
+  </div>
 </header>
 
 <main>
 
 <div class="hero-block">
-  <div class="brand-sub">Generador de Imágenes</div>
-  <h1 class="hero-title">Convierte tu cápsula en <em>imagen compartible</em></h1>
-  <p class="hero-desc">Elige una cápsula del Archivo Colectivo, selecciona el formato (Stories, Feed o X) y descarga tu imagen lista para compartir.</p>
+  <div class="brand-sub">Generador de Cápsulas</div>
+  <h1 class="hero-title">¿Qué pequeño <em>fragmento de vida</em><br>salvarías para siempre?</h1>
+  <p class="hero-desc">Nombra lo que el mundo está perdiendo. El Oráculo lo convertirá en una cápsula visual lista para compartir. <strong style="color:var(--oro)">Tu primera cápsula es gratis.</strong></p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-visitante" onclick="setMode('visitante')">Generar nueva</button>
+    <button class="mode-tab" id="tab-guardian" onclick="setMode('guardian')">Mis cápsulas <span class="badge" id="guardian-badge">login</span></button>
+  </div>
 </div>
 
 <div class="grid-main">
 
-  <!-- COLUMNA IZQUIERDA: SELECTOR -->
+  <!-- COLUMNA IZQUIERDA -->
   <div class="selector-col">
 
-    <div>
-      <div class="section-title">Elegí una cápsula</div>
-      <div class="capsulas-list" id="capsulas-list">
-        <div style="padding:2rem 1.5rem;text-align:center;font-family:var(--serif);font-style:italic;color:var(--crema-50)">
-          Cargando del Archivo…
+    <!-- MODO VISITANTE: Form Gemini -->
+    <div id="mode-visitante-content">
+      <div id="form-area">
+        <div class="section-title">Nombra tu fragmento</div>
+        <div class="field">
+          <input id="inp-sujeto" type="text" maxlength="80" placeholder="Ej: El roble de mi infancia"/>
+          <div class="field-hint">Una especie, un río, un saber, un lugar, un sonido…</div>
         </div>
+
+        <div class="section-title" style="margin-top:1.5rem">Tono de la cápsula</div>
+        <div class="tipo-grid">
+          <button class="tipo-btn active" data-tipo="poema" onclick="setTipo(this,'poema')"><span class="ico">📜</span><span class="nm">Poema</span></button>
+          <button class="tipo-btn" data-tipo="obituario" onclick="setTipo(this,'obituario')"><span class="ico">🕯️</span><span class="nm">Obituario</span></button>
+          <button class="tipo-btn" data-tipo="carta" onclick="setTipo(this,'carta')"><span class="ico">✉️</span><span class="nm">Carta</span></button>
+          <button class="tipo-btn" data-tipo="ritual" onclick="setTipo(this,'ritual')"><span class="ico">🙏</span><span class="nm">Ritual</span></button>
+        </div>
+
+        <div class="section-title" style="margin-top:1.5rem">Formato</div>
+        <div class="formato-grid">
+          <button class="formato-btn active" data-formato="9:16" onclick="setFormato(this,'9:16')">
+            <span class="formato-icon f9-16"></span>
+            <div class="formato-name">9:16</div>
+            <div class="formato-dim">Stories</div>
+          </button>
+          <button class="formato-btn" data-formato="1:1" onclick="setFormato(this,'1:1')">
+            <span class="formato-icon f1-1"></span>
+            <div class="formato-name">1:1</div>
+            <div class="formato-dim">Feed</div>
+          </button>
+          <button class="formato-btn" data-formato="16:9" onclick="setFormato(this,'16:9')">
+            <span class="formato-icon f16-9"></span>
+            <div class="formato-name">16:9</div>
+            <div class="formato-dim">X / blog</div>
+          </button>
+        </div>
+
+        <button class="btn-primary" id="btn-generar" onclick="generarConGemini()" style="margin-top:1.4rem">🪄 Generar cápsula</button>
+        <div class="status" id="status-gen"></div>
+      </div>
+
+      <!-- Limit reached -->
+      <div class="limit-banner" id="limit-banner" style="display:none">
+        <h3>Ya generaste tu cápsula de hoy 🌿</h3>
+        <p>Crea una cuenta y obtén <strong>3 cápsulas adicionales gratuitas</strong>, cada una con certificado permanente que perdura en el Archivo del Umbral.</p>
+        <a href="/oraculo.html" class="btn-secondary">Crear cuenta · Es gratis</a>
       </div>
     </div>
 
-    <div>
-      <div class="section-title">Formato</div>
+    <!-- MODO GUARDIÁN: Lista de cápsulas -->
+    <div id="mode-guardian-content" style="display:none">
+      <div class="section-title">Cápsulas disponibles</div>
+      <div class="list-toggle">
+        <button class="active" id="src-mias" onclick="setListaSource('mias')">Mis cápsulas</button>
+        <button id="src-publicas" onclick="setListaSource('publicas')">Archivo público</button>
+      </div>
+      <div class="capsulas-list" id="capsulas-list">
+        <div style="padding:2rem 1.5rem;text-align:center;font-family:var(--serif);font-style:italic;color:var(--crema-50)">Cargando…</div>
+      </div>
+
+      <div class="section-title" style="margin-top:1.5rem">Formato</div>
       <div class="formato-grid">
-        <button class="formato-btn active" data-formato="9:16" onclick="seleccionarFormato(this,'9:16')">
+        <button class="formato-btn active" data-formato="9:16" onclick="setFormato(this,'9:16')">
           <span class="formato-icon f9-16"></span>
           <div class="formato-name">9:16</div>
-          <div class="formato-dim">1080×1920 · Stories</div>
+          <div class="formato-dim">Stories</div>
         </button>
-        <button class="formato-btn" data-formato="1:1" onclick="seleccionarFormato(this,'1:1')">
+        <button class="formato-btn" data-formato="1:1" onclick="setFormato(this,'1:1')">
           <span class="formato-icon f1-1"></span>
           <div class="formato-name">1:1</div>
-          <div class="formato-dim">1080×1080 · Feed</div>
+          <div class="formato-dim">Feed</div>
         </button>
-        <button class="formato-btn" data-formato="16:9" onclick="seleccionarFormato(this,'16:9')">
+        <button class="formato-btn" data-formato="16:9" onclick="setFormato(this,'16:9')">
           <span class="formato-icon f16-9"></span>
           <div class="formato-name">16:9</div>
-          <div class="formato-dim">1920×1080 · X</div>
+          <div class="formato-dim">X / blog</div>
         </button>
       </div>
+
+      <button class="btn-primary" id="btn-descargar-g" onclick="descargarCapsulaSeleccionada()" disabled style="margin-top:1.4rem">📥 Descargar imagen</button>
+      <div class="status" id="status-g"></div>
     </div>
 
-    <button class="btn-download" id="btn-download" onclick="descargarImagen()" disabled>
-      📥 Descargar imagen
-    </button>
-    <div class="status" id="status"></div>
   </div>
 
   <!-- COLUMNA DERECHA: PREVIEW -->
   <div class="preview-col">
     <div class="section-title">Vista previa</div>
     <div class="preview-frame empty" id="preview-frame">
-      Elige una cápsula para ver la previsualización
+      Tu cápsula aparecerá aquí
+    </div>
+    <button class="btn-primary" id="btn-descargar-v" onclick="descargarPreview()" style="display:none">📥 Descargar imagen</button>
+    <div class="cta-after" id="cta-after" style="display:none">
+      <p>¿Querés que esta cápsula sea <strong style="color:var(--oro)">oficial</strong>, con certificado permanente y número correlativo en el Archivo del Umbral?</p>
+      <a href="/oraculo.html" class="btn-secondary">Inscribir cápsula real →</a>
     </div>
   </div>
 
@@ -435,52 +646,123 @@ footer a{color:var(--oro);text-decoration:none}
 </main>
 
 <footer>
-  <p>© 2026 <a href="/">Thanotectas</a> · Archivo del Umbral</p>
+  <p>© 2026 <a href="/">Thanotectas</a> · Archivo del Umbral · Bogotá, Colombia</p>
 </footer>
 
 <script>
 var SB_URL='https://oygwnmfwfxbxdogaqwmi.supabase.co';
 var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
+var noopLock=function(_n,_t,fn){return fn();};
+var hasOAuthHash=window.location.hash && window.location.hash.indexOf('access_token')!==-1;
+var sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:hasOAuthHash,lock:noopLock}});
 
 var TIPO_LABEL={poema:'Cápsula Poética',dato:'Dato Científico',carta:'Carta al Futuro',obituario:'Obituario Ecológico',alerta:'Mensaje de Alerta',ritual:'Ritual del Umbral'};
 var CAT_LABEL={especies:'Especies',ecosistemas:'Ecosistemas',rios:'Ríos',sonidos:'Sonidos',territorios:'Territorios',saberes:'Saberes'};
 
-var capsulas=[];
-var capsulaSeleccionada=null;
+var modoActual='visitante'; // 'visitante' | 'guardian'
+var tipoActual='poema';
 var formatoActual='9:16';
+var capsulaSeleccionada=null;
+var capsulaGeneradaTemp=null; // para el modo visitante después de Gemini
+var listaSource='mias';
+var capsulasUsuario=[];
+var capsulasPublicas=[];
+var currentUser=null;
 
-// === Cargar cápsulas públicas ===
-async function cargarCapsulas(){
+// === Estrellas ===
+(function(){var cv=document.getElementById('stars'),cx=cv.getContext('2d'),st=[];function init(){cv.width=innerWidth;cv.height=innerHeight;st=[];for(var i=0;i<Math.floor(cv.width*cv.height/9000);i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.1+.2,a:Math.random()*.5+.15,s:Math.random()*.0015+.0005,p:Math.random()*Math.PI*2});}function draw(){cx.clearRect(0,0,cv.width,cv.height);var t=Date.now();st.forEach(function(s){var a=s.a*(.5+.5*Math.sin(t*s.s+s.p));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle='rgba(240,230,211,'+a+')';cx.fill();});requestAnimationFrame(draw);}init();draw();window.addEventListener('resize',init);})();
+
+// === Rate limit (visitante) ===
+function visitanteHaGeneradoHoy(){
   try{
-    var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_feed_publico',{
-      method:'POST',
-      headers:{
-        'apikey':SB_ANON,
-        'Authorization':'Bearer '+SB_ANON,
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify({limite:30})
-    });
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    if(!data||data.length===0)throw new Error('Sin cápsulas públicas');
-    capsulas=data;
-    renderListaCapsulas();
-    // Seleccionar primera por defecto
-    if(capsulas.length>0){
-      seleccionarCapsula(capsulas[0]);
-      var firstItem=document.querySelector('.capsula-item');
-      if(firstItem)firstItem.classList.add('active');
+    var lastDate=localStorage.getItem('thano_gen_lastdate');
+    var hoy=new Date().toDateString();
+    return lastDate===hoy;
+  }catch(e){return false;}
+}
+function marcarGeneracionVisitante(){
+  try{localStorage.setItem('thano_gen_lastdate',new Date().toDateString());}catch(e){}
+}
+
+// === Modes ===
+function setMode(m){
+  modoActual=m;
+  document.querySelectorAll('.mode-tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+m).classList.add('active');
+  document.getElementById('mode-visitante-content').style.display=m==='visitante'?'block':'none';
+  document.getElementById('mode-guardian-content').style.display=m==='guardian'?'block':'none';
+
+  // Reset preview
+  resetPreview();
+
+  if(m==='visitante'){
+    if(visitanteHaGeneradoHoy()){
+      document.getElementById('form-area').style.display='none';
+      document.getElementById('limit-banner').style.display='block';
     }
-  }catch(e){
-    console.error('[cargarCapsulas]',e);
-    document.getElementById('capsulas-list').innerHTML='<div class="empty-state"><p>No se pudieron cargar cápsulas del Archivo.</p><a href="/oraculo.html">Inscribir mi primera cápsula →</a></div>';
+  } else if(m==='guardian'){
+    cargarListaCapsulas();
   }
+}
+
+function setTipo(el,t){
+  document.querySelectorAll('.tipo-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  tipoActual=t;
+}
+
+function setFormato(el,f){
+  document.querySelectorAll('.formato-btn').forEach(function(b){b.classList.remove('active');});
+  // Solo activar el del grid donde se hizo click
+  el.classList.add('active');
+  formatoActual=f;
+  // Re-render preview si hay capsula
+  var cap=capsulaGeneradaTemp||capsulaSeleccionada;
+  if(cap)renderizarPreview(cap);
+}
+
+function setListaSource(s){
+  listaSource=s;
+  document.querySelectorAll('.list-toggle button').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('src-'+s).classList.add('active');
+  renderListaCapsulas();
+}
+
+// === Cargar cápsulas (Guardián) ===
+async function cargarListaCapsulas(){
+  if(!currentUser){
+    document.getElementById('capsulas-list').innerHTML='<div style="padding:1.5rem;text-align:center;font-family:var(--serif);font-style:italic;color:var(--crema-50)">Inicia sesión para ver tus cápsulas.<br><br><a href="/oraculo.html" style="color:var(--oro);font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none">Iniciar sesión →</a></div>';
+    return;
+  }
+  // Cargar mis cápsulas
+  if(capsulasUsuario.length===0){
+    try{
+      var r=await sb.from('capsulas').select('id,numero_certificado,sujeto,categoria,tipo,idioma,contenido').eq('guardian_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+      if(r.data)capsulasUsuario=r.data;
+    }catch(e){console.error('[cargar mis]',e);}
+  }
+  // Cargar públicas
+  if(capsulasPublicas.length===0){
+    try{
+      var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_feed_publico',{
+        method:'POST',
+        headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON,'Content-Type':'application/json'},
+        body:JSON.stringify({limite:30})
+      });
+      if(res.ok)capsulasPublicas=await res.json();
+    }catch(e){console.error('[cargar publicas]',e);}
+  }
+  renderListaCapsulas();
 }
 
 function renderListaCapsulas(){
   var list=document.getElementById('capsulas-list');
-  list.innerHTML=capsulas.map(function(c,i){
+  var caps=listaSource==='mias'?capsulasUsuario:capsulasPublicas;
+  if(!caps||caps.length===0){
+    list.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:var(--serif);font-style:italic;color:var(--crema-50)">'+(listaSource==='mias'?'Aún no has inscrito cápsulas. <a href="/oraculo.html" style="color:var(--oro)">Crear primera →</a>':'Sin cápsulas públicas todavía.')+'</div>';
+    return;
+  }
+  list.innerHTML=caps.map(function(c,i){
     var preview=(c.contenido||'').replace(/^#+\s*|\*+/g,'').substring(0,140);
     return '<div class="capsula-item" data-idx="'+i+'" onclick="onClickCapsula(this,'+i+')">'+
       '<div class="cap-it-head">'+
@@ -496,25 +778,148 @@ function renderListaCapsulas(){
 function onClickCapsula(el,idx){
   document.querySelectorAll('.capsula-item').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
-  seleccionarCapsula(capsulas[idx]);
+  var caps=listaSource==='mias'?capsulasUsuario:capsulasPublicas;
+  capsulaSeleccionada=caps[idx];
+  document.getElementById('btn-descargar-g').disabled=false;
+  renderizarPreview(capsulaSeleccionada);
 }
 
-function seleccionarCapsula(c){
-  capsulaSeleccionada=c;
-  document.getElementById('btn-download').disabled=false;
-  renderizarPreview();
+// === Generar con Gemini (modo visitante) ===
+async function generarConGemini(){
+  var sujeto=document.getElementById('inp-sujeto').value.trim();
+  var status=document.getElementById('status-gen');
+  var btn=document.getElementById('btn-generar');
+
+  if(!sujeto){
+    status.textContent='Nombra primero algo que el mundo está perdiendo';
+    status.className='status err';
+    return;
+  }
+
+  // Rate limit
+  if(visitanteHaGeneradoHoy()){
+    document.getElementById('form-area').style.display='none';
+    document.getElementById('limit-banner').style.display='block';
+    return;
+  }
+
+  btn.disabled=true;
+  status.textContent='El Oráculo consulta las sombras…';
+  status.className='status info';
+  setPreviewLoading();
+
+  try{
+    var res=await fetch('/.netlify/functions/oraculo',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        sujeto:sujeto,
+        testimonio:'',
+        categoria:inferirCategoria(sujeto),
+        tipo:tipoActual,
+        idioma:'es',
+        plan:'gratuito'
+      })
+    });
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    if(!data.poema)throw new Error('Respuesta vacía del Oráculo');
+
+    capsulaGeneradaTemp={
+      sujeto:sujeto,
+      tipo:tipoActual,
+      categoria:inferirCategoria(sujeto),
+      idioma:'es',
+      contenido:data.poema,
+      numero_certificado:'TH-2026-PREVIEW'
+    };
+    marcarGeneracionVisitante();
+    renderizarPreview(capsulaGeneradaTemp);
+    status.textContent='✓ Cápsula generada. Descarga abajo.';
+    status.className='status ok';
+
+    // Mostrar CTA "inscribir cápsula real" después
+    document.getElementById('btn-descargar-v').style.display='flex';
+    document.getElementById('cta-after').style.display='block';
+
+  }catch(e){
+    console.error('[generar]',e);
+    status.textContent='⚠️ '+e.message;
+    status.className='status err';
+    document.getElementById('preview-frame').className='preview-frame empty';
+    document.getElementById('preview-frame').textContent='Tu cápsula aparecerá aquí';
+  }finally{
+    btn.disabled=false;
+  }
 }
 
-function seleccionarFormato(el,fmt){
-  document.querySelectorAll('.formato-btn').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-  formatoActual=fmt;
-  if(capsulaSeleccionada)renderizarPreview();
+function inferirCategoria(sujeto){
+  var s=sujeto.toLowerCase();
+  if(/\b(rio|río|glaciar|nevado|laguna|cienaga|lago|mar|océano|oceano)\b/i.test(s))return 'rios';
+  if(/\b(selva|bosque|paramo|páramo|sabana|desierto|arrecife|manglar)\b/i.test(s))return 'ecosistemas';
+  if(/\b(canto|sonido|silencio|música|voz|lengua|idioma)\b/i.test(s))return 'sonidos';
+  if(/\b(saber|conocimiento|tradición|tradicion|ritual|ceremonia|chicha|yagé|yage)\b/i.test(s))return 'saberes';
+  if(/\b(montaña|montana|cerro|valle|territorio|tierra|región|region|ciudad)\b/i.test(s))return 'territorios';
+  return 'especies';
 }
 
-// === Renderizar imagen en canvas ===
+// === RENDER CANVAS (compartido entre modos) ===
+function renderizarPreview(capsula){
+  if(!capsula)return;
+  var frame=document.getElementById('preview-frame');
+  frame.classList.remove('empty');
+  frame.classList.remove('loading');
+
+  var dims={'9:16':{w:1080,h:1920},'1:1':{w:1080,h:1080},'16:9':{w:1920,h:1080}}[formatoActual];
+  var canvas=document.createElement('canvas');
+  canvas.className='preview-canvas';
+  canvas.width=dims.w;
+  canvas.height=dims.h;
+  var maxH=580;
+  var ratio=dims.w/dims.h;
+  if(dims.h*1>maxH){
+    canvas.style.height=maxH+'px';
+    canvas.style.width=(maxH*ratio)+'px';
+  } else {
+    canvas.style.maxWidth='100%';
+    canvas.style.maxHeight=maxH+'px';
+  }
+  var ctx=canvas.getContext('2d');
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
+    });
+  } else {
+    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
+  }
+
+  frame.innerHTML='';
+  frame.appendChild(canvas);
+
+  // En modo visitante mostrar download, en guardián el download está en columna izq
+  if(modoActual==='visitante'){
+    document.getElementById('btn-descargar-v').style.display='flex';
+  }
+}
+
+function setPreviewLoading(){
+  var frame=document.getElementById('preview-frame');
+  frame.className='preview-frame loading';
+  frame.innerHTML='<div class="ring"></div><div>El Oráculo está escribiendo…</div>';
+}
+
+function resetPreview(){
+  var frame=document.getElementById('preview-frame');
+  frame.className='preview-frame empty';
+  frame.innerHTML='Tu cápsula aparecerá aquí';
+  document.getElementById('btn-descargar-v').style.display='none';
+  document.getElementById('cta-after').style.display='none';
+  capsulaGeneradaTemp=null;
+  capsulaSeleccionada=null;
+  document.getElementById('btn-descargar-g').disabled=true;
+}
+
 function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
-  // Background gradient (verde bosque oscuro)
   var grad=ctx.createLinearGradient(0,0,width,height);
   grad.addColorStop(0,'#0d130c');
   grad.addColorStop(0.5,'#141d12');
@@ -522,14 +927,12 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
   ctx.fillStyle=grad;
   ctx.fillRect(0,0,width,height);
 
-  // Atmósfera radial
   var radial=ctx.createRadialGradient(width*0.2,0,0,width*0.5,height*0.5,width*0.8);
   radial.addColorStop(0,'rgba(74,138,75,0.12)');
   radial.addColorStop(0.6,'rgba(0,0,0,0)');
   ctx.fillStyle=radial;
   ctx.fillRect(0,0,width,height);
 
-  // Estrellas pequeñas
   ctx.save();
   for(var i=0;i<60;i++){
     var sx=Math.random()*width;
@@ -543,22 +946,18 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
   }
   ctx.restore();
 
-  // Border ornamental
   ctx.strokeStyle='rgba(212,165,71,0.18)';
   ctx.lineWidth=1;
   var pad=Math.min(width,height)*0.04;
   ctx.strokeRect(pad,pad,width-pad*2,height-pad*2);
 
-  // Padding interno (proporcional al tamaño)
   var P=Math.min(width,height)*0.08;
   var cx=width/2;
 
-  // === LOGO ÁRBOL (top) ===
   var logoSize=Math.min(width,height)*0.085;
   var logoY=P+logoSize/2;
   drawTreeLogo(ctx, cx, logoY, logoSize);
 
-  // === BRAND NAME ===
   var brandY=logoY+logoSize/2+Math.min(width,height)*0.02;
   ctx.fillStyle='#d4a547';
   var brandFontSize=Math.max(14,Math.min(width,height)*0.022);
@@ -572,35 +971,26 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
   ctx.font='400 '+subFontSize+'px "IBM Plex Mono", monospace';
   ctx.fillText('— ARCHIVO DEL UMBRAL —', cx, brandY+brandFontSize+8);
 
-  // === CONTENIDO PRINCIPAL ===
   var contentTop=brandY+brandFontSize+subFontSize+P*0.8;
-  var contentArea=height-contentTop-P*1.5;
 
-  // Sello ❦
   var sealFontSize=Math.max(20,Math.min(width,height)*0.035);
   ctx.fillStyle='#d4a547';
   ctx.font='400 '+sealFontSize+'px Fraunces, serif';
   ctx.fillText('❦', cx, contentTop);
 
-  // Tipo de cápsula
   var tipoY=contentTop+sealFontSize+Math.min(width,height)*0.025;
   var tipoFontSize=Math.max(11,Math.min(width,height)*0.016);
   ctx.fillStyle='#6cc06d';
   ctx.font='400 '+tipoFontSize+'px "IBM Plex Mono", monospace';
   ctx.fillText((TIPO_LABEL[capsula.tipo]||capsula.tipo||'').toUpperCase(), cx, tipoY);
 
-  // Sujeto (grande, serif)
   var sujetoY=tipoY+tipoFontSize+Math.min(width,height)*0.025;
   var sujetoFontSize=Math.max(28,Math.min(width,height)*0.062);
+  if((capsula.sujeto||'').length>20)sujetoFontSize=sujetoFontSize*0.7;
   ctx.fillStyle='#f0e6d3';
   ctx.font='500 '+sujetoFontSize+'px Fraunces, Georgia, serif';
-  // Si el sujeto es muy largo, ajustar
-  var sujetoTexto=capsula.sujeto||'';
-  if(sujetoTexto.length>20)sujetoFontSize=sujetoFontSize*0.7;
-  ctx.font='500 '+sujetoFontSize+'px Fraunces, Georgia, serif';
-  ctx.fillText(sujetoTexto, cx, sujetoY);
+  ctx.fillText(capsula.sujeto||'', cx, sujetoY);
 
-  // Categoría + idioma
   var catY=sujetoY+sujetoFontSize+Math.min(width,height)*0.018;
   var catFontSize=Math.max(10,Math.min(width,height)*0.013);
   ctx.fillStyle='#d4a547';
@@ -608,7 +998,6 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
   var catText=(CAT_LABEL[capsula.categoria]||capsula.categoria||'').toUpperCase()+' · '+(capsula.idioma||'es').toUpperCase();
   ctx.fillText(catText, cx, catY);
 
-  // Línea separadora
   var lineY=catY+catFontSize+Math.min(width,height)*0.025;
   ctx.strokeStyle='#d4a547';
   ctx.lineWidth=1;
@@ -617,13 +1006,11 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
   ctx.lineTo(cx+30, lineY);
   ctx.stroke();
 
-  // Contenido (extracto del poema, itálica)
   var poemaY=lineY+Math.min(width,height)*0.04;
   var poemaFontSize=Math.max(15,Math.min(width,height)*0.024);
   ctx.fillStyle='rgba(240,230,211,0.85)';
   ctx.font='italic 300 '+poemaFontSize+'px Fraunces, Georgia, serif';
 
-  // Wrap text
   var preview=(capsula.contenido||'').replace(/^#+\s*|\*+/g,'').replace(/\n+/g,' ').substring(0,formato==='16:9'?280:formato==='9:16'?260:200);
   var maxWidth=width-P*2.5;
   var lineHeight=poemaFontSize*1.5;
@@ -634,49 +1021,41 @@ function renderizarImagenEnCanvas(canvas, ctx, width, height, capsula, formato){
     ctx.fillText(lines[l], cx, poemaY+l*lineHeight);
   }
 
-  // === FOOTER (número certificado + url) ===
   var footerY=height-P*0.8;
   var certFontSize=Math.max(10,Math.min(width,height)*0.013);
 
-  ctx.fillStyle='#d4a547';
-  ctx.font='500 '+certFontSize+'px "IBM Plex Mono", monospace';
-  ctx.fillText('CERT. '+(capsula.numero_certificado||'TH-2026-XXXXX'), cx, footerY-certFontSize*1.6);
+  if(capsula.numero_certificado && capsula.numero_certificado!=='TH-2026-PREVIEW'){
+    ctx.fillStyle='#d4a547';
+    ctx.font='500 '+certFontSize+'px "IBM Plex Mono", monospace';
+    ctx.fillText('CERT. '+capsula.numero_certificado, cx, footerY-certFontSize*1.6);
+  }
 
   ctx.fillStyle='rgba(240,230,211,0.5)';
   ctx.font='400 '+certFontSize+'px "IBM Plex Mono", monospace';
-  ctx.fillText('THANOTECTAS.COM/ORACULO', cx, footerY);
+  ctx.fillText('THANOTECTAS.COM', cx, footerY);
 }
 
-// Dibuja el árbol del logo en el canvas
 function drawTreeLogo(ctx, cx, cy, size){
-  var s=size/220; // escala (logo nativo es 220x220)
+  var s=size/220;
   ctx.save();
   ctx.translate(cx-110*s, cy-110*s);
   ctx.scale(s,s);
-
-  // Línea horizontal sutil
   ctx.strokeStyle='rgba(212,165,71,0.4)';
   ctx.lineWidth=0.5;
   ctx.beginPath();ctx.moveTo(40,132);ctx.lineTo(180,132);ctx.stroke();
-
-  // Raíces (verde-bosque)
   var rootGrad=ctx.createLinearGradient(110,130,110,200);
   rootGrad.addColorStop(0,'#6cc06d');
   rootGrad.addColorStop(1,'#2d5237');
   ctx.strokeStyle=rootGrad;
   ctx.lineWidth=2;
   ctx.lineCap='round';
-  // Raíz central
   ctx.beginPath();ctx.moveTo(108,132);ctx.lineTo(108,180);ctx.stroke();
   ctx.beginPath();ctx.moveTo(112,132);ctx.lineTo(112,180);ctx.stroke();
-  // Raíces laterales
   ctx.lineWidth=1.5;
   ctx.globalAlpha=0.85;
   ctx.beginPath();ctx.moveTo(108,148);ctx.quadraticCurveTo(94,158,80,168);ctx.stroke();
   ctx.beginPath();ctx.moveTo(112,148);ctx.quadraticCurveTo(126,158,140,168);ctx.stroke();
   ctx.globalAlpha=1;
-
-  // Tronco/copa (dorado)
   var topGrad=ctx.createLinearGradient(110,40,110,160);
   topGrad.addColorStop(0,'#f4d989');
   topGrad.addColorStop(1,'#d4a547');
@@ -686,15 +1065,12 @@ function drawTreeLogo(ctx, cx, cy, size){
   ctx.lineWidth=1.6;
   ctx.beginPath();ctx.moveTo(110,90);ctx.quadraticCurveTo(92,76,70,66);ctx.stroke();
   ctx.beginPath();ctx.moveTo(110,90);ctx.quadraticCurveTo(128,76,150,66);ctx.stroke();
-
-  // Estrella/punto luminoso
   ctx.fillStyle='#f4d989';
   ctx.globalAlpha=0.95;
   ctx.beginPath();ctx.arc(110,72,5,0,Math.PI*2);ctx.fill();
   ctx.globalAlpha=1;
   ctx.fillStyle='#fffaee';
   ctx.beginPath();ctx.arc(110,72,2.5,0,Math.PI*2);ctx.fill();
-
   ctx.restore();
 }
 
@@ -716,48 +1092,17 @@ function wrapText(ctx, text, maxWidth){
   return lines;
 }
 
-// === Renderizar preview ===
-function renderizarPreview(){
-  if(!capsulaSeleccionada)return;
-  var frame=document.getElementById('preview-frame');
-  frame.classList.remove('empty');
-
-  var dims={'9:16':{w:1080,h:1920},'1:1':{w:1080,h:1080},'16:9':{w:1920,h:1080}}[formatoActual];
-  var canvas=document.createElement('canvas');
-  canvas.className='preview-canvas';
-  canvas.width=dims.w;
-  canvas.height=dims.h;
-  // Limitar visualmente
-  var maxH=580;
-  var ratio=dims.w/dims.h;
-  if(dims.h*1>maxH){
-    canvas.style.height=maxH+'px';
-    canvas.style.width=(maxH*ratio)+'px';
-  } else {
-    canvas.style.maxWidth='100%';
-    canvas.style.maxHeight=maxH+'px';
-  }
-
-  var ctx=canvas.getContext('2d');
-  // Esperar a que las fonts carguen antes de renderizar
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(function(){
-      renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsulaSeleccionada,formatoActual);
-    });
-  } else {
-    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsulaSeleccionada,formatoActual);
-  }
-
-  frame.innerHTML='';
-  frame.appendChild(canvas);
+// === Descargas ===
+function descargarPreview(){
+  var cap=capsulaGeneradaTemp||capsulaSeleccionada;
+  if(!cap)return;
+  doDownload(cap);
 }
-
-// === Descargar ===
-function descargarImagen(){
-  if(!capsulaSeleccionada){
-    setStatus('Elige una cápsula primero','err');return;
-  }
-  setStatus('Generando…','');
+function descargarCapsulaSeleccionada(){
+  if(!capsulaSeleccionada)return;
+  doDownload(capsulaSeleccionada);
+}
+function doDownload(capsula){
   var dims={'9:16':{w:1080,h:1920},'1:1':{w:1080,h:1080},'16:9':{w:1920,h:1080}}[formatoActual];
   var canvas=document.createElement('canvas');
   canvas.width=dims.w;
@@ -765,8 +1110,9 @@ function descargarImagen(){
   var ctx=canvas.getContext('2d');
 
   function doRender(){
-    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsulaSeleccionada,formatoActual);
-    var fname='thanotectas-'+(capsulaSeleccionada.numero_certificado||'capsula').toLowerCase()+'-'+formatoActual.replace(':','x')+'.png';
+    renderizarImagenEnCanvas(canvas,ctx,dims.w,dims.h,capsula,formatoActual);
+    var slug=(capsula.numero_certificado||'capsula').toLowerCase().replace(/^th-2026-/,'').replace(/[^a-z0-9-]/g,'-');
+    var fname='thanotectas-'+slug+'-'+formatoActual.replace(':','x')+'.png';
     canvas.toBlob(function(blob){
       var url=URL.createObjectURL(blob);
       var a=document.createElement('a');
@@ -776,7 +1122,6 @@ function descargarImagen(){
       a.click();
       document.body.removeChild(a);
       setTimeout(function(){URL.revokeObjectURL(url);},1000);
-      setStatus('✓ Descargada · '+fname,'ok');
     },'image/png');
   }
 
@@ -787,17 +1132,50 @@ function descargarImagen(){
   }
 }
 
-function setStatus(text,cls){
-  var el=document.getElementById('status');
-  el.textContent=text;
-  el.className='status '+(cls||'');
-}
-
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 
-// Init
-cargarCapsulas();
-</script>
+// === Auth init (detectar si hay sesión) ===
+async function detectarSesion(){
+  try{
+    var s=await sb.auth.getSession();
+    if(s.data && s.data.session && s.data.session.user){
+      var authUser=s.data.session.user;
+      var sess=s.data.session;
+      // Cargar perfil
+      try{
+        var res=await fetch(SB_URL+'/rest/v1/rpc/obtener_mi_perfil',{
+          method:'POST',
+          headers:{
+            'apikey':SB_ANON,
+            'Authorization':'Bearer '+sess.access_token,
+            'Content-Type':'application/json'
+          },
+          body:'{}'
+        });
+        if(res.ok){
+          var data=await res.json();
+          if(data && data.length>0){
+            currentUser=data[0];
+            // Mostrar pill
+            document.getElementById('user-pill').style.display='flex';
+            document.getElementById('user-name').textContent=currentUser.nombre||authUser.email.split('@')[0];
+            document.getElementById('login-link').style.display='none';
+            // Quitar badge "login" del tab
+            document.getElementById('guardian-badge').style.display='none';
+            console.log('[init] Logueado:',currentUser.nombre);
+          }
+        }
+      }catch(e){console.error('[perfil]',e);}
+    }
+  }catch(e){console.error('[sesion]',e);}
+}
 
+// Init
+detectarSesion();
+// Comprobar rate limit al cargar
+if(visitanteHaGeneradoHoy() && !currentUser){
+  // Lo aplicará cuando setMode('visitante') se ejecute
+}
+</script>
 </body>
 </html>
