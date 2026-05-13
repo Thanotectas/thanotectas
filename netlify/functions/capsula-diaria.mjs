@@ -8,7 +8,7 @@
 //   4. Postea a X, Instagram y Threads en paralelo
 //   5. Marca la cápsula como posteada
 //
-// Cron: configurar en netlify.toml [functions."capsula-diaria"] schedule = "0 14 * * *" (9am COL)
+// Cron: configurado en netlify.toml [functions."capsula-diaria"] schedule = "0 14 * * *" (9am COL)
 //
 // Env vars requeridas: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SITE_URL, GEMINI_API_KEY,
 //                      IG_USER_ID, IG_PAGE_TOKEN, X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET
@@ -20,7 +20,6 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SITE_URL = process.env.SITE_URL || "https://thanotectas.com";
 const IG_USER_ID = process.env.IG_USER_ID;
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const STORAGE_BUCKET = "capsulas-imagenes";
 
 export default async (req) => {
@@ -55,7 +54,7 @@ export default async (req) => {
 
     if (errSel) {
       console.error("[capsula-diaria] Error consultando cápsulas:", errSel);
-      return new Response(JSON.stringify({ error: "DB error" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "DB error", details: errSel }), { status: 500 });
     }
 
     if (!capsulas || capsulas.length === 0) {
@@ -66,9 +65,9 @@ export default async (req) => {
     const capsula = capsulas[0];
     console.log(`[capsula-diaria] Procesando: ${capsula.numero_certificado || capsula.id}`);
 
-    // 2) Generar imagen con Gemini (placeholder: usar URL directa por ahora)
-    // TODO: Implementar renderizado de PNG con imagen
+    // 2) Usar imagen estática por ahora (TODO: renderizar con Gemini)
     const imagenUrl = `${SITE_URL}/umbral-og.png`;
+    console.log(`[capsula-diaria] Imagen: ${imagenUrl}`);
 
     // 3) Construir captions
     const captions = construirCaptions(capsula, imagenUrl);
@@ -78,19 +77,20 @@ export default async (req) => {
     if (IG_PAGE_TOKEN && IG_USER_ID) {
       try {
         igResult = await postearInstagram(captions.instagram, imagenUrl);
+        console.log("[capsula-diaria] Instagram:", igResult);
       } catch (err) {
-        console.error("[capsula-diaria] Error posteando a IG:", err);
+        console.error("[capsula-diaria] Error Instagram:", err.message);
         igResult = { ok: false, error: err.message };
       }
+    } else {
+      console.warn("[capsula-diaria] IG credenciales faltando");
     }
 
-    // 5) Postear a X (si tenemos credenciales)
-    let xResult = { ok: false, error: "Credentials not configured" };
-    // TODO: Implementar X posting cuando tengamos keys
+    // 5) Postear a X (cuando tengamos credenciales)
+    let xResult = { ok: false, error: "X credentials not configured" };
 
-    // 6) Postear a Threads (si tenemos token)
-    let threadsResult = { ok: false, error: "Credentials not configured" };
-    // TODO: Implementar Threads posting cuando tengamos token
+    // 6) Postear a Threads (cuando tengamos token)
+    let threadsResult = { ok: false, error: "Threads credentials not configured" };
 
     const platforms = {
       instagram: igResult,
@@ -109,7 +109,7 @@ export default async (req) => {
       .eq("id", capsula.id);
 
     if (errUpd) {
-      console.error("[capsula-diaria] Error marcando como posteada:", errUpd);
+      console.error("[capsula-diaria] Error actualizando BD:", errUpd);
     }
 
     return new Response(
@@ -122,7 +122,10 @@ export default async (req) => {
     );
   } catch (err) {
     console.error("[capsula-diaria] Error general:", err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Internal server error", details: err.message }),
+      { status: 500 }
+    );
   }
 };
 
@@ -135,7 +138,7 @@ function construirCaptions(capsula, imagenUrl) {
   const numero = capsula.numero_certificado || "";
   const sujeto = capsula.sujeto;
   const tipo = (capsula.tipo || "").toLowerCase();
-  const enlace = `${process.env.SITE_URL || "https://thanotectas.com"}/c/${numero}`;
+  const enlace = `${SITE_URL}/c/${numero}`;
   const cuerpo = capsula.contenido.trim();
 
   // X — máx 280 chars
@@ -176,42 +179,40 @@ async function postearInstagram(caption, imagenUrl) {
   const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
 
   if (!IG_USER_ID || !IG_PAGE_TOKEN) {
-    return { ok: false, error: "Missing IG credentials" };
+    throw new Error("Missing IG_USER_ID or IG_PAGE_TOKEN");
   }
 
   try {
-    // Crear container
-    const containerRes = await fetch(
-      `https://graph.instagram.com/v21.0/${IG_USER_ID}/media?image_url=${encodeURIComponent(imagenUrl)}&caption=${encodeURIComponent(caption)}&access_token=${IG_PAGE_TOKEN}`,
-      { method: "POST" }
-    );
-
+    // 1. Crear container
+    const containerUrl = `https://graph.instagram.com/v21.0/${IG_USER_ID}/media?image_url=${encodeURIComponent(imagenUrl)}&caption=${encodeURIComponent(caption)}&access_token=${IG_PAGE_TOKEN}`;
+    
+    const containerRes = await fetch(containerUrl, { method: "POST" });
     const containerData = await containerRes.json();
+
     if (!containerData.id) {
       throw new Error(`Container creation failed: ${JSON.stringify(containerData)}`);
     }
 
     const containerId = containerData.id;
-    console.log(`[IG] Container creado: ${containerId}`);
+    console.log(`[IG] Container created: ${containerId}`);
 
-    // Esperar a que se procese
+    // 2. Esperar a que se procese
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // Publicar
-    const publishRes = await fetch(
-      `https://graph.instagram.com/v21.0/${IG_USER_ID}/media_publish?creation_id=${containerId}&access_token=${IG_PAGE_TOKEN}`,
-      { method: "POST" }
-    );
-
+    // 3. Publicar
+    const publishUrl = `https://graph.instagram.com/v21.0/${IG_USER_ID}/media_publish?creation_id=${containerId}&access_token=${IG_PAGE_TOKEN}`;
+    
+    const publishRes = await fetch(publishUrl, { method: "POST" });
     const publishData = await publishRes.json();
+
     if (!publishData.id) {
       throw new Error(`Publish failed: ${JSON.stringify(publishData)}`);
     }
 
-    console.log(`[IG] Post publicado: ${publishData.id}`);
+    console.log(`[IG] Post published: ${publishData.id}`);
     return { ok: true, postId: publishData.id };
   } catch (err) {
     console.error("[IG] Error:", err.message);
-    return { ok: false, error: err.message };
+    throw err;
   }
 }
