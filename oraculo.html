@@ -2161,17 +2161,54 @@ function openPayment(plan){
   localStorage.setItem('thano_pending_plan',plan);
   setTimeout(function(){document.getElementById('pw-confirm').style.display='block';},3000);
 }
+
+// === confirmPayment · NUEVO FLUJO (polling al webhook) ===
+// Antes: llamaba a sb.rpc('activar_plan', ...) directamente desde el navegador.
+// Ahora: el webhook de Bold (Edge Function activar-membresia en Supabase) activa
+// el plan server-side al confirmar el pago. Acá solo verificamos cuándo se activó.
 async function confirmPayment(){
-  var plan=localStorage.getItem('thano_pending_plan')||'guardian';
-  var sess=await sb.auth.getSession();
-  if(!sess.data||!sess.data.session){go('login');return;}
-  var authId=sess.data.session.user.id;
-  var r=await sb.rpc('activar_plan',{p_auth_id:authId,p_plan:plan,p_referencia:'bold_'+Date.now()});
-  if(r.error||!r.data||!r.data.ok){alert('Error activando plan. Contacta info@thanotectas.com');return;}
-  localStorage.removeItem('thano_pending_plan');
-  await refreshUserData();actualizarTiposIdiomas();updateUsesBar();
-  document.getElementById('pw-confirm').style.display='none';
-  go('input');
+  var btn=document.querySelector('#pw-confirm button.btn-main');
+  var textoOriginal=btn?btn.textContent:'Ya pagué · Activar membresía';
+  if(btn){btn.disabled=true;btn.textContent='🌿 Verificando tu pago…';}
+
+  for(var intento=1;intento<=12;intento++){
+    try{
+      await refreshUserData();
+      var planActivo=currentUser&&(
+        currentUser.plan==='guardian'||
+        currentUser.plan==='eterno'||
+        currentUser.es_admin
+      );
+      if(planActivo){
+        if(btn)btn.textContent='✦ ¡Membresía activa!';
+        localStorage.removeItem('thano_pending_plan');
+        actualizarTiposIdiomas();
+        updateUsesBar();
+        await new Promise(function(r){setTimeout(r,800);});
+        document.getElementById('pw-confirm').style.display='none';
+        go('input');
+        return;
+      }
+      if(btn)btn.textContent='🌿 Procesando pago… ('+intento+'/12)';
+    }catch(e){
+      console.error('[confirmPayment] intento '+intento+':',e);
+    }
+    if(intento<12){
+      await new Promise(function(r){setTimeout(r,5000);});
+    }
+  }
+
+  // Tras 1 minuto sin activación: mensaje informativo y permitir reintentar
+  if(btn){btn.disabled=false;btn.textContent=textoOriginal;}
+  var confirmBox=document.getElementById('pw-confirm');
+  if(confirmBox&&!document.getElementById('pw-pending-msg')){
+    confirmBox.insertAdjacentHTML('beforeend',
+      '<div id="pw-pending-msg" style="margin-top:1rem;padding:.9rem 1.1rem;background:rgba(74,138,75,.08);border:1px solid rgba(74,138,75,.25);border-radius:2px;font-family:var(--sans);font-size:.85rem;color:var(--crema);line-height:1.5;text-align:left">'+
+      '<strong style="color:var(--musgo-glow)">🌿 Tu pago está procesándose.</strong><br>'+
+      'A veces Bold tarda unos minutos en confirmárnoslo. Te enviaremos un correo cuando tu membresía Guardián esté activa. Si pasaron más de 30 minutos, escríbenos a <a href="mailto:info@thanotectas.com" style="color:var(--oro)">info@thanotectas.com</a> con tu referencia de pago.'+
+      '</div>'
+    );
+  }
 }
 
 async function loadHistory(){var grid=document.getElementById('history-grid');if(!currentUser){grid.innerHTML='<p class="subtext">Inicia sesión para ver tus cápsulas.</p>';return;}grid.innerHTML='<p class="subtext">Cargando…</p>';var r=await sb.from('capsulas').select('*').eq('guardian_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(r.error||!r.data||r.data.length===0){grid.innerHTML='<p class="subtext">Aún no tienes cápsulas. ¡Inscribe tu primera memoria!</p>';return;}
@@ -2389,7 +2426,7 @@ function showPartialUserUI(authUser){
     if(p.get('status')==='ok'&&p.get('plan')){
       localStorage.setItem('thano_pending_plan',p.get('plan'));
       history.replaceState({},'','oraculo.html');
-      if(currentUser)confirmPayment();else go('login');
+      if(currentUser){go('paywall');document.getElementById('pw-confirm').style.display='block';confirmPayment();}else go('login');
     }
   }catch(e){
     console.error('[init] Error crítico:', e);
