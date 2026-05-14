@@ -1,17 +1,7 @@
 // netlify/functions/capsula-diaria.mjs
 //
-// Background Function que se ejecuta diariamente (15min de timeout).
-// Orquesta el ciclo completo:
-//   1. Selecciona la próxima cápsula pública no posteada
-//   2. Renderiza un PNG con la plantilla Thanotectas
-//   3. Lo sube a Supabase Storage (bucket capsulas-imagenes)
-//   4. Postea a X, Instagram y Threads en paralelo
-//   5. Marca la cápsula como posteada
-//
-// Cron: configurado en netlify.toml [functions."capsula-diaria"] schedule = "0 14 * * *" (9am COL)
-//
-// Env vars requeridas: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SITE_URL, GEMINI_API_KEY,
-//                      IG_USER_ID, IG_PAGE_TOKEN, X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET
+// Background Function que se ejecuta diariamente.
+// Cron: configurado en netlify.toml a las 9am COL (14 UTC)
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -20,7 +10,6 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SITE_URL = process.env.SITE_URL || "https://thanotectas.com";
 const IG_USER_ID = process.env.IG_USER_ID;
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
-const STORAGE_BUCKET = "capsulas-imagenes";
 
 export default async (req) => {
   console.log("[capsula-diaria] Iniciando ciclo");
@@ -65,12 +54,12 @@ export default async (req) => {
     const capsula = capsulas[0];
     console.log(`[capsula-diaria] Procesando: ${capsula.numero_certificado || capsula.id}`);
 
-    // 2) Usar imagen estática por ahora (TODO: renderizar con Gemini)
+    // 2) Usar imagen estática por ahora
     const imagenUrl = `${SITE_URL}/umbral-og.png`;
     console.log(`[capsula-diaria] Imagen: ${imagenUrl}`);
 
     // 3) Construir captions
-    const captions = construirCaptions(capsula, imagenUrl);
+    const captions = construirCaptions(capsula);
 
     // 4) Postear a Instagram
     let igResult = { ok: false, error: "Skipped" };
@@ -86,10 +75,7 @@ export default async (req) => {
       console.warn("[capsula-diaria] IG credenciales faltando");
     }
 
-    // 5) Postear a X (cuando tengamos credenciales)
     let xResult = { ok: false, error: "X credentials not configured" };
-
-    // 6) Postear a Threads (cuando tengamos token)
     let threadsResult = { ok: false, error: "Threads credentials not configured" };
 
     const platforms = {
@@ -98,23 +84,25 @@ export default async (req) => {
       threads: threadsResult,
     };
 
-    // 7) Marcar cápsula como posteada
-    const { error: errUpd } = await supabase
-      .from("capsulas")
-      .update({
-        posteado_en: new Date().toISOString(),
-        posts_metadata: platforms,
-        imagen_url: imagenUrl,
-      })
-      .eq("id", capsula.id);
+    // 5) Marcar cápsula como posteada SOLO si Instagram fue exitoso
+    if (igResult.ok) {
+      const { error: errUpd } = await supabase
+        .from("capsulas")
+        .update({
+          posteado_en: new Date().toISOString(),
+          posts_metadata: platforms,
+          imagen_url: imagenUrl,
+        })
+        .eq("id", capsula.id);
 
-    if (errUpd) {
-      console.error("[capsula-diaria] Error actualizando BD:", errUpd);
+      if (errUpd) {
+        console.error("[capsula-diaria] Error actualizando BD:", errUpd);
+      }
     }
 
     return new Response(
       JSON.stringify({
-        ok: true,
+        ok: igResult.ok,
         capsula: capsula.numero_certificado,
         platforms,
       }),
@@ -133,7 +121,7 @@ export default async (req) => {
 // Helpers
 // ────────────────────────────────────────────────────────────
 
-function construirCaptions(capsula, imagenUrl) {
+function construirCaptions(capsula) {
   const año = new Date(capsula.created_at).getFullYear();
   const numero = capsula.numero_certificado || "";
   const sujeto = capsula.sujeto;
@@ -141,14 +129,6 @@ function construirCaptions(capsula, imagenUrl) {
   const enlace = `${SITE_URL}/c/${numero}`;
   const cuerpo = capsula.contenido.trim();
 
-  // X — máx 280 chars
-  const xMaxBody = 200;
-  const xCuerpo = cuerpo.length > xMaxBody
-    ? cuerpo.slice(0, xMaxBody - 1) + "…"
-    : cuerpo;
-  const x = `${xCuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n🌿 ${enlace}`;
-
-  // Instagram — con hashtags
   const hashtags = [
     "#archivodelumbral",
     "#dueloecologico",
@@ -164,55 +144,40 @@ function construirCaptions(capsula, imagenUrl) {
     `${cuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n` +
     `${numero}\n${enlace}\n\n${hashtags}`;
 
-  // Threads — hasta 500 chars
-  const threadsMaxBody = 380;
-  const tCuerpo = cuerpo.length > threadsMaxBody
-    ? cuerpo.slice(0, threadsMaxBody - 1) + "…"
-    : cuerpo;
-  const threads = `${tCuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n${enlace}`;
-
-  return { x, instagram, threads };
+  return { instagram };
 }
 
 async function postearInstagram(caption, imagenUrl) {
-  const IG_USER_ID = process.env.IG_USER_ID;
-  const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
-
   if (!IG_USER_ID || !IG_PAGE_TOKEN) {
     throw new Error("Missing IG_USER_ID or IG_PAGE_TOKEN");
   }
 
-  try {
-    // 1. Crear container
-    const containerUrl = `https://graph.instagram.com/v21.0/${IG_USER_ID}/media?image_url=${encodeURIComponent(imagenUrl)}&caption=${encodeURIComponent(caption)}&access_token=${IG_PAGE_TOKEN}`;
-    
-    const containerRes = await fetch(containerUrl, { method: "POST" });
-    const containerData = await containerRes.json();
+  // 1. Crear container — USAR graph.facebook.com (no graph.instagram.com)
+  const containerUrl = `https://graph.facebook.com/v21.0/${IG_USER_ID}/media?image_url=${encodeURIComponent(imagenUrl)}&caption=${encodeURIComponent(caption)}&access_token=${IG_PAGE_TOKEN}`;
+  
+  const containerRes = await fetch(containerUrl, { method: "POST" });
+  const containerData = await containerRes.json();
 
-    if (!containerData.id) {
-      throw new Error(`Container creation failed: ${JSON.stringify(containerData)}`);
-    }
-
-    const containerId = containerData.id;
-    console.log(`[IG] Container created: ${containerId}`);
-
-    // 2. Esperar a que se procese
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    // 3. Publicar
-    const publishUrl = `https://graph.instagram.com/v21.0/${IG_USER_ID}/media_publish?creation_id=${containerId}&access_token=${IG_PAGE_TOKEN}`;
-    
-    const publishRes = await fetch(publishUrl, { method: "POST" });
-    const publishData = await publishRes.json();
-
-    if (!publishData.id) {
-      throw new Error(`Publish failed: ${JSON.stringify(publishData)}`);
-    }
-
-    console.log(`[IG] Post published: ${publishData.id}`);
-    return { ok: true, postId: publishData.id };
-  } catch (err) {
-    console.error("[IG] Error:", err.message);
-    throw err;
+  if (!containerData.id) {
+    throw new Error(`Container creation failed: ${JSON.stringify(containerData)}`);
   }
+
+  const containerId = containerData.id;
+  console.log(`[IG] Container created: ${containerId}`);
+
+  // 2. Esperar a que se procese
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  // 3. Publicar
+  const publishUrl = `https://graph.facebook.com/v21.0/${IG_USER_ID}/media_publish?creation_id=${containerId}&access_token=${IG_PAGE_TOKEN}`;
+  
+  const publishRes = await fetch(publishUrl, { method: "POST" });
+  const publishData = await publishRes.json();
+
+  if (!publishData.id) {
+    throw new Error(`Publish failed: ${JSON.stringify(publishData)}`);
+  }
+
+  console.log(`[IG] Post published: ${publishData.id}`);
+  return { ok: true, postId: publishData.id };
 }
