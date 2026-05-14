@@ -1,7 +1,7 @@
 // netlify/functions/capsula-diaria.mjs
 //
 // Background Function que se ejecuta diariamente.
-// Cron: configurado en netlify.toml a las 9am COL (14 UTC)
+// Cron: 9am COL (14 UTC)
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -11,6 +11,10 @@ const SITE_URL = process.env.SITE_URL || "https://thanotectas.com";
 const IG_USER_ID = process.env.IG_USER_ID;
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
 
+// Instagram caption: max 2200 chars. Dejamos margen para metadata + hashtags.
+const IG_CAPTION_MAX = 2200;
+const IG_BODY_MAX = 1700; // espacio para body + ~500 chars de metadata/hashtags
+
 export default async (req) => {
   console.log("[capsula-diaria] Iniciando ciclo");
 
@@ -19,7 +23,6 @@ export default async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // 1) Seleccionar próxima cápsula: pública, no sellada, no posteada
     const { data: capsulas, error: errSel } = await supabase
       .from("capsulas")
       .select(`
@@ -54,14 +57,12 @@ export default async (req) => {
     const capsula = capsulas[0];
     console.log(`[capsula-diaria] Procesando: ${capsula.numero_certificado || capsula.id}`);
 
-    // 2) Usar imagen estática por ahora
     const imagenUrl = `${SITE_URL}/umbral-og.png`;
     console.log(`[capsula-diaria] Imagen: ${imagenUrl}`);
 
-    // 3) Construir captions
     const captions = construirCaptions(capsula);
+    console.log(`[capsula-diaria] Caption length: ${captions.instagram.length} chars`);
 
-    // 4) Postear a Instagram
     let igResult = { ok: false, error: "Skipped" };
     if (IG_PAGE_TOKEN && IG_USER_ID) {
       try {
@@ -84,7 +85,6 @@ export default async (req) => {
       threads: threadsResult,
     };
 
-    // 5) Marcar cápsula como posteada SOLO si Instagram fue exitoso
     if (igResult.ok) {
       const { error: errUpd } = await supabase
         .from("capsulas")
@@ -127,7 +127,12 @@ function construirCaptions(capsula) {
   const sujeto = capsula.sujeto;
   const tipo = (capsula.tipo || "").toLowerCase();
   const enlace = `${SITE_URL}/c/${numero}`;
-  const cuerpo = capsula.contenido.trim();
+  let cuerpo = capsula.contenido.trim();
+
+  // Truncar body si es muy largo para IG
+  if (cuerpo.length > IG_BODY_MAX) {
+    cuerpo = cuerpo.slice(0, IG_BODY_MAX - 1).trim() + "…";
+  }
 
   const hashtags = [
     "#archivodelumbral",
@@ -140,9 +145,14 @@ function construirCaptions(capsula) {
     .filter(Boolean)
     .join(" ");
 
-  const instagram =
+  let instagram =
     `${cuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n` +
     `${numero}\n${enlace}\n\n${hashtags}`;
+
+  // Safety net: truncar duro si todavía es muy largo
+  if (instagram.length > IG_CAPTION_MAX) {
+    instagram = instagram.slice(0, IG_CAPTION_MAX - 1).trim() + "…";
+  }
 
   return { instagram };
 }
@@ -152,7 +162,6 @@ async function postearInstagram(caption, imagenUrl) {
     throw new Error("Missing IG_USER_ID or IG_PAGE_TOKEN");
   }
 
-  // 1. Crear container — USAR graph.facebook.com (no graph.instagram.com)
   const containerUrl = `https://graph.facebook.com/v21.0/${IG_USER_ID}/media?image_url=${encodeURIComponent(imagenUrl)}&caption=${encodeURIComponent(caption)}&access_token=${IG_PAGE_TOKEN}`;
   
   const containerRes = await fetch(containerUrl, { method: "POST" });
@@ -165,10 +174,8 @@ async function postearInstagram(caption, imagenUrl) {
   const containerId = containerData.id;
   console.log(`[IG] Container created: ${containerId}`);
 
-  // 2. Esperar a que se procese
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  // 3. Publicar
   const publishUrl = `https://graph.facebook.com/v21.0/${IG_USER_ID}/media_publish?creation_id=${containerId}&access_token=${IG_PAGE_TOKEN}`;
   
   const publishRes = await fetch(publishUrl, { method: "POST" });
