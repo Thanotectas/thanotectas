@@ -6,7 +6,7 @@
 
 // ── Headers CORS reutilizables ──────────────────────────────────
 var CORS_HEADERS = {
-  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Origin":  "https://thanotectas.com",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
   "Content-Type": "application/json"
