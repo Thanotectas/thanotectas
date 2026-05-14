@@ -152,14 +152,14 @@ async function ensureFonts() {
     cormorant: readFileSync(
       join(
         base,
-        "@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff2"
+        "@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff"
       )
     ),
     jostLight: readFileSync(
-      join(base, "@fontsource/jost/files/jost-latin-300-normal.woff2")
+      join(base, "@fontsource/jost/files/jost-latin-300-normal.woff")
     ),
     jostSemi: readFileSync(
-      join(base, "@fontsource/jost/files/jost-latin-600-normal.woff2")
+      join(base, "@fontsource/jost/files/jost-latin-600-normal.woff")
     ),
   };
   console.log("[imagen] Fuentes cargadas");
