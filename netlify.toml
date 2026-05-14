@@ -9,6 +9,12 @@
 
 [functions."capsula-diaria"]
   schedule = "0 14 * * *"
+  included_files = [
+    "node_modules/@resvg/resvg-wasm/index_bg.wasm",
+    "node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff2",
+    "node_modules/@fontsource/jost/files/jost-latin-300-normal.woff2",
+    "node_modules/@fontsource/jost/files/jost-latin-600-normal.woff2"
+  ]
 
 [[headers]]
   for = "/*"
