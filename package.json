@@ -1,0 +1,10 @@
+{
+  "name": "thanotectas",
+  "version": "1.0.0",
+  "description": "Thanotectas - Guardianes del Umbral",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
