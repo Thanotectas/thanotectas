@@ -276,6 +276,25 @@ h1 em{font-style:italic;color:var(--oro-claro)}
 .share-box a{display:inline-block;margin:0 .6rem;color:var(--oro);text-decoration:none;transition:transform .3s}
 .share-box a:hover{transform:translateY(-2px)}
 
+/* Newsletter capture */
+.newsletter{margin-top:3.5rem;padding:2.5rem 2rem;border:1px dashed var(--linea-2);border-radius:2px;background:rgba(13,11,8,.4);text-align:center}
+.newsletter-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--musgo-glow);margin-bottom:.9rem}
+.newsletter-title{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-height:1.3;color:var(--crema);font-weight:400;margin-bottom:.5rem}
+.newsletter-title em{color:var(--oro-claro);font-style:italic}
+.newsletter-sub{font-family:var(--serif);font-size:.95rem;color:var(--crema-50);margin-bottom:1.6rem;line-height:1.7;font-weight:300;font-style:italic}
+.newsletter-form{display:flex;gap:.5rem;max-width:420px;margin:0 auto;flex-wrap:wrap}
+.newsletter-form input[type=email]{flex:1;min-width:220px;background:rgba(13,11,8,.6);border:1px solid var(--linea-2);border-radius:2px;padding:.85rem 1rem;color:var(--crema);font-family:var(--sans);font-size:.85rem;font-weight:300;outline:none;transition:border-color .3s}
+.newsletter-form input[type=email]::placeholder{color:var(--crema-30)}
+.newsletter-form input[type=email]:focus{border-color:var(--oro)}
+.newsletter-form button{padding:.85rem 1.6rem;background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:var(--noche);border:none;border-radius:2px;font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:transform .3s,box-shadow .3s}
+.newsletter-form button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,165,71,.3)}
+.newsletter-form button:disabled{opacity:.5;cursor:not-allowed}
+.newsletter-form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.newsletter-msg{margin-top:1rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;min-height:1.2em}
+.newsletter-msg.ok{color:var(--musgo-glow)}
+.newsletter-msg.err{color:#c47050}
+.newsletter-fineprint{font-family:var(--mono);font-size:.6rem;color:var(--crema-30);letter-spacing:.15em;margin-top:1.2rem;text-transform:uppercase}
+
 /* Relacionadas */
 .related{margin-top:5rem;padding-top:3rem;border-top:1px solid var(--linea)}
 .related-title{font-family:var(--serif);font-size:1.4rem;font-weight:400;margin-bottom:1.5rem;color:var(--crema)}
@@ -373,8 +392,72 @@ footer a{color:var(--oro);text-decoration:none}
     <a href="/oraculo.html" class="btn-primary">🌿 Abrir el Oráculo</a>
   </section>
 
+  <section class="newsletter" aria-labelledby="news-title">
+    <div class="newsletter-eyebrow">✦ Una memoria al amanecer ✦</div>
+    <h2 class="newsletter-title" id="news-title">Recibe la <em>cápsula del día</em><br>por correo</h2>
+    <p class="newsletter-sub">Cada amanecer en Colombia, una nueva memoria del Archivo aterriza en tu bandeja.</p>
+    <form class="newsletter-form" id="news-form" novalidate>
+      <label class="hp"><input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <input type="email" name="email" placeholder="tu@correo.com" required aria-label="Tu correo electrónico">
+      <button type="submit">Suscribirme</button>
+    </form>
+    <p class="newsletter-msg" id="news-msg" role="status" aria-live="polite"></p>
+    <p class="newsletter-fineprint">Sin spam · Te puedes dar de baja en un click</p>
+  </section>
+
   ${relacionadasHTML}
 </main>
+
+<script>
+(function(){
+  var f = document.getElementById('news-form');
+  var msg = document.getElementById('news-msg');
+  if (!f) return;
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var btn = f.querySelector('button');
+    var emailEl = f.querySelector('input[name=email]');
+    var hpEl = f.querySelector('input[name=website]');
+    var email = (emailEl.value || '').trim();
+    if (!email || !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/.test(email)) {
+      msg.className = 'newsletter-msg err';
+      msg.textContent = 'Correo inválido';
+      return;
+    }
+    btn.disabled = true;
+    msg.className = 'newsletter-msg';
+    msg.textContent = 'Enviando…';
+    try {
+      var r = await fetch('/.netlify/functions/suscribir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          idioma: document.documentElement.lang || 'es',
+          fuente: 'capsula:' + window.location.pathname.replace(/^\\//, ''),
+          website: hpEl ? hpEl.value : ''
+        })
+      });
+      var data = await r.json();
+      if (r.ok && data && data.ok) {
+        msg.className = 'newsletter-msg ok';
+        msg.textContent = data.ya_existia
+          ? '✓ Ya estabas suscrito — gracias por volver'
+          : (data.reactivado ? '✓ Te reactivamos en la lista' : '✓ Inscrito — revisa tu correo');
+        f.reset();
+      } else {
+        msg.className = 'newsletter-msg err';
+        msg.textContent = (data && data.error === 'email_invalido') ? 'Correo inválido' : 'No se pudo procesar — intenta de nuevo';
+      }
+    } catch(err) {
+      msg.className = 'newsletter-msg err';
+      msg.textContent = 'Error de conexión';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 
 <footer>
   <p>© 2026 Thanotectas · Archivo del Umbral · Bogotá, Colombia</p>

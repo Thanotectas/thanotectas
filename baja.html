@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darte de baja — Thanotectas</title>
+<meta name="description" content="Gestiona tu suscripción al Archivo del Umbral.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d130c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#0d130c;--noche-2:#141d12;
+  --oro:#d4a547;--oro-claro:#e5c068;
+  --crema:#f0e6d3;--crema-50:rgba(240,230,211,.5);
+  --musgo-glow:#6cc06d;--rojo:#c47050;
+  --linea:rgba(212,165,71,.18);
+  --serif:'Fraunces',Georgia,serif;--sans:'Manrope',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--noche);color:var(--crema);min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem;font-weight:300;line-height:1.7}
+.card{max-width:520px;width:100%;background:var(--noche-2);border:1px solid var(--linea);padding:3rem 2.5rem;border-radius:2px;text-align:center}
+.icon{font-size:2.5rem;margin-bottom:1rem}
+h1{font-family:var(--serif);font-size:1.8rem;font-weight:400;margin-bottom:.8rem;letter-spacing:-0.005em}
+h1 em{font-style:italic;color:var(--oro-claro)}
+.subtitle{color:var(--crema-50);font-family:var(--serif);font-style:italic;font-size:1rem;margin-bottom:2rem;line-height:1.7}
+.status{padding:1.2rem 1.5rem;border-radius:2px;margin-bottom:1.5rem;font-size:.9rem;border:1px solid var(--linea)}
+.status.ok{background:rgba(108,192,109,.06);border-color:rgba(108,192,109,.3);color:var(--musgo-glow)}
+.status.err{background:rgba(196,112,80,.08);border-color:rgba(196,112,80,.3);color:var(--rojo)}
+.status.loading{color:var(--crema-50)}
+.actions{display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap}
+.btn{padding:.85rem 1.8rem;border:1px solid var(--oro);color:var(--oro);text-decoration:none;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;border-radius:2px;transition:all .3s}
+.btn:hover{background:rgba(212,165,71,.1)}
+.btn.primary{background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:var(--noche);border-color:transparent;font-weight:600}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,165,71,.3)}
+.footnote{margin-top:2.5rem;font-size:.7rem;color:var(--crema-50);letter-spacing:.1em}
+.footnote a{color:var(--oro);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🌿</div>
+  <h1>Gestionar <em>suscripción</em></h1>
+  <p class="subtitle">El Umbral siempre queda abierto. Puedes volver cuando quieras.</p>
+
+  <div id="status" class="status loading">Procesando…</div>
+
+  <div id="actions" class="actions" style="display:none">
+    <a href="/" class="btn">Volver al Archivo</a>
+    <a href="/oraculo.html" class="btn primary">Abrir el Oráculo</a>
+  </div>
+
+  <div class="footnote">
+    <a href="/">thanotectas.com</a> · Archivo del Umbral
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://oygwnmfwfxbxdogaqwmi.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95Z3dubWZ3ZnhieGRvZ2Fxd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Njc3NzEsImV4cCI6MjA5MTE0Mzc3MX0.RqnATwitqlTWThw27qw4Z2TlHiQBEVpvsKfbBe0kJ8I';
+
+(async () => {
+  const status = document.getElementById('status');
+  const actions = document.getElementById('actions');
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  if (!token) {
+    status.className = 'status err';
+    status.textContent = 'Falta el token. Usa el link que llegó en tu correo.';
+    actions.style.display = 'flex';
+    return;
+  }
+
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/dar_de_baja', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_token: token })
+    });
+    const data = await r.json();
+    if (r.ok && data && data.ok) {
+      status.className = 'status ok';
+      status.textContent = '✓ Tu correo fue dado de baja. No recibirás más cápsulas.';
+    } else if (data && data.error === 'token_invalido_o_ya_baja') {
+      status.className = 'status ok';
+      status.textContent = 'Tu correo ya no estaba activo en la lista. Todo en orden.';
+    } else {
+      status.className = 'status err';
+      status.textContent = 'No pudimos procesar la baja. Escribe a info@thanotectas.com.';
+    }
+  } catch (e) {
+    status.className = 'status err';
+    status.textContent = 'Error de conexión. Intenta de nuevo o escribe a info@thanotectas.com.';
+  }
+  actions.style.display = 'flex';
+})();
+</script>
+</body>
+</html>
