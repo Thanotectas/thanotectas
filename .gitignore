@@ -40,3 +40,10 @@ android/local.properties
 # Supabase CLI (temp y secrets locales)
 supabase/.temp/
 supabase/.branches/
+
+# === Páginas generadas por build-pages.mjs ===
+# Se regeneran en cada build de Netlify desde Supabase.
+# No commitear: son artefactos derivados.
+/c/
+/sitemap.xml
+/robots.txt
