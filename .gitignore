@@ -33,3 +33,10 @@ android/local.properties
 .idea/
 *.iml
 .vscode/
+
+# Netlify CLI (local state con site-id)
+.netlify/
+
+# Supabase CLI (temp y secrets locales)
+supabase/.temp/
+supabase/.branches/
