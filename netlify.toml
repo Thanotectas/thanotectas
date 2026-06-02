@@ -14,7 +14,8 @@
     "node_modules/@resvg/resvg-wasm/index_bg.wasm",
     "node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff",
     "node_modules/@fontsource/jost/files/jost-latin-300-normal.woff",
-    "node_modules/@fontsource/jost/files/jost-latin-600-normal.woff"
+    "node_modules/@fontsource/jost/files/jost-latin-600-normal.woff",
+    "node_modules/ffmpeg-static/ffmpeg"
   ]
 
 [[headers]]

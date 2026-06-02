@@ -6,8 +6,10 @@
 import { createClient } from "@supabase/supabase-js";
 import satori from "satori";
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync, unlinkSync } from "fs";
 import { join } from "path";
+import { execFileSync } from "child_process";
+import ffmpegPath from "ffmpeg-static";
 
 // ── Entorno ──────────────────────────────────────────────────
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -78,6 +80,18 @@ export default async (req) => {
       imagenUrl = `${SITE_URL}/umbral-og.png`;
     }
 
+    // Generar video vertical (Reel); si falla, seguimos solo con imagen
+    let videoUrl = null;
+    try {
+      videoUrl = await generarVideoCapsula(capsula, supabase);
+      console.log(`[capsula-diaria] Video Reel: ${videoUrl}`);
+    } catch (vidErr) {
+      console.error(
+        "[capsula-diaria] Fallo video Reel, se posteará imagen:",
+        vidErr.message
+      );
+    }
+
     const captions = construirCaptions(capsula);
     console.log(
       `[capsula-diaria] Caption length: ${captions.instagram.length} chars`
@@ -85,12 +99,23 @@ export default async (req) => {
 
     let igResult = { ok: false, error: "Skipped" };
     if (IG_PAGE_TOKEN && IG_USER_ID) {
-      try {
-        igResult = await postearInstagram(captions.instagram, imagenUrl);
-        console.log("[capsula-diaria] Instagram:", igResult);
-      } catch (err) {
-        console.error("[capsula-diaria] Error Instagram:", err.message);
-        igResult = { ok: false, error: err.message };
+      // Intentar Reel primero (más alcance); si falla, caer a foto
+      if (videoUrl) {
+        try {
+          igResult = await postearReel(captions.instagram, videoUrl);
+          console.log("[capsula-diaria] Instagram Reel:", igResult);
+        } catch (err) {
+          console.error("[capsula-diaria] Error Reel, intentando foto:", err.message);
+        }
+      }
+      if (!igResult.ok) {
+        try {
+          igResult = await postearInstagram(captions.instagram, imagenUrl);
+          console.log("[capsula-diaria] Instagram foto:", igResult);
+        } catch (err) {
+          console.error("[capsula-diaria] Error Instagram foto:", err.message);
+          igResult = { ok: false, error: err.message };
+        }
       }
     } else {
       console.warn("[capsula-diaria] IG credenciales faltando");
@@ -182,13 +207,19 @@ async function ensureFonts() {
 }
 
 async function ensureBucket(supabase) {
-  const { error } = await supabase.storage.createBucket("capsulas-imagenes", {
+  const opts = {
     public: true,
-    fileSizeLimit: 10485760,
-    allowedMimeTypes: ["image/png"],
-  });
-  if (error && !error.message.toLowerCase().includes("already exists")) {
-    console.warn("[imagen] Bucket warning:", error.message);
+    fileSizeLimit: 52428800, // 50MB (videos)
+    allowedMimeTypes: ["image/png", "video/mp4"],
+  };
+  const { error } = await supabase.storage.createBucket("capsulas-imagenes", opts);
+  if (error) {
+    if (error.message.toLowerCase().includes("already exists")) {
+      // Asegurar que el bucket existente acepte video y el límite mayor
+      await supabase.storage.updateBucket("capsulas-imagenes", opts);
+    } else {
+      console.warn("[imagen] Bucket warning:", error.message);
+    }
   }
 }
 
@@ -433,6 +464,149 @@ async function generarImagenCapsula(capsula, supabase) {
   return urlData.publicUrl;
 }
 
+// ── Generación de video vertical (Reel) ──────────────────────
+
+// Construye el árbol de elementos para la imagen vertical 1080x1920
+function construirElementoVertical(capsula) {
+  const año = new Date(capsula.created_at).getFullYear();
+  const sujetoDisplay = (capsula.sujeto || "Sujeto").toUpperCase();
+  const tipo =
+    (capsula.tipo || "").charAt(0).toUpperCase() +
+    (capsula.tipo || "").slice(1).toLowerCase();
+  const certNum = capsula.numero_certificado || capsula.id;
+  const contenido = capsula.contenido.trim();
+  const cita =
+    contenido.length > 320 ? contenido.slice(0, 319).trim() + "…" : contenido;
+  const citaFontSize = cita.length > 240 ? 42 : cita.length > 150 ? 48 : 56;
+
+  return {
+    type: "div",
+    props: {
+      style: {
+        width: 1080,
+        height: 1920,
+        backgroundColor: "#14100D",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingTop: 140,
+        paddingRight: 90,
+        paddingBottom: 140,
+        paddingLeft: 90,
+      },
+      children: [
+        // Cabecera
+        {
+          type: "div",
+          props: {
+            style: { display: "flex", flexDirection: "column", alignItems: "center", width: "100%" },
+            children: [
+              { type: "div", props: { style: { width: "100%", height: 1, backgroundColor: "#C4A45B", marginBottom: 24 } } },
+              { type: "p", props: { style: { fontFamily: "Jost", fontWeight: 300, fontSize: 20, letterSpacing: 8, color: "#C4A45B", marginTop: 0, marginBottom: 12 }, children: "T H A N O T E C T A S" } },
+              { type: "p", props: { style: { fontFamily: "Jost", fontWeight: 300, fontSize: 14, letterSpacing: 3, color: "#5A4A38", marginTop: 0, marginBottom: 0 }, children: "ARCHIVO DEL UMBRAL" } },
+            ],
+          },
+        },
+        // Cita
+        {
+          type: "div",
+          props: {
+            style: { display: "flex", alignItems: "center", justifyContent: "center", width: "100%", flexGrow: 1, paddingTop: 60, paddingBottom: 60 },
+            children: [
+              { type: "p", props: { style: { fontFamily: "Cormorant Garamond", fontStyle: "italic", fontWeight: 400, fontSize: citaFontSize, color: "#F5EDE0", textAlign: "center", lineHeight: 1.5, marginTop: 0, marginBottom: 0 }, children: `"${cita}"` } },
+            ],
+          },
+        },
+        // Pie
+        {
+          type: "div",
+          props: {
+            style: { display: "flex", flexDirection: "column", alignItems: "center", width: "100%" },
+            children: [
+              { type: "div", props: { style: { width: "50%", height: 1, backgroundColor: "#3D2E1E", marginBottom: 24 } } },
+              { type: "p", props: { style: { fontFamily: "Jost", fontWeight: 600, fontSize: 28, color: "#E8D9B8", marginTop: 0, marginBottom: 14, letterSpacing: 3, textAlign: "center" }, children: sujetoDisplay } },
+              { type: "p", props: { style: { fontFamily: "Jost", fontWeight: 300, fontSize: 18, color: "#8A7560", marginTop: 0, marginBottom: 16, letterSpacing: 3, textAlign: "center" }, children: `${tipo} · ${año}` } },
+              { type: "p", props: { style: { fontFamily: "Jost", fontWeight: 300, fontSize: 15, color: "#7A6448", marginTop: 0, marginBottom: 0, letterSpacing: 2, textAlign: "center" }, children: "thanotectas.com" } },
+            ],
+          },
+        },
+      ],
+    },
+  };
+}
+
+async function generarVideoCapsula(capsula, supabase) {
+  await Promise.all([ensureWasm(), ensureFonts()]);
+
+  const certNum = capsula.numero_certificado || capsula.id;
+  const safe = certNum.replace(/[^a-zA-Z0-9_-]/g, "_");
+
+  // 1. Imagen vertical 1080x1920 con satori
+  const svg = await satori(construirElementoVertical(capsula), {
+    width: 1080,
+    height: 1920,
+    fonts: [
+      { name: "Cormorant Garamond", data: fonts.cormorant, style: "italic", weight: 400 },
+      { name: "Jost", data: fonts.jostLight, style: "normal", weight: 300 },
+      { name: "Jost", data: fonts.jostSemi, style: "normal", weight: 600 },
+    ],
+  });
+  const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1080 } });
+  const pngBuffer = resvg.render().asPng();
+
+  // 2. Escribir PNG temporal y generar MP4 con zoom lento (Ken Burns)
+  const tmpPng = `/tmp/${safe}-v.png`;
+  const tmpMp4 = `/tmp/${safe}.mp4`;
+  writeFileSync(tmpPng, pngBuffer);
+
+  try {
+    execFileSync(
+      ffmpegPath,
+      [
+        "-y",
+        "-loop", "1",
+        "-i", tmpPng,
+        "-vf",
+        "zoompan=z='min(zoom+0.0006,1.12)':d=500:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=25,format=yuv420p",
+        "-t", "20",
+        "-r", "25",
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        tmpMp4,
+      ],
+      { stdio: "pipe" }
+    );
+  } catch (e) {
+    throw new Error(`ffmpeg falló: ${e.message}`);
+  }
+
+  const mp4Buffer = readFileSync(tmpMp4);
+
+  // 3. Subir a Supabase Storage
+  await ensureBucket(supabase);
+  const fileName = `${safe}.mp4`;
+  const { error: uploadError } = await supabase.storage
+    .from("capsulas-imagenes")
+    .upload(fileName, mp4Buffer, { contentType: "video/mp4", upsert: true });
+
+  // Limpiar temporales
+  try { unlinkSync(tmpPng); } catch {}
+  try { unlinkSync(tmpMp4); } catch {}
+
+  if (uploadError) {
+    throw new Error(`Upload video fallido: ${uploadError.message}`);
+  }
+
+  const { data: urlData } = supabase.storage
+    .from("capsulas-imagenes")
+    .getPublicUrl(fileName);
+
+  return urlData.publicUrl;
+}
+
 // ── Captions ─────────────────────────────────────────────────
 
 function construirCaptions(capsula) {
@@ -623,4 +797,70 @@ async function postearInstagram(caption, imagenUrl) {
 
   console.log(`[IG] Post published: ${publishData.id}`);
   return { ok: true, postId: publishData.id };
+}
+
+// ── Instagram Reel ────────────────────────────────────────────
+
+async function postearReel(caption, videoUrl) {
+  if (!IG_USER_ID || !IG_PAGE_TOKEN) {
+    throw new Error("Missing IG_USER_ID or IG_PAGE_TOKEN");
+  }
+
+  // 1. Crear contenedor de Reel
+  const containerUrl =
+    `https://graph.facebook.com/v21.0/${IG_USER_ID}/media` +
+    `?media_type=REELS` +
+    `&video_url=${encodeURIComponent(videoUrl)}` +
+    `&caption=${encodeURIComponent(caption)}` +
+    `&share_to_feed=true` +
+    `&access_token=${IG_PAGE_TOKEN}`;
+
+  const containerRes = await fetch(containerUrl, { method: "POST" });
+  const containerData = await containerRes.json();
+
+  if (!containerData.id) {
+    throw new Error(`Reel container failed: ${JSON.stringify(containerData)}`);
+  }
+
+  const containerId = containerData.id;
+  console.log(`[Reel] Container created: ${containerId}`);
+
+  // 2. Esperar a que termine el procesamiento del video (polling)
+  const maxIntentos = 30; // ~5 min máx
+  for (let i = 0; i < maxIntentos; i++) {
+    await new Promise((r) => setTimeout(r, 10000)); // 10s entre checks
+
+    const statusUrl =
+      `https://graph.facebook.com/v21.0/${containerId}` +
+      `?fields=status_code,status` +
+      `&access_token=${IG_PAGE_TOKEN}`;
+    const statusRes = await fetch(statusUrl);
+    const statusData = await statusRes.json();
+
+    console.log(`[Reel] Status check ${i + 1}: ${statusData.status_code}`);
+
+    if (statusData.status_code === "FINISHED") break;
+    if (statusData.status_code === "ERROR") {
+      throw new Error(`Reel processing error: ${JSON.stringify(statusData)}`);
+    }
+    if (i === maxIntentos - 1) {
+      throw new Error("Reel processing timeout (5min)");
+    }
+  }
+
+  // 3. Publicar
+  const publishUrl =
+    `https://graph.facebook.com/v21.0/${IG_USER_ID}/media_publish` +
+    `?creation_id=${containerId}` +
+    `&access_token=${IG_PAGE_TOKEN}`;
+
+  const publishRes = await fetch(publishUrl, { method: "POST" });
+  const publishData = await publishRes.json();
+
+  if (!publishData.id) {
+    throw new Error(`Reel publish failed: ${JSON.stringify(publishData)}`);
+  }
+
+  console.log(`[Reel] Published: ${publishData.id}`);
+  return { ok: true, postId: publishData.id, tipo: "reel" };
 }
