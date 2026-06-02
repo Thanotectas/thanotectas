@@ -881,7 +881,27 @@ footer{
   .footer-bottom{flex-direction:column;text-align:center}
   .chatbot-panel{right:.5rem;left:.5rem;width:auto;bottom:5rem}
   .chatbot-btn{bottom:1.2rem;right:1.2rem;width:54px;height:54px}
+  .nl-form{flex-direction:column;align-items:stretch}
+  .nl-form input[type=email]{min-width:0}
 }
+/* ── Newsletter band ─────────────────────────────────────── */
+.nl-band{padding:5rem 1.5rem;text-align:center;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);background:linear-gradient(180deg,rgba(13,19,12,0) 0%,rgba(20,16,9,.6) 100%)}
+.nl-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--musgo-glow);margin-bottom:1.1rem}
+.nl-title{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:400;line-height:1.2;color:var(--crema);margin-bottom:.6rem}
+.nl-title em{color:var(--oro-claro);font-style:italic}
+.nl-sub{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--crema-50);margin-bottom:2rem;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.7}
+.nl-form{display:flex;gap:.5rem;max-width:460px;margin:0 auto 1rem;flex-wrap:wrap}
+.nl-form input[type=email]{flex:1;min-width:220px;background:rgba(13,11,8,.5);border:1px solid var(--linea-2);border-radius:2px;padding:.9rem 1.1rem;color:var(--crema);font-family:var(--sans);font-size:.9rem;font-weight:300;outline:none;transition:border-color .3s}
+.nl-form input[type=email]::placeholder{color:var(--crema-30)}
+.nl-form input[type=email]:focus{border-color:var(--oro)}
+.nl-form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.nl-form button{padding:.9rem 1.8rem;background:linear-gradient(135deg,var(--oro),var(--oro-claro));color:var(--noche);border:none;border-radius:2px;font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:transform .3s,box-shadow .3s;white-space:nowrap}
+.nl-form button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,165,71,.3)}
+.nl-form button:disabled{opacity:.5;cursor:not-allowed}
+.nl-msg{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;min-height:1.2em;margin-top:.5rem}
+.nl-msg.ok{color:var(--musgo-glow)}
+.nl-msg.err{color:#c47050}
+.nl-fineprint{font-family:var(--mono);font-size:.6rem;color:var(--crema-30);letter-spacing:.15em;text-transform:uppercase;margin-top:1.2rem}
 </style>
 </head>
 <body>
@@ -1044,6 +1064,20 @@ footer{
     <a href="/planes.html" class="btn-secondary">Ver planes Guardián</a>
   </div>
   <p class="cta-note">Sin suscripciones · Pago único · Desde $0</p>
+</div>
+
+<!-- ══ NEWSLETTER ══ -->
+<div class="nl-band" id="newsletter">
+  <div class="nl-eyebrow">✦ Una memoria al amanecer ✦</div>
+  <h2 class="nl-title">Recibe la <em>cápsula del día</em><br>cada amanecer</h2>
+  <p class="nl-sub">Cada mañana en Colombia, una nueva memoria del Archivo llega a tu correo. Sin algoritmos. Sin anuncios.</p>
+  <form class="nl-form" id="nl-form-home" novalidate>
+    <label class="hp"><input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+    <input type="email" name="email" placeholder="tu@correo.com" required aria-label="Tu correo electrónico">
+    <button type="submit">Suscribirme gratis</button>
+  </form>
+  <p class="nl-msg" id="nl-msg-home" role="status" aria-live="polite"></p>
+  <p class="nl-fineprint">Sin spam · Un correo al día · Te puedes dar de baja en un click</p>
 </div>
 
 <!-- ══ FOOTER ══ -->
@@ -1271,5 +1305,39 @@ function sendChat(){
 }
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
+<script>
+(function(){
+  var f=document.getElementById('nl-form-home');
+  var msg=document.getElementById('nl-msg-home');
+  if(!f)return;
+  f.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var btn=f.querySelector('button');
+    var emailEl=f.querySelector('input[name=email]');
+    var hpEl=f.querySelector('input[name=website]');
+    var email=(emailEl.value||'').trim();
+    if(!email||!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)){
+      msg.className='nl-msg err';msg.textContent='Correo inválido';return;
+    }
+    btn.disabled=true;msg.className='nl-msg';msg.textContent='Enviando…';
+    try{
+      var r=await fetch('/.netlify/functions/suscribir',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email:email,idioma:'es',fuente:'index:newsletter',website:hpEl?hpEl.value:''})
+      });
+      var d=await r.json();
+      if(r.ok&&d&&d.ok){
+        msg.className='nl-msg ok';
+        msg.textContent=d.ya_existia?'✓ Ya estabas suscrito — gracias':(d.reactivado?'✓ Te reactivamos en la lista':'✓ Inscrito — revisa tu correo');
+        f.reset();
+      } else {
+        msg.className='nl-msg err';
+        msg.textContent=(d&&d.error==='email_invalido')?'Correo inválido':'Error — intenta de nuevo';
+      }
+    }catch(err){msg.className='nl-msg err';msg.textContent='Error de conexión';}
+    finally{btn.disabled=false;}
+  });
+})();
+</script>
 </body>
 </html>

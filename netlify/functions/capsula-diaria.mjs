@@ -15,6 +15,7 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SITE_URL = process.env.SITE_URL || "https://thanotectas.com";
 const IG_USER_ID = process.env.IG_USER_ID;
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const IG_CAPTION_MAX = 2200;
 const IG_BODY_MAX = 1700;
@@ -115,11 +116,26 @@ export default async (req) => {
         console.error("[capsula-diaria] Error actualizando BD:", errUpd);
     }
 
+    // Enviar email diario a suscriptores (independiente de Instagram)
+    let emailResult = { ok: false, enviados: 0, error: "Skipped" };
+    if (RESEND_API_KEY) {
+      try {
+        emailResult = await enviarEmailDiario(capsula, imagenUrl, supabase);
+        console.log("[capsula-diaria] Email diario:", emailResult);
+      } catch (err) {
+        console.error("[capsula-diaria] Error email diario:", err.message);
+        emailResult = { ok: false, enviados: 0, error: err.message };
+      }
+    } else {
+      console.warn("[capsula-diaria] RESEND_API_KEY no configurada, saltando email diario");
+    }
+
     return new Response(
       JSON.stringify({
         ok: igResult.ok,
         capsula: capsula.numero_certificado,
         platforms,
+        email_diario: emailResult,
       }),
       { headers: { "Content-Type": "application/json" } }
     );
@@ -451,6 +467,119 @@ function construirCaptions(capsula) {
   }
 
   return { instagram };
+}
+
+// ── Email diario a suscriptores ───────────────────────────────
+
+async function enviarEmailDiario(capsula, imagenUrl, supabase) {
+  // 1. Obtener suscriptores activos
+  const { data: suscriptores, error: errSus } = await supabase
+    .from("suscriptores")
+    .select("id, email, idioma, token_baja, emails_enviados")
+    .is("baja_at", null)
+    .limit(500);
+
+  if (errSus) throw new Error(`Supabase suscriptores: ${errSus.message}`);
+  if (!suscriptores || suscriptores.length === 0) {
+    return { ok: true, enviados: 0, error: null };
+  }
+
+  const cert = capsula.numero_certificado || capsula.id;
+  const sujeto = capsula.sujeto || "Sin título";
+  const tipo = (capsula.tipo || "").charAt(0).toUpperCase() + (capsula.tipo || "").slice(1);
+  const año = new Date(capsula.created_at).getFullYear();
+  const enlace = `${SITE_URL}/c/${cert}`;
+  const asunto = `Cápsula del día: ${sujeto} · ${tipo} · ${año} — Thanotectas`;
+
+  // 2. Construir payloads de email individuales (con token de baja único)
+  const payloads = suscriptores.map((s) => ({
+    from: "Thanotectas <info@thanotectas.com>",
+    to: [s.email],
+    subject: asunto,
+    html: renderEmailDiario({ capsula, imagenUrl, enlace, cert, sujeto, tipo, año, bajaUrl: `${SITE_URL}/baja?token=${encodeURIComponent(s.token_baja)}` }),
+  }));
+
+  // 3. Enviar en lotes de 100 (límite de Resend batch)
+  let totalEnviados = 0;
+  const BATCH = 100;
+  for (let i = 0; i < payloads.length; i += BATCH) {
+    const lote = payloads.slice(i, i + BATCH);
+    const res = await fetch("https://api.resend.com/emails/batch", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(lote),
+    });
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error(`[email-diario] Lote ${i / BATCH + 1} falló: ${res.status} ${errBody}`);
+      continue;
+    }
+    totalEnviados += lote.length;
+  }
+
+  // 4. Actualizar contadores en BD
+  if (totalEnviados > 0) {
+    const ids = suscriptores.map((s) => s.id);
+    await supabase.rpc("incrementar_emails_suscriptores", { p_ids: ids, p_capsula_id: capsula.id });
+  }
+
+  return { ok: true, enviados: totalEnviados, total_suscriptores: suscriptores.length };
+}
+
+function renderEmailDiario({ capsula, imagenUrl, enlace, cert, sujeto, tipo, año, bajaUrl }) {
+  const contenido = (capsula.contenido || "").trim();
+  const preview = contenido.length > 300 ? contenido.slice(0, 299).trim() + "…" : contenido;
+  const previewHTML = preview.split("\n").join("<br>");
+
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1611;font-family:Georgia,serif;color:#f0e6d3;padding:0}
+.wrap{max-width:580px;margin:0 auto;padding:0}
+.header{background:#141009;padding:36px 30px;text-align:center;border-bottom:1px solid rgba(196,151,59,0.2)}
+.logo-txt{font-size:11px;letter-spacing:0.35em;text-transform:uppercase;color:#c4973b;margin-bottom:8px;font-family:Arial,sans-serif}
+.tagline{font-size:12px;color:rgba(240,230,211,0.5);font-family:Arial,sans-serif;letter-spacing:0.1em}
+.capsule{background:#0d0b08;padding:44px 36px;border-left:3px solid #c4973b;border-right:3px solid #c4973b}
+.cert{font-family:Arial,sans-serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#c4973b;text-align:center;margin-bottom:14px}
+.tipo-badge{font-family:Arial,sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#4a8a4b;text-align:center;margin-bottom:10px}
+.sujeto{font-family:Georgia,serif;font-size:26px;font-weight:400;color:#f0e6d3;text-align:center;margin-bottom:28px;line-height:1.2}
+.imagen-wrap{margin:0 0 28px;text-align:center}
+.imagen-wrap img{width:100%;max-width:480px;height:auto;border:1px solid rgba(196,151,59,0.15)}
+.contenido{font-family:Georgia,serif;font-size:16px;line-height:2;font-style:italic;color:#f0e6d3;text-align:center}
+.separador{width:40%;margin:28px auto;height:1px;background:rgba(196,151,59,0.2)}
+.meta{font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(240,230,211,0.4);text-align:center}
+.footer-sec{background:#141009;padding:36px 30px;text-align:center}
+.footer-text{font-family:Arial,sans-serif;font-size:13px;color:rgba(240,230,211,0.6);line-height:1.8;margin-bottom:22px}
+.cta-btn{display:inline-block;padding:13px 26px;background:#c4973b;color:#1a1611;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;letter-spacing:0.08em;border-radius:4px}
+.site-link{display:block;margin-top:16px;font-size:11px;color:#c4973b;text-decoration:none;font-family:Arial,sans-serif;letter-spacing:0.1em}
+.baja{margin-top:18px;font-size:10px;color:rgba(240,230,211,0.3);font-family:Arial,sans-serif}
+.baja a{color:rgba(196,151,59,0.6)}
+</style></head><body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo-txt">THANOTECTAS</div>
+    <div class="tagline">Cápsula del día · Archivo del Umbral</div>
+  </div>
+  <div class="capsule">
+    <div class="cert">${cert.replace(/-/g, " · ")}</div>
+    <div class="tipo-badge">${tipo}</div>
+    <div class="sujeto">${sujeto}</div>
+    ${imagenUrl ? `<div class="imagen-wrap"><img src="${imagenUrl}" alt="Cápsula ${cert}"></div>` : ""}
+    <div class="contenido">${previewHTML}</div>
+    <div class="separador"></div>
+    <div class="meta">${tipo} · ${año}</div>
+  </div>
+  <div class="footer-sec">
+    <div class="footer-text">Cada amanecer, una memoria del Archivo. Gracias por ser parte del Umbral.</div>
+    <a href="${enlace}" class="cta-btn">🌿 Leer cápsula completa</a>
+    <a href="${SITE_URL}" class="site-link">thanotectas.com</a>
+    <div class="baja">¿No quieres más correos? <a href="${bajaUrl}">Darte de baja en un click</a></div>
+  </div>
+</div>
+</body></html>`;
 }
 
 // ── Instagram ─────────────────────────────────────────────────
