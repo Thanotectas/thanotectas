@@ -9,6 +9,7 @@ import { initWasm, Resvg } from "@resvg/resvg-wasm";
 import { readFileSync, writeFileSync, unlinkSync } from "fs";
 import { join } from "path";
 import { execFileSync } from "child_process";
+import crypto from "crypto";
 import ffmpegPath from "ffmpeg-static";
 
 // ── Entorno ──────────────────────────────────────────────────
@@ -18,6 +19,11 @@ const SITE_URL = process.env.SITE_URL || "https://thanotectas.com";
 const IG_USER_ID = process.env.IG_USER_ID;
 const IG_PAGE_TOKEN = process.env.IG_PAGE_TOKEN;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+// X (Twitter) — OAuth 1.0a user context. Si faltan, se salta el posteo en X.
+const X_API_KEY = process.env.X_API_KEY;
+const X_API_SECRET = process.env.X_API_SECRET;
+const X_ACCESS_TOKEN = process.env.X_ACCESS_TOKEN;
+const X_ACCESS_SECRET = process.env.X_ACCESS_SECRET;
 
 const IG_CAPTION_MAX = 2200;
 const IG_BODY_MAX = 1700;
@@ -121,13 +127,27 @@ export default async (req) => {
       console.warn("[capsula-diaria] IG credenciales faltando");
     }
 
+    let xResult = { ok: false, error: "X credentials not configured" };
+    if (X_API_KEY && X_API_SECRET && X_ACCESS_TOKEN && X_ACCESS_SECRET) {
+      try {
+        xResult = await postearX(captions.x);
+        console.log("[capsula-diaria] X:", xResult);
+      } catch (err) {
+        console.error("[capsula-diaria] Error X:", err.message);
+        xResult = { ok: false, error: err.message };
+      }
+    } else {
+      console.warn("[capsula-diaria] X credenciales faltando, saltando X");
+    }
+
     const platforms = {
       instagram: igResult,
-      x: { ok: false, error: "X credentials not configured" },
+      x: xResult,
       threads: { ok: false, error: "Threads credentials not configured" },
     };
 
-    if (igResult.ok) {
+    // Marcar como posteada si cualquier plataforma publicó (evita duplicados)
+    if (igResult.ok || xResult.ok) {
       const { error: errUpd } = await supabase
         .from("capsulas")
         .update({
@@ -157,7 +177,7 @@ export default async (req) => {
 
     return new Response(
       JSON.stringify({
-        ok: igResult.ok,
+        ok: igResult.ok || xResult.ok,
         capsula: capsula.numero_certificado,
         platforms,
         email_diario: emailResult,
@@ -640,7 +660,71 @@ function construirCaptions(capsula) {
     instagram = instagram.slice(0, IG_CAPTION_MAX - 1).trim() + "…";
   }
 
-  return { instagram };
+  // X: 280 chars; la URL cuenta como 23 (t.co). La tarjeta OG de la página
+  // pone la imagen, así que el tweet es solo texto + enlace.
+  const X_URL_LEN = 23;
+  const xCola = `\n\n— ${sujeto} · ${tipo} · ${año}\n`;
+  const xMax = 280 - X_URL_LEN - xCola.length - 2; // 2 por comillas
+  let xCita = capsula.contenido.trim().replace(/\s+/g, " ");
+  if (xCita.length > xMax) xCita = xCita.slice(0, xMax - 1).trim() + "…";
+  const x = `"${xCita}"${xCola}${enlace}?utm_source=x&utm_medium=social`;
+
+  return { instagram, x };
+}
+
+// ── X (Twitter) ──────────────────────────────────────────────
+
+// Percent-encoding estricto RFC 3986 que exige OAuth 1.0a
+const pctEncode = (s) =>
+  encodeURIComponent(s).replace(
+    /[!'()*]/g,
+    (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase()
+  );
+
+async function postearX(texto) {
+  const url = "https://api.x.com/2/tweets";
+  const oauth = {
+    oauth_consumer_key: X_API_KEY,
+    oauth_nonce: crypto.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_token: X_ACCESS_TOKEN,
+    oauth_version: "1.0",
+  };
+
+  // El cuerpo JSON no entra en la firma; solo los parámetros oauth
+  const paramString = Object.keys(oauth)
+    .sort()
+    .map((k) => `${pctEncode(k)}=${pctEncode(oauth[k])}`)
+    .join("&");
+  const baseString = ["POST", pctEncode(url), pctEncode(paramString)].join("&");
+  const signingKey = `${pctEncode(X_API_SECRET)}&${pctEncode(X_ACCESS_SECRET)}`;
+  oauth.oauth_signature = crypto
+    .createHmac("sha1", signingKey)
+    .update(baseString)
+    .digest("base64");
+
+  const authHeader =
+    "OAuth " +
+    Object.keys(oauth)
+      .sort()
+      .map((k) => `${pctEncode(k)}="${pctEncode(oauth[k])}"`)
+      .join(", ");
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: authHeader,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text: texto }),
+  });
+  const data = await res.json();
+
+  if (!res.ok || !data.data?.id) {
+    throw new Error(`X post failed (${res.status}): ${JSON.stringify(data)}`);
+  }
+  return { ok: true, postId: data.data.id };
 }
 
 // ── Email diario a suscriptores ───────────────────────────────
@@ -662,7 +746,7 @@ async function enviarEmailDiario(capsula, imagenUrl, supabase) {
   const sujeto = capsula.sujeto || "Sin título";
   const tipo = (capsula.tipo || "").charAt(0).toUpperCase() + (capsula.tipo || "").slice(1);
   const año = new Date(capsula.created_at).getFullYear();
-  const enlace = `${SITE_URL}/c/${cert}`;
+  const enlace = `${SITE_URL}/c/${cert}?utm_source=email&utm_medium=newsletter`;
   const asunto = `Cápsula del día: ${sujeto} · ${tipo} · ${año} — Thanotectas`;
 
   // 2. Construir payloads de email individuales (con token de baja único)
@@ -729,6 +813,10 @@ body{background:#1a1611;font-family:Georgia,serif;color:#f0e6d3;padding:0}
 .footer-text{font-family:Arial,sans-serif;font-size:13px;color:rgba(240,230,211,0.6);line-height:1.8;margin-bottom:22px}
 .cta-btn{display:inline-block;padding:13px 26px;background:#c4973b;color:#1a1611;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;letter-spacing:0.08em;border-radius:4px}
 .site-link{display:block;margin-top:16px;font-size:11px;color:#c4973b;text-decoration:none;font-family:Arial,sans-serif;letter-spacing:0.1em}
+.compartir{margin-top:24px;padding-top:20px;border-top:1px solid rgba(196,151,59,0.15);font-family:Arial,sans-serif;font-size:11px;color:rgba(240,230,211,0.5);letter-spacing:0.08em}
+.compartir a{color:#c4973b;text-decoration:none;margin:0 8px}
+.referido{margin-top:14px;font-family:Arial,sans-serif;font-size:11px;color:rgba(240,230,211,0.5)}
+.referido a{color:#c4973b}
 .baja{margin-top:18px;font-size:10px;color:rgba(240,230,211,0.3);font-family:Arial,sans-serif}
 .baja a{color:rgba(196,151,59,0.6)}
 </style></head><body>
@@ -750,6 +838,13 @@ body{background:#1a1611;font-family:Georgia,serif;color:#f0e6d3;padding:0}
     <div class="footer-text">Cada amanecer, una memoria del Archivo. Gracias por ser parte del Umbral.</div>
     <a href="${enlace}" class="cta-btn">🌿 Leer cápsula completa</a>
     <a href="${SITE_URL}" class="site-link">thanotectas.com</a>
+    <div class="compartir">
+      Comparte esta memoria
+      <br>
+      <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(`${sujeto} — una memoria del Archivo del Umbral: ${SITE_URL}/c/${cert}?utm_source=whatsapp&utm_medium=email-share`)}">WhatsApp</a> ·
+      <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(`${sujeto} — Cápsula del Archivo del Umbral`)}&url=${encodeURIComponent(`${SITE_URL}/c/${cert}?utm_source=x&utm_medium=email-share`)}">X</a>
+    </div>
+    <div class="referido">¿Te reenviaron este correo? <a href="${SITE_URL}/?utm_source=referido&utm_medium=email#newsletter">Suscríbete aquí</a></div>
     <div class="baja">¿No quieres más correos? <a href="${bajaUrl}">Darte de baja en un click</a></div>
   </div>
 </div>

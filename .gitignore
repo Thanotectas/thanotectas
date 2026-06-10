@@ -45,5 +45,9 @@ supabase/.branches/
 # Se regeneran en cada build de Netlify desde Supabase.
 # No commitear: son artefactos derivados.
 /c/
+/og/
+/categoria/
 /sitemap.xml
 /robots.txt
+/feed.xml
+/7d4f2c9b1e8a4063a5c2b7f0d9e6418c.txt
