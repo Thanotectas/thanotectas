@@ -662,7 +662,7 @@ async function enviarEmailDiario(capsula, imagenUrl, supabase) {
   const sujeto = capsula.sujeto || "Sin título";
   const tipo = (capsula.tipo || "").charAt(0).toUpperCase() + (capsula.tipo || "").slice(1);
   const año = new Date(capsula.created_at).getFullYear();
-  const enlace = `${SITE_URL}/c/${cert}`;
+  const enlace = `${SITE_URL}/c/${cert}?utm_source=email&utm_medium=newsletter`;
   const asunto = `Cápsula del día: ${sujeto} · ${tipo} · ${año} — Thanotectas`;
 
   // 2. Construir payloads de email individuales (con token de baja único)
@@ -729,6 +729,10 @@ body{background:#1a1611;font-family:Georgia,serif;color:#f0e6d3;padding:0}
 .footer-text{font-family:Arial,sans-serif;font-size:13px;color:rgba(240,230,211,0.6);line-height:1.8;margin-bottom:22px}
 .cta-btn{display:inline-block;padding:13px 26px;background:#c4973b;color:#1a1611;text-decoration:none;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;letter-spacing:0.08em;border-radius:4px}
 .site-link{display:block;margin-top:16px;font-size:11px;color:#c4973b;text-decoration:none;font-family:Arial,sans-serif;letter-spacing:0.1em}
+.compartir{margin-top:24px;padding-top:20px;border-top:1px solid rgba(196,151,59,0.15);font-family:Arial,sans-serif;font-size:11px;color:rgba(240,230,211,0.5);letter-spacing:0.08em}
+.compartir a{color:#c4973b;text-decoration:none;margin:0 8px}
+.referido{margin-top:14px;font-family:Arial,sans-serif;font-size:11px;color:rgba(240,230,211,0.5)}
+.referido a{color:#c4973b}
 .baja{margin-top:18px;font-size:10px;color:rgba(240,230,211,0.3);font-family:Arial,sans-serif}
 .baja a{color:rgba(196,151,59,0.6)}
 </style></head><body>
@@ -750,6 +754,13 @@ body{background:#1a1611;font-family:Georgia,serif;color:#f0e6d3;padding:0}
     <div class="footer-text">Cada amanecer, una memoria del Archivo. Gracias por ser parte del Umbral.</div>
     <a href="${enlace}" class="cta-btn">🌿 Leer cápsula completa</a>
     <a href="${SITE_URL}" class="site-link">thanotectas.com</a>
+    <div class="compartir">
+      Comparte esta memoria
+      <br>
+      <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(`${sujeto} — una memoria del Archivo del Umbral: ${SITE_URL}/c/${cert}?utm_source=whatsapp&utm_medium=email-share`)}">WhatsApp</a> ·
+      <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(`${sujeto} — Cápsula del Archivo del Umbral`)}&url=${encodeURIComponent(`${SITE_URL}/c/${cert}?utm_source=x&utm_medium=email-share`)}">X</a>
+    </div>
+    <div class="referido">¿Te reenviaron este correo? <a href="${SITE_URL}/?utm_source=referido&utm_medium=email#newsletter">Suscríbete aquí</a></div>
     <div class="baja">¿No quieres más correos? <a href="${bajaUrl}">Darte de baja en un click</a></div>
   </div>
 </div>
