@@ -96,7 +96,17 @@ contamos hacia afuera.
 - La imagen canónica del lema: el pedestal vacío con placa en blanco.
   El espacio que falta es el del espectador.
 
-**Variantes aprobadas del cierre:**
+**El gancho oficial (adoptado 26 nov 2026):**
+
+> **"Que no termine en museo."**
+
+Es el cierre repetible de la campaña: va al final de cada caption de
+Instagram y X, y funciona como fórmula con cualquier sujeto
+("El tití cabeciblanco. Que no termine en museo."). Hashtag:
+**#QueNoTermineEnMuseo**. La frase larga abre (voz en off de los videos);
+el gancho cierra y se repite. La repetición es la que fabrica el lema.
+
+**Variantes aprobadas del cierre (usos puntuales):**
 - "Tú aún puedes decidir qué no entre aquí."
 - "Que esta sala quede vacía."
 - "Nómbralo ahora, antes de que entre aquí."

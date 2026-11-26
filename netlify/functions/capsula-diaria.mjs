@@ -659,6 +659,7 @@ function construirCaptions(capsula) {
   }
 
   const hashtags = [
+    "#QueNoTermineEnMuseo",
     "#archivodelumbral",
     "#dueloecologico",
     "#thanotectas",
@@ -671,6 +672,7 @@ function construirCaptions(capsula) {
 
   let instagram =
     `${cuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n` +
+    `Que no termine en museo.\n\n` +
     `${numero}\n${enlace}\n\n${hashtags}`;
 
   if (instagram.length > IG_CAPTION_MAX) {
@@ -680,7 +682,7 @@ function construirCaptions(capsula) {
   // X: 280 chars; la URL cuenta como 23 (t.co). La tarjeta OG de la página
   // pone la imagen, así que el tweet es solo texto + enlace.
   const X_URL_LEN = 23;
-  const xCola = `\n\n— ${sujeto} · ${tipo} · ${año}\n`;
+  const xCola = `\n\n— ${sujeto} · ${tipo} · ${año}\nQue no termine en museo.\n`;
   const xMax = 280 - X_URL_LEN - xCola.length - 2; // 2 por comillas
   let xCita = capsula.contenido.trim().replace(/\s+/g, " ");
   if (xCita.length > xMax) xCita = xCita.slice(0, xMax - 1).trim() + "…";
