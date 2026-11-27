@@ -955,6 +955,19 @@ footer{
 .sala-chip{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--crema-50);border:1px solid var(--linea);border-radius:999px;padding:.55rem 1.15rem;text-decoration:none;transition:all .35s}
 .sala-chip:hover{color:var(--oro);border-color:var(--oro);box-shadow:0 0 18px rgba(212,165,71,.25);transform:translateY(-2px)}
 
+/* El Museo del Futuro — carrusel de videos */
+.museo-band{background:linear-gradient(180deg,var(--noche) 0%,#0a0f09 50%,var(--noche) 100%);border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+.videos-carrusel{display:flex;gap:1.3rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:1rem .2rem 1.6rem;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--linea-2) transparent}
+.video-card{flex:0 0 min(290px,72vw);aspect-ratio:9/16;position:relative;border:1px solid var(--linea-2);border-radius:4px;overflow:hidden;background:#000;scroll-snap-align:center;cursor:pointer;transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
+.video-card:hover{transform:translateY(-5px);box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 0 1px rgba(212,165,71,.3)}
+.video-card video{width:100%;height:100%;object-fit:cover;display:block}
+.video-play{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;border:1px solid var(--oro);background:rgba(13,19,12,.65);color:var(--oro-glow);font-size:1.3rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;backdrop-filter:blur(4px)}
+.video-play:hover{background:rgba(212,165,71,.25);transform:scale(1.08)}
+.video-card.playing .video-play{opacity:0;pointer-events:none}
+.video-cap{position:absolute;left:0;right:0;bottom:0;padding:1.6rem .9rem .7rem;background:linear-gradient(180deg,transparent,rgba(10,15,9,.85));font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--oro);pointer-events:none}
+.video-mas{display:flex;align-items:center;justify-content:center;text-align:center;padding:1rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro);text-decoration:none;background:var(--noche-2)}
+.museo-gancho{font-family:var(--serif);font-style:italic;font-size:1.35rem;color:var(--oro-claro);margin-top:1.2rem;text-align:center}
+
 @media (prefers-reduced-motion:reduce){
   #fireflies{display:none}
   .hero-aurora,.legado-card{animation:none}
@@ -1108,6 +1121,31 @@ footer{
         <div class="oraculo-cap-seal">— Río Bogotá · Ritual · 2026</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ══ EL MUSEO DEL FUTURO ══ -->
+<section class="museo-band" id="museo">
+  <div class="sec-inner">
+    <div class="sec-label">La serie</div>
+    <h2 class="sec-title">El <em>Museo del Futuro</em></h2>
+    <p class="sec-desc">Un día, un museo guardará todo lo que dejamos ir. Tú aún puedes decidir qué no entre aquí.</p>
+
+    <div class="videos-carrusel">
+      <figure class="video-card" style="margin:0">
+        <video src="/video/museo-del-futuro-ep1.mp4" poster="/video/poster-museo-ep1.jpg" playsinline preload="none"></video>
+        <button class="video-play" aria-label="Reproducir episodio 1">▶</button>
+        <figcaption class="video-cap">Ep. I · El museo</figcaption>
+      </figure>
+      <figure class="video-card" style="margin:0">
+        <video src="/video/el-umbral.mp4" poster="/video/poster-el-umbral.jpg" playsinline preload="none"></video>
+        <button class="video-play" aria-label="Reproducir El umbral">▶</button>
+        <figcaption class="video-cap">El umbral</figcaption>
+      </figure>
+      <a class="video-card video-mas" href="https://instagram.com/thanotectas" target="_blank" rel="noopener">Más episodios en<br>@thanotectas →</a>
+    </div>
+
+    <p class="museo-gancho">Que no termine en museo.</p>
   </div>
 </section>
 
@@ -1453,6 +1491,20 @@ function sendChat(){
   document.querySelectorAll('.sec-label,.sec-title,.sec-desc,.legado-card,.nl-title,.nl-sub,.nl-form,.cta-band h2,.cta-band .sec-desc').forEach(function(el){reveal(el,0)});
   document.querySelectorAll('.modo').forEach(reveal);
   document.querySelectorAll('.sala-chip').forEach(reveal);
+  document.querySelectorAll('.video-card').forEach(reveal);
+
+  // Carrusel de videos: clic para reproducir con sonido; pausa los demás
+  document.querySelectorAll('.video-card video').forEach(function(v){
+    var card=v.closest('.video-card');
+    function toggle(){
+      if(v.paused){
+        document.querySelectorAll('.video-card video').forEach(function(o){if(o!==v){o.pause();o.closest('.video-card').classList.remove('playing');}});
+        v.play();card.classList.add('playing');
+      }else{v.pause();card.classList.remove('playing');}
+    }
+    card.addEventListener('click',function(e){e.preventDefault();toggle();});
+    v.addEventListener('ended',function(){card.classList.remove('playing');v.currentTime=0;});
+  });
   // Tarjetas del archivo llegan por fetch: observar el grid
   var grid=document.getElementById('capsulas-grid');
   if(grid){
