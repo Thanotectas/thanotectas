@@ -911,6 +911,63 @@ footer{
 .nl-msg.err{color:#c47050}
 .nl-fineprint{font-family:var(--mono);font-size:.6rem;color:var(--crema-30);letter-spacing:.15em;text-transform:uppercase;margin-top:1.2rem}
 </style>
+<style>
+/* ═══ CAPA INMERSIVA ═══ */
+#fireflies{position:fixed;inset:0;z-index:1;pointer-events:none}
+#umbral-progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:300;background:linear-gradient(90deg,var(--musgo-glow),var(--oro),var(--oro-glow));box-shadow:0 0 12px rgba(212,165,71,.55)}
+
+/* Aurora del hero */
+.hero-aurora{position:absolute;inset:-15%;z-index:-1;pointer-events:none;
+  background:radial-gradient(42% 34% at 30% 28%,rgba(74,138,75,.16),transparent 70%),
+             radial-gradient(38% 30% at 72% 62%,rgba(212,165,71,.12),transparent 70%),
+             radial-gradient(30% 26% at 55% 15%,rgba(108,192,109,.09),transparent 70%);
+  filter:blur(46px);animation:auroraDrift 16s ease-in-out infinite alternate}
+@keyframes auroraDrift{from{transform:translate3d(-2%,-1%,0) scale(1);opacity:.85}to{transform:translate3d(2%,2%,0) scale(1.07);opacity:1}}
+
+/* Revelado al scroll */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.18s}.rv-d3{transition-delay:.28s}
+.rv-d4{transition-delay:.38s}.rv-d5{transition-delay:.48s}.rv-d6{transition-delay:.58s}
+
+/* Stats como números héroe */
+.hero-stats{gap:4.2rem}
+.stat{position:relative}
+.stat+.stat::before{content:'';position:absolute;left:-2.1rem;top:50%;transform:translateY(-50%);width:1px;height:48px;background:linear-gradient(180deg,transparent,var(--linea-2),transparent)}
+.stat-num{font-size:3.3rem;background:linear-gradient(180deg,var(--oro-glow) 20%,var(--oro) 85%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(212,165,71,.3))}
+
+/* Tarjetas con luz que sigue el cursor */
+.modo,.cap-card{position:relative;overflow:hidden;transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s,background .4s}
+.modo::after,.cap-card::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(212,165,71,.14),transparent 62%)}
+.modo:hover,.cap-card:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 0 0 1px rgba(212,165,71,.3)}
+.modo:hover::after,.cap-card:hover::after{opacity:1}
+
+/* La vela del legado */
+.legado-card{animation:velaRespira 5.5s ease-in-out infinite}
+@keyframes velaRespira{0%,100%{box-shadow:0 0 40px rgba(212,165,71,.07)}50%{box-shadow:0 0 75px rgba(212,165,71,.2)}}
+
+/* Destello en CTA dorado */
+.btn-primary::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,250,238,.5),transparent);transition:left .7s ease;z-index:2}
+.btn-primary:hover::after{left:140%}
+
+/* Salas del Archivo */
+.salas{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.8rem 0 2.6rem}
+.sala-chip{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--crema-50);border:1px solid var(--linea);border-radius:999px;padding:.55rem 1.15rem;text-decoration:none;transition:all .35s}
+.sala-chip:hover{color:var(--oro);border-color:var(--oro);box-shadow:0 0 18px rgba(212,165,71,.25);transform:translateY(-2px)}
+
+@media (prefers-reduced-motion:reduce){
+  #fireflies{display:none}
+  .hero-aurora,.legado-card{animation:none}
+  .rv{opacity:1;transform:none;transition:none}
+}
+@media(max-width:680px){
+  .hero-stats{gap:1.6rem;flex-direction:row;justify-content:space-around;width:100%}
+  .stat-num{font-size:2.1rem}
+  .stat-label{font-size:.52rem;letter-spacing:.2em}
+  .stat+.stat::before{display:none}
+  .scroll-hint{display:none}
+}
+</style>
 </head>
 <body>
 
@@ -948,6 +1005,7 @@ footer{
 <!-- ══ HERO ══ -->
 <section class="hero">
   <div class="hero-bg-image"></div>
+  <div class="hero-aurora"></div>
 
   <div class="hero-tree">
     <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1015,6 +1073,15 @@ footer{
     <div class="sec-label">Archivo Colectivo</div>
     <h2 class="sec-title">Las primeras <em>memorias</em><br>inscritas al Umbral.</h2>
     <p class="sec-desc">Estas son cápsulas vivas que ya forman parte del Archivo. Las puedes leer hoy. Cada una es un acto de memoria contra la pérdida.</p>
+
+    <nav class="salas" aria-label="Salas del Archivo">
+      <a class="sala-chip" href="/categoria/especies">🌿 Especies</a>
+      <a class="sala-chip" href="/categoria/rios">〜 Ríos</a>
+      <a class="sala-chip" href="/categoria/ecosistemas">✦ Ecosistemas</a>
+      <a class="sala-chip" href="/categoria/sonidos">♪ Sonidos</a>
+      <a class="sala-chip" href="/categoria/saberes">✶ Saberes</a>
+      <a class="sala-chip" href="/categoria/territorios">△ Territorios</a>
+    </nav>
 
     <div class="capsulas-grid" id="capsulas-grid">
       <div class="cap-card" style="opacity:.5;justify-content:center;align-items:center">
@@ -1311,6 +1378,100 @@ function sendChat(){
   else if(l.includes('contact')||l.includes('correo')||l.includes('email'))k='contacto';
   setTimeout(()=>addMsg(BOT[k],'bot'),800);
 }
+</script>
+<script>
+// ═══ CAPA INMERSIVA ═══
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Barra de progreso del umbral
+  var bar=document.createElement('div');bar.id='umbral-progress';document.body.appendChild(bar);
+  var ticking=false;
+  window.addEventListener('scroll',function(){
+    if(ticking)return;ticking=true;
+    requestAnimationFrame(function(){
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      bar.style.width=(h>0?(window.scrollY/h)*100:0)+'%';
+      ticking=false;
+    });
+  },{passive:true});
+
+  // Luciérnagas doradas (capa sobre las estrellas)
+  if(!reduce){
+    var fc=document.createElement('canvas');fc.id='fireflies';document.body.appendChild(fc);
+    var fx=fc.getContext('2d'),flies=[],sprite=null,running=true;
+    function makeSprite(){
+      sprite=document.createElement('canvas');sprite.width=sprite.height=64;
+      var s=sprite.getContext('2d'),g=s.createRadialGradient(32,32,0,32,32,32);
+      g.addColorStop(0,'rgba(255,250,238,.95)');g.addColorStop(.25,'rgba(244,217,137,.6)');
+      g.addColorStop(.6,'rgba(212,165,71,.18)');g.addColorStop(1,'rgba(212,165,71,0)');
+      s.fillStyle=g;s.fillRect(0,0,64,64);
+    }
+    function initF(){
+      fc.width=window.innerWidth;fc.height=window.innerHeight;
+      var n=Math.min(Math.floor(fc.width*fc.height/32000),55);
+      flies=[];
+      for(var i=0;i<n;i++)flies.push({
+        x:Math.random()*fc.width, y:Math.random()*fc.height,
+        r:Math.random()*5+2.5,
+        vy:-(Math.random()*.22+.08),
+        amp:Math.random()*28+8, freq:Math.random()*.0012+.0004,
+        ph:Math.random()*Math.PI*2, tw:Math.random()*.002+.0008
+      });
+    }
+    function drawF(){
+      if(!running)return;
+      fx.clearRect(0,0,fc.width,fc.height);
+      var t=Date.now();
+      for(var i=0;i<flies.length;i++){
+        var f=flies[i];
+        f.y+=f.vy;
+        if(f.y<-20){f.y=fc.height+20;f.x=Math.random()*fc.width;}
+        var x=f.x+Math.sin(t*f.freq+f.ph)*f.amp;
+        var a=.35+.65*Math.abs(Math.sin(t*f.tw+f.ph));
+        fx.globalAlpha=a;
+        fx.drawImage(sprite,x-f.r,f.y-f.r,f.r*2,f.r*2);
+      }
+      fx.globalAlpha=1;
+      requestAnimationFrame(drawF);
+    }
+    makeSprite();initF();drawF();
+    var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(initF,200);});
+    document.addEventListener('visibilitychange',function(){
+      running=!document.hidden;if(running)drawF();
+    });
+  }
+
+  // Revelado al entrar en pantalla
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  function reveal(el,i){
+    el.classList.add('rv','rv-d'+Math.min((i||0)%6+1,6));
+    io.observe(el);
+  }
+  document.querySelectorAll('.sec-label,.sec-title,.sec-desc,.legado-card,.nl-title,.nl-sub,.nl-form,.cta-band h2,.cta-band .sec-desc').forEach(function(el){reveal(el,0)});
+  document.querySelectorAll('.modo').forEach(reveal);
+  document.querySelectorAll('.sala-chip').forEach(reveal);
+  // Tarjetas del archivo llegan por fetch: observar el grid
+  var grid=document.getElementById('capsulas-grid');
+  if(grid){
+    new MutationObserver(function(){
+      grid.querySelectorAll('.cap-card:not(.rv)').forEach(reveal);
+    }).observe(grid,{childList:true});
+  }
+
+  // Luz que sigue el cursor en las tarjetas
+  if(window.matchMedia('(hover: hover)').matches){
+    document.addEventListener('pointermove',function(e){
+      var card=e.target.closest&&e.target.closest('.modo,.cap-card');
+      if(!card)return;
+      var r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    },{passive:true});
+  }
+})();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 <script>
