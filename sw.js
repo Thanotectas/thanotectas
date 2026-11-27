@@ -3,7 +3,7 @@
 // Caché solo para iconos y manifest. Las páginas HTML NUNCA se sirven desde caché
 // para evitar problemas de sesión y datos viejos.
 
-var CACHE_NAME = 'thanotectas-v3';
+var CACHE_NAME = 'thanotectas-v4';
 var OFFLINE_URL = '/offline.html';
 
 // Solo cacheamos estos recursos estáticos críticos al instalar

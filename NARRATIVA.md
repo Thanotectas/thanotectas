@@ -78,6 +78,45 @@ Solo se abre cuando llega ese año. Una carta a los que vendrán.
 
 ---
 
+## El lema de campaña: "El Museo del Futuro"
+
+> **"Un día, un museo guardará todo lo que dejamos ir.
+> Tú aún puedes decidir qué no entre aquí."**
+
+Adoptado el 26 de noviembre de 2026 como lema de campaña y título de la
+serie de videos. Convive con "Archivo del Umbral" (identidad madre, no se
+reemplaza): el Archivo es lo que somos; el Museo del Futuro es cómo lo
+contamos hacia afuera.
+
+**Cómo usarlo:**
+- Como título de la serie de Reels/videos: *El Museo del Futuro*.
+- Siempre acompañado de la frase completa o de una imagen que dé contexto.
+  Suelto es ambiguo (suena a museo de tecnología) y compite en búsquedas
+  con el Museo del Futuro de Dubái.
+- La imagen canónica del lema: el pedestal vacío con placa en blanco.
+  El espacio que falta es el del espectador.
+
+**El gancho oficial (adoptado 26 nov 2026):**
+
+> **"Que no termine en museo."**
+
+Es el cierre repetible de la campaña: va al final de cada caption de
+Instagram y X, y funciona como fórmula con cualquier sujeto
+("El tití cabeciblanco. Que no termine en museo."). Hashtag:
+**#QueNoTermineEnMuseo**. La frase larga abre (voz en off de los videos);
+el gancho cierra y se repite. La repetición es la que fabrica el lema.
+
+**Variantes aprobadas del cierre (usos puntuales):**
+- "Tú aún puedes decidir qué no entre aquí."
+- "Que esta sala quede vacía."
+- "Nómbralo ahora, antes de que entre aquí."
+
+**Voz oficial:** las locuciones se generan con la voz de ElevenLabs
+"Thanotectas — Voz del Umbral" (narrador masculino maduro, colombiano,
+ceremonial). No usar voces distintas en piezas de la serie.
+
+---
+
 ## El SVG del logo (oficial)
 
 El logo es un árbol con tres elementos visuales:

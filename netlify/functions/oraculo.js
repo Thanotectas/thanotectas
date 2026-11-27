@@ -186,7 +186,9 @@ exports.handler = async function(event) {
     var tipoPrompts = prompts[tipo] || prompts.poema;
     var prompt = tipoPrompts[idioma] || tipoPrompts.es;
 
-    // ── Llamada a Gemini ────────────────────────────────────────
+    // ── Llamada a Gemini (texto) ────────────────────────────────
+    // thinkingBudget: 0 — sin esto, gemini-2.5-flash gasta parte de
+    // maxOutputTokens en razonamiento interno y el texto sale truncado.
     var res = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY,
       {
@@ -194,7 +196,11 @@ exports.handler = async function(event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: maxTokens, temperature: 1.1 }
+          generationConfig: {
+            maxOutputTokens: maxTokens,
+            temperature: 1.1,
+            thinkingConfig: { thinkingBudget: 0 }
+          }
         })
       }
     );
@@ -206,20 +212,33 @@ exports.handler = async function(event) {
 
     var data = await res.json();
     var poema = "";
-    try { poema = data.candidates[0].content.parts[0].text.trim(); } catch(e) {}
-    if (!poema) throw new Error("Respuesta vacia de Gemini");
+    var finishReason = "";
+    try {
+      finishReason = data.candidates[0].finishReason || "";
+      var parts = data.candidates[0].content.parts || [];
+      // Ignorar partes de "pensamiento" si el modelo las devuelve
+      for (var pi = 0; pi < parts.length; pi++) {
+        if (parts[pi].text && !parts[pi].thought) poema += parts[pi].text;
+      }
+      poema = poema.trim();
+    } catch(e) {}
+    if (!poema) throw new Error("Respuesta vacia de Gemini (finishReason: " + finishReason + ")");
+    if (finishReason === "MAX_TOKENS") {
+      console.warn("[Oraculo] Texto truncado por MAX_TOKENS (plan " + plan + ", tipo " + tipo + ")");
+    }
 
-    // ── Imagen Unsplash por categoría ───────────────────────────
-    var queryMap = {
-      especies:    "endangered wildlife animal nature dark moody",
-      ecosistemas: "rainforest ecosystem jungle misty atmospheric",
-      rios:        "river glacier water landscape dark melancholic",
-      sonidos:     "misty forest nature silence atmospheric dark",
-      territorios: "mountain landscape wilderness dark dramatic",
-      saberes:     "indigenous ritual forest fire dark atmospheric"
-    };
-    var q = encodeURIComponent((queryMap[categoria] || sujeto) + " melancholic");
-    var imagen = "https://source.unsplash.com/800x450/?" + q + "&sig=" + Date.now();
+    // ── Imagen generada con Gemini y subida a Supabase Storage ──
+    // (source.unsplash.com fue descontinuado; ahora la imagen es generada)
+    var imagen = "https://thanotectas.com/img/hero-capsula-mano.png"; // fallback
+    try {
+      var generada = await generarImagenGemini(sujeto, categoria, API_KEY);
+      if (generada) {
+        var subida = await subirImagenStorage(generada.buffer, generada.mime);
+        if (subida) imagen = subida;
+      }
+    } catch (imgErr) {
+      console.warn("[Oraculo] Imagen fallo (no fatal):", imgErr.message);
+    }
 
     return respond(200, { poema: poema, imagen: imagen, plan: plan, tipo: tipo });
 
@@ -228,3 +247,71 @@ exports.handler = async function(event) {
     return respond(500, { error: error.message });
   }
 };
+
+// ── Generar imagen con Gemini (gemini-2.5-flash-image) ──────────
+var ESTILO_CATEGORIA = {
+  especies:    "portrait of the animal or plant in its natural habitat",
+  ecosistemas: "wide landscape of the ecosystem, mist between the vegetation",
+  rios:        "the water body at dusk, reflections of amber light",
+  sonidos:     "an evocative scene suggesting sound in nature: forest at night, dense atmosphere",
+  territorios: "dramatic wide landscape of the territory",
+  saberes:     "hands practicing the craft or tradition, warm firelight, no visible faces"
+};
+
+async function generarImagenGemini(sujeto, categoria, apiKey) {
+  var estilo = ESTILO_CATEGORIA[categoria] || "evocative natural scene";
+  var promptImg =
+    "Cinematic, dark, atmospheric photograph for an ecological memory archive. Subject: " +
+    sujeto + ". Composition: " + estilo + ". " +
+    "Deep forest-green shadows with warm amber-gold accents of light, misty, melancholic but reverent mood, " +
+    "shallow depth of field, wide 16:9 framing. No text, no watermarks, no logos, no recognizable human faces.";
+
+  var res = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=" + apiKey,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: promptImg }] }] })
+    }
+  );
+  if (!res.ok) throw new Error("Gemini imagen " + res.status + ": " + (await res.text()).slice(0, 300));
+
+  var data = await res.json();
+  var parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+  for (var i = 0; i < parts.length; i++) {
+    var inline = parts[i].inlineData || parts[i].inline_data;
+    if (inline && inline.data) {
+      return {
+        buffer: Buffer.from(inline.data, "base64"),
+        mime: inline.mimeType || inline.mime_type || "image/png"
+      };
+    }
+  }
+  throw new Error("Gemini no devolvio imagen");
+}
+
+// ── Subir imagen al bucket público capsulas-imagenes ────────────
+async function subirImagenStorage(buffer, mime) {
+  var SB_URL = process.env.SUPABASE_URL;
+  var SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!SB_URL || !SB_KEY) {
+    console.warn("[Oraculo] SUPABASE_URL/SERVICE_ROLE_KEY faltan; sin subida de imagen");
+    return null;
+  }
+  var ext = mime === "image/jpeg" ? "jpg" : "png";
+  var path = "oraculo/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
+
+  var res = await fetch(SB_URL + "/storage/v1/object/capsulas-imagenes/" + path, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + SB_KEY,
+      apikey: SB_KEY,
+      "Content-Type": mime,
+      "x-upsert": "true"
+    },
+    body: buffer
+  });
+  if (!res.ok) throw new Error("Storage " + res.status + ": " + (await res.text()).slice(0, 300));
+
+  return SB_URL + "/storage/v1/object/public/capsulas-imagenes/" + path;
+}

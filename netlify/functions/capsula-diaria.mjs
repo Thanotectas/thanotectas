@@ -27,6 +27,10 @@ const X_ACCESS_SECRET = process.env.X_ACCESS_SECRET;
 
 const IG_CAPTION_MAX = 2200;
 const IG_BODY_MAX = 1700;
+// Build hook de Netlify: al postearse una cápsula, se reconstruye el sitio
+// (páginas /c/, categorías, sitemap, feed). Crear en Netlify:
+// Site settings → Build & deploy → Build hooks, y guardar la URL aquí.
+const BUILD_HOOK_URL = process.env.BUILD_HOOK_URL;
 
 // ── Caché de módulo (persiste entre invocaciones tibias) ─────
 let wasmInitialized = false;
@@ -159,6 +163,19 @@ export default async (req) => {
 
       if (errUpd)
         console.error("[capsula-diaria] Error actualizando BD:", errUpd);
+
+      // Reconstruir el sitio para que la cápsula tenga su página /c/,
+      // entre al sitemap, al feed RSS y a su página de categoría.
+      if (BUILD_HOOK_URL) {
+        try {
+          const hookRes = await fetch(BUILD_HOOK_URL, { method: "POST" });
+          console.log(`[capsula-diaria] Build hook disparado: ${hookRes.status}`);
+        } catch (hookErr) {
+          console.warn("[capsula-diaria] Build hook falló (no fatal):", hookErr.message);
+        }
+      } else {
+        console.warn("[capsula-diaria] BUILD_HOOK_URL no configurada; el sitio no se reconstruye solo");
+      }
     }
 
     // Enviar email diario a suscriptores (independiente de Instagram)
@@ -642,6 +659,7 @@ function construirCaptions(capsula) {
   }
 
   const hashtags = [
+    "#QueNoTermineEnMuseo",
     "#archivodelumbral",
     "#dueloecologico",
     "#thanotectas",
@@ -654,6 +672,7 @@ function construirCaptions(capsula) {
 
   let instagram =
     `${cuerpo}\n\n— ${sujeto} · ${tipo} · ${año}\n\n` +
+    `Que no termine en museo.\n\n` +
     `${numero}\n${enlace}\n\n${hashtags}`;
 
   if (instagram.length > IG_CAPTION_MAX) {
@@ -663,7 +682,7 @@ function construirCaptions(capsula) {
   // X: 280 chars; la URL cuenta como 23 (t.co). La tarjeta OG de la página
   // pone la imagen, así que el tweet es solo texto + enlace.
   const X_URL_LEN = 23;
-  const xCola = `\n\n— ${sujeto} · ${tipo} · ${año}\n`;
+  const xCola = `\n\n— ${sujeto} · ${tipo} · ${año}\nQue no termine en museo.\n`;
   const xMax = 280 - X_URL_LEN - xCola.length - 2; // 2 por comillas
   let xCita = capsula.contenido.trim().replace(/\s+/g, " ");
   if (xCita.length > xMax) xCita = xCita.slice(0, xMax - 1).trim() + "…";
